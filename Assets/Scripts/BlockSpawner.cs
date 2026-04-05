@@ -23,18 +23,18 @@ public class BlockSpawner : MonoBehaviour
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             int randomIndex = Random.Range(0, blockPrefabs.Length);
-            
+
             int attempts = 0;
-        
+
             while (GridManager.Instance.CanBlockFit(blockPrefabs[randomIndex]) == false)
             {
                 randomIndex = Random.Range(0, blockPrefabs.Length);
                 attempts++;
-                
-                if (attempts > 50) 
+
+                if (attempts > 50)
                 {
                     Debug.Log("Inget block får plats! Här ska vi trigga Game Over senare.");
-                    break; 
+                    break;
                 }
             }
 
