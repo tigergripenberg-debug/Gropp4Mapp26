@@ -6,11 +6,11 @@ public class GridManager : MonoBehaviour
     public int width = 8;
     public int height = 8;
     public GameObject tilePrefab;
-    public int[,] gridLogic;
+    public int[,] grid;
     
     void Start()
     {
-        gridLogic = new int[width, height];
+        grid = new int[width, height];
         GenerateGrid();
     }
     void GenerateGrid()

@@ -10,9 +10,11 @@ public class Block : MonoBehaviour
     private Vector3 previewState = new Vector3(0.75f,0.75f,0.75f);
     private Vector3 selectedState = Vector3.one;
     private BlockSpawner spawner;
+    private GridManager gridManager;
 
     void Start()
     {
+        gridManager = FindFirstObjectByType<GridManager>();
         spawner = FindFirstObjectByType<BlockSpawner>();
         startPosition = transform.position;
         transform.localScale = previewState;
@@ -42,7 +44,6 @@ public class Block : MonoBehaviour
         float snappedY = gridY - yOffset + 2f;
         transform.position = new Vector3(snappedX, snappedY, -1f);
         
-        Debug.Log(spawner.blocksLeftIndex);
         bool isValid = true;
         
         foreach (Transform child in transform)
@@ -51,8 +52,13 @@ public class Block : MonoBehaviour
             int childY = Mathf.RoundToInt(child.position.y + yOffset - 2f);
             if (childX < 0 || childX >= 8 || childY < 0 || childY >= 8)
             {
+                isValid = false; 
+                break;  
+            }
+            if (gridManager.grid[childX, childY] != 0)
+            {
                 isValid = false;
-                break; 
+                break;
             }
         }
         if (isValid)
@@ -61,6 +67,9 @@ public class Block : MonoBehaviour
             spawner.RemoveBlock(gameObject);
             foreach (Transform child in transform)
             {
+                int childX = Mathf.RoundToInt(child.position.x + xOffset);
+                int childY = Mathf.RoundToInt(child.position.y + yOffset - 2f);
+                gridManager.grid[childX, childY] = 1;
                 Instantiate(spawner.tilePrefab, child.position, Quaternion.identity);
             }
             Destroy(gameObject);
