@@ -11,7 +11,7 @@ public class Block : MonoBehaviour
     void Start()
     {
         startPosition = transform.position;
-        
+
         transform.localScale = miniatyrStorlek;
     }
 
@@ -42,7 +42,7 @@ public class Block : MonoBehaviour
         float snappedX = gridX - xOffset;
         float snappedY = gridY - yOffset + 2f;
 
-        transform.position = new Vector3(snappedX, snappedY, -1f);
+        transform.position = new Vector3(snappedX, snappedY, 0f);
 
         bool isValid = true;
 
@@ -54,12 +54,12 @@ public class Block : MonoBehaviour
             if (childX < 0 || childX >= 8 || childY < 0 || childY >= 8)
             {
                 isValid = false;
-                break; 
+                break;
             }
 
             if (GridManager.Instance.gridLogic[childX, childY] == 1)
             {
-                isValid = false; 
+                isValid = false;
                 break;
             }
         }
@@ -70,8 +70,8 @@ public class Block : MonoBehaviour
             {
                 int childX = Mathf.RoundToInt(child.position.x + xOffset);
                 int childY = Mathf.RoundToInt(child.position.y + yOffset - 2f);
-                
-                GridManager.Instance.gridLogic[childX, childY] = 1; 
+
+                GridManager.Instance.gridLogic[childX, childY] = 1;
                 GridManager.Instance.visualGrid[childX, childY] = child;
             }
 
@@ -79,12 +79,12 @@ public class Block : MonoBehaviour
             GridManager.Instance.CheckForMatches();
 
             BlockSpawner.Instance.BlockPlaced();
-            
+
         }
         else
         {
             transform.position = startPosition;
-            
+
             transform.localScale = miniatyrStorlek;
         }
     }
