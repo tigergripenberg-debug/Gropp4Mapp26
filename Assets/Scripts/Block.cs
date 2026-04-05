@@ -63,15 +63,18 @@ public class Block : MonoBehaviour
         }
         if (isValid)
         {
-            spawner.blocksLeftIndex--;
-            spawner.RemoveBlock(gameObject);
+            
             foreach (Transform child in transform)
             {
                 int childX = Mathf.RoundToInt(child.position.x + xOffset);
                 int childY = Mathf.RoundToInt(child.position.y + yOffset - 2f);
+                GameObject tile = Instantiate(spawner.tilePrefab, child.position, Quaternion.identity);
                 gridManager.grid[childX, childY] = 1;
-                Instantiate(spawner.tilePrefab, child.position, Quaternion.identity);
+                gridManager.tileObjects[childX, childY] = tile;
             }
+            gridManager.CheckAndClearLines();
+            spawner.blocksLeftIndex--; 
+            spawner.RemoveBlock(gameObject);
             Destroy(gameObject);
         }
         else
