@@ -1,66 +1,54 @@
-using System;
 using UnityEngine;
-using System.Collections.Generic;
-using Random = UnityEngine.Random;
 
 public class BlockSpawner : MonoBehaviour
 {
-    [Header("Block Settings")]
-    [SerializeField] GameObject[] blockPrefab;
-    [SerializeField] Transform[] spawnPoints;
-    public GameObject tilePrefab;
-    private List<GameObject> currentBlocks = new List<GameObject>();
-    public int blocksLeftIndex = 0;
+    private int BlocksUsed = 0;
+    public static BlockSpawner Instance;
 
-    private void Start()
+    [Header("Inställningar")]
+    public GameObject[] blockPrefabs;
+    public Transform[] spawnPoints;
+    void Awake()
     {
-        currentBlocks = new List<GameObject>();
-        SpawnBlocks();
+        Instance = this;
     }
 
-    private void Update()
+    void Start()
     {
-        if (blocksLeftIndex == 0)
-        {
-            SpawnBlocks();
-            blocksLeftIndex = spawnPoints.Length;
-        }
+        SpawnNyBlock();
     }
 
-    private void SpawnBlocks()
+    public void SpawnNyBlock()
     {
-        ClearOldBlocks();
         for (int i = 0; i < spawnPoints.Length; i++)
         {
-            GameObject prefab = GetRandomBlock();
-            GameObject block = Instantiate(prefab, spawnPoints[i].position, Quaternion.identity);
-            currentBlocks.Add(block);
-        }
-    }
+            int randomIndex = Random.Range(0, blockPrefabs.Length);
 
-    public void RemoveBlock(GameObject block)
-    {
-        if (currentBlocks.Contains(block))
-        {
-            currentBlocks.Remove(block);
-        }
-    }
-    
-    private GameObject GetRandomBlock()
-    {
-        int index = Random.Range(0, blockPrefab.Length);
-        return blockPrefab[index];
-    }
-    private void ClearOldBlocks()
-    {
-        if (currentBlocks == null) return;
-        foreach (GameObject block in currentBlocks)
-        {
-            if (block != null)
+            int attempts = 0;
+
+            while (GridManager.Instance.CanBlockFit(blockPrefabs[randomIndex]) == false)
             {
-                Destroy(block);
+                randomIndex = Random.Range(0, blockPrefabs.Length);
+                attempts++;
+
+                if (attempts > 50)
+                {
+                    Debug.Log("Inget block får plats! Här ska vi trigga Game Over senare.");
+                    break;
+                }
             }
+
+            Instantiate(blockPrefabs[randomIndex], spawnPoints[i].position, Quaternion.identity);
         }
-        currentBlocks.Clear();
+    }
+    public void BlockPlaced()
+    {
+        BlocksUsed++;
+
+        if (BlocksUsed >= 3)
+        {
+            BlocksUsed = 0;
+            SpawnNyBlock();
+        }
     }
 }
