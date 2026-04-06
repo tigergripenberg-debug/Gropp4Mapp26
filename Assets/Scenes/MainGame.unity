@@ -551,18 +551,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 560653883303097335, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -4
-      objectReference: {fileID: 0}
-    - target: {fileID: 968301393760314478, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_fontSize
-      value: 80.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 968301393760314478, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_margin.w
-      value: 59.788795
-      objectReference: {fileID: 0}
     - target: {fileID: 3791280884757919417, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_Name
       value: Scorer
