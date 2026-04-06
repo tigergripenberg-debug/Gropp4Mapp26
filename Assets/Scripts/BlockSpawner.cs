@@ -5,7 +5,7 @@ public class BlockSpawner : MonoBehaviour
     private int BlocksUsed = 0;
     public static BlockSpawner Instance;
 
-    [Header("Inställningar")]
+    [Header("Settings")]
     public GameObject[] blockPrefabs;
     public Transform[] spawnPoints;
     void Awake()
@@ -15,10 +15,10 @@ public class BlockSpawner : MonoBehaviour
 
     void Start()
     {
-        SpawnNyBlock();
+        SpawnNewBlock();
     }
 
-    public void SpawnNyBlock()
+    public void SpawnNewBlock()
     {
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -48,7 +48,7 @@ public class BlockSpawner : MonoBehaviour
         if (BlocksUsed >= 3)
         {
             BlocksUsed = 0;
-            SpawnNyBlock();
+            SpawnNewBlock();
         }
     }
 }

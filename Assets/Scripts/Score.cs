@@ -16,7 +16,7 @@ public class Score : MonoBehaviour
 
     }
 
-    public void addScore(int combo)
+    public void AddScore(int combo)
     {
         int points = (combo * 100) * combo;
         score += points;

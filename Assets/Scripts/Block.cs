@@ -1,24 +1,22 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Block : MonoBehaviour
 {
     private Vector3 startPosition;
     private Vector3 touchOffset;
-
-    private Vector3 miniatyrStorlek = new Vector3(0.6f, 0.6f, 1f);
-    private Vector3 normalStorlek = new Vector3(1f, 1f, 1f);
+    private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
+    private Vector3 normalSize = new Vector3(1f, 1f, 1f);
 
     void Start()
     {
         startPosition = transform.position;
-
-        transform.localScale = miniatyrStorlek;
+        transform.localScale = previewSize;
     }
 
     void OnMouseDown()
     {
-        transform.localScale = normalStorlek;
-
+        transform.localScale = normalSize;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
         touchOffset = transform.position - mousePos;
@@ -33,30 +31,20 @@ public class Block : MonoBehaviour
 
     void OnMouseUp()
     {
-        float xOffset = (8 - 1) / 2f;
-        float yOffset = (8 - 0) / 2f;
-
-        int gridX = Mathf.RoundToInt(transform.position.x + xOffset);
-        int gridY = Mathf.RoundToInt(transform.position.y + yOffset - 2f);
-
-        float snappedX = gridX - xOffset;
-        float snappedY = gridY - yOffset + 2f;
-
-        transform.position = new Vector3(snappedX, snappedY, 0f);
-
+        Vector2Int snappedGrid = GridManager.Instance.WorldToGrid(transform.position);
+        Vector2 snappedWorld = GridManager.Instance.GetWorldPosition(snappedGrid.x, snappedGrid.y);
+        transform.position = new Vector3(snappedWorld.x, snappedWorld.y, 0f);
         bool isValid = true;
-
         foreach (Transform child in transform)
         {
-            int childX = Mathf.RoundToInt(child.position.x + xOffset);
-            int childY = Mathf.RoundToInt(child.position.y + yOffset - 2f);
-
+            Vector2Int childPos = GridManager.Instance.WorldToGrid(child.position);
+            int childX = childPos.x;
+            int childY = childPos.y;
             if (childX < 0 || childX >= 8 || childY < 0 || childY >= 8)
             {
                 isValid = false;
                 break;
             }
-
             if (GridManager.Instance.gridLogic[childX, childY] == 1)
             {
                 isValid = false;
@@ -68,24 +56,23 @@ public class Block : MonoBehaviour
         {
             foreach (Transform child in transform)
             {
-                int childX = Mathf.RoundToInt(child.position.x + xOffset);
-                int childY = Mathf.RoundToInt(child.position.y + yOffset - 2f);
-
+                Vector2Int childPos = GridManager.Instance.WorldToGrid(child.position);
+                int childX = childPos.x;
+                int childY = childPos.y;
                 GridManager.Instance.gridLogic[childX, childY] = 1;
                 GridManager.Instance.visualGrid[childX, childY] = child;
+                child.name = $"Block X:{childX} Y:{childY}";
             }
-
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();
-
+            GridManager.Instance.OnTurnFinished();
             BlockSpawner.Instance.BlockPlaced();
 
         }
         else
         {
             transform.position = startPosition;
-
-            transform.localScale = miniatyrStorlek;
+            transform.localScale = previewSize;
         }
     }
 }
