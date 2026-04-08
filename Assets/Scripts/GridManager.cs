@@ -27,8 +27,8 @@ public class GridManager : MonoBehaviour
         score = GameObject.FindGameObjectWithTag("Scorer").GetComponent<Score>();
         GenerateGrid();
     }
-    
-    void OnDrawGizmos()
+
+    void OnDrawGizmos() //används för att rita upp grid i debugmode
     {
         if (visualGrid == null) return;
         Gizmos.color = Color.green;
@@ -38,12 +38,14 @@ public class GridManager : MonoBehaviour
             Vector2 end = GetWorldPosition(x, height);
             Gizmos.DrawLine(start, end);
         }
+
         for (int y = 0; y <= height; y++)
         {
             Vector2 start = GetWorldPosition(0, y);
             Vector2 end = GetWorldPosition(width, y);
             Gizmos.DrawLine(start, end);
-        } 
+        }
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -54,7 +56,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-    
+
     public Vector2 GetWorldPosition(int x, int y)
     {
         float xOffset = (width - 1) / 2f;
@@ -65,7 +67,7 @@ public class GridManager : MonoBehaviour
             y - yOffset + 2f
         );
     }
-    
+
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
         float xOffset = (width - 1) / 2f;
@@ -82,7 +84,7 @@ public class GridManager : MonoBehaviour
         score.score = 0;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    
+
     void GenerateGrid()
     {
 
@@ -117,10 +119,10 @@ public class GridManager : MonoBehaviour
 
         Debug.Log("Turns since clear: " + turnsSinceClear);
 
-        if (turnsSinceClear >= maxTurnsSinceClear)
+        if (turnsSinceClear > maxTurnsSinceClear)
         {
             Debug.Log("GRID PUSH!");
-            MoveGridUp();
+            MoveGrid();
             turnsSinceClear = 0;
         }
     }
@@ -182,7 +184,7 @@ public class GridManager : MonoBehaviour
         return didClear;
     }
 
-    public void MoveGridUp()
+    public void MoveGrid()
     {
         if (IsGameOver())
         {
@@ -190,21 +192,26 @@ public class GridManager : MonoBehaviour
             gameOverCanvas.SetActive(true);
             return;
         }
+
+        // Destroy bottom row (y = 0)
         for (int x = 0; x < width; x++)
         {
-            if (visualGrid[x, height - 1] != null)
+            if (visualGrid[x, 0] != null)
             {
-                Destroy(visualGrid[x, height - 1].gameObject);
-                visualGrid[x, height - 1] = null;
+                Destroy(visualGrid[x, 0].gameObject);
             }
-            gridLogic[x, height - 1] = 0;
+
+            visualGrid[x, 0] = null;
+            gridLogic[x, 0] = 0;
         }
-        for (int y = height - 1; y > 0; y--)
+
+        // Move everything DOWN
+        for (int y = 0; y < height - 1; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                visualGrid[x, y] = visualGrid[x, y - 1];
-                gridLogic[x, y] = gridLogic[x, y - 1];
+                visualGrid[x, y] = visualGrid[x, y + 1];
+                gridLogic[x, y] = gridLogic[x, y + 1];
 
                 if (visualGrid[x, y] != null)
                 {
@@ -212,27 +219,31 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
+        // Clear TOP row (now empty)
         for (int x = 0; x < width; x++)
         {
-            visualGrid[x, 0] = null;
-            gridLogic[x, 0] = 0;
+            visualGrid[x, height - 1] = null;
+            gridLogic[x, height - 1] = 0;
         }
-        GenerateBottomRow();
+
+        GenerateNewRow();
     }
-    void GenerateBottomRow()
+    
+    void GenerateNewRow()
     {
         for (int x = 0; x < width; x++)
         {
             Debug.Log("Generating new row");
-            visualGrid[x, 0] = null;
-            gridLogic[x, 0] = 0;
+            visualGrid[x, height - 1] = null;
+            gridLogic[x, height - 1] = 0;
         }
     }
     bool IsGameOver()
     {
         for (int x = 0; x < width; x++)
         {
-            if (visualGrid[x, height - 1] != null)
+            if (visualGrid[x, 0] != null)
                 return true;
         }
         return false;
