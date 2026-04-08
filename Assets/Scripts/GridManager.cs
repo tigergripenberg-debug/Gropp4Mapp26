@@ -14,6 +14,7 @@ public class GridManager : MonoBehaviour
     public int turnsSinceClear = 0;
     public int maxTurnsSinceClear = 3;
     [SerializeField] GameObject gameOverCanvas;
+    
 
     void Awake()
     {
@@ -24,6 +25,7 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
+        var soundManager = FindFirstObjectByType<SoundManager>();
         score = GameObject.FindGameObjectWithTag("Scorer").GetComponent<Score>();
         GenerateGrid();
     }
@@ -130,7 +132,7 @@ public class GridManager : MonoBehaviour
     public bool CheckForMatches()
     {
         bool didClear = false;
-
+        string soundName = SoundManager. ;
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
 
@@ -178,7 +180,7 @@ public class GridManager : MonoBehaviour
                 if (ClearColumn(col))
                     didClear = true;
 
-            score.AddScore(totalLines);
+            score.AddScore(totalLines,soundName);
         }
 
         return didClear;

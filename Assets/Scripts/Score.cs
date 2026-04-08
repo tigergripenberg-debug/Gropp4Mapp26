@@ -15,14 +15,16 @@ public class Score : MonoBehaviour
         scoreText.text = score.ToString();
         highscoreText.text = "Best: " + highscore;
     }
+    
 
-    public void AddScore(int combo)
+    public static event System.Action<string> OnScoreChange;
+    
+    public void AddScore(int combo, string soundName)
     {
         int points = (combo * 100) * combo;
         score += points;
         scoreText.text = score.ToString();
-        soundManager.PlayWowSound();
-        Debug.Log("Playing sound inside score");
+        OnScoreChange?.Invoke(soundName);
         if (highscore < score)
         {
             highscore = score;

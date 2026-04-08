@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class SoundManager : MonoBehaviour
 {
@@ -8,15 +6,49 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip[] wowSounds;
     private AudioSource soundManager;
 
-    private void Start()
+    private void Awake()
     {
         Instance = this;
         soundManager = GetComponent<AudioSource>();
     }
 
-    public void PlayWowSound()
+    private void OnEnable()
     {
-        soundManager.PlayOneShot(wowSounds[Random.Range(0, wowSounds.Length)]);
-        Debug.Log("Playing sound inside soundmanager");
+        Score.OnScoreChange += PlaySound;
+    }
+
+    private void OnDisable()
+    {
+        Score.OnScoreChange -= PlaySound;
+    }
+
+    public void PlaySound(string soundName)
+    {
+        AudioClip clip = GetClipByName(soundName);
+
+        if (clip != null)
+        {
+            soundManager.PlayOneShot(clip);
+        }
+    }
+
+    AudioClip GetClipByName(string name)
+    {
+        foreach (AudioClip clip in wowSounds)
+        {
+            if (clip.name == name)
+            {
+                return clip;
+            }
+        }
+
+        Debug.LogWarning("Clip not found: " + name);
+        return null;
+    }
+    
+    public string GetRandomAudioClip()
+    {
+        AudioClip clip = wowSounds[Random.Range(0, wowSounds.Length)];
+        return clip.name;
     }
 }
