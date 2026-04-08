@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GridManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class GridManager : MonoBehaviour
     public Transform[,] visualGrid;
     public int turnsSinceClear = 0;
     public int maxTurnsSinceClear = 3;
+    [SerializeField] GameObject gameOverCanvas;
 
     void Awake()
     {
@@ -74,8 +76,13 @@ public class GridManager : MonoBehaviour
 
         return new Vector2Int(x, y);
     }
-    
 
+    public void RestartGame() //använder onclick event i unity
+    {
+        score.score = 0;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    
     void GenerateGrid()
     {
 
@@ -180,6 +187,7 @@ public class GridManager : MonoBehaviour
         if (IsGameOver())
         {
             Debug.Log("Game Over");
+            gameOverCanvas.SetActive(true);
             return;
         }
         for (int x = 0; x < width; x++)
@@ -189,7 +197,6 @@ public class GridManager : MonoBehaviour
                 Destroy(visualGrid[x, height - 1].gameObject);
                 visualGrid[x, height - 1] = null;
             }
-
             gridLogic[x, height - 1] = 0;
         }
         for (int y = height - 1; y > 0; y--)
@@ -216,6 +223,7 @@ public class GridManager : MonoBehaviour
     {
         for (int x = 0; x < width; x++)
         {
+            Debug.Log("Generating new row");
             visualGrid[x, 0] = null;
             gridLogic[x, 0] = 0;
         }
