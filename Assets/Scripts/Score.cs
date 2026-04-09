@@ -17,14 +17,16 @@ public class Score : MonoBehaviour
     }
     
 
-    public static event System.Action<string> OnScoreChange;
+    public static event System.Action<ScoreEventType> OnScoreChange;
     
-    public void AddScore(int combo, string soundName)
+    public void AddScore(int combo)
     {
         int points = (combo * 100) * combo;
         score += points;
         scoreText.text = score.ToString();
-        OnScoreChange?.Invoke(soundName);
+        
+        ScoreEventType type = GetScoreEventType(combo);
+        OnScoreChange?.Invoke(type);
         if (highscore < score)
         {
             highscore = score;
@@ -33,4 +35,12 @@ public class Score : MonoBehaviour
             PlayerPrefs.Save();
         }
     }
+    private ScoreEventType GetScoreEventType(int combo)
+    {
+        if (combo < 2) return ScoreEventType.Small;
+        if (combo < 4) return ScoreEventType.Medium;
+        if (combo < 6) return ScoreEventType.Big;
+        return ScoreEventType.Jackpot;
+    }
+    
 }

@@ -132,7 +132,6 @@ public class GridManager : MonoBehaviour
     public bool CheckForMatches()
     {
         bool didClear = false;
-        string soundName = SoundManager. ;
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
 
@@ -180,7 +179,7 @@ public class GridManager : MonoBehaviour
                 if (ClearColumn(col))
                     didClear = true;
 
-            score.AddScore(totalLines,soundName);
+            score.AddScore(totalLines);
         }
 
         return didClear;

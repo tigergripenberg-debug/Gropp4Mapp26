@@ -1,5 +1,15 @@
 using UnityEngine;
 
+public enum ScoreEventType
+{
+    Small,
+    Medium,
+    Big,
+    Jackpot
+}
+
+
+
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
@@ -14,41 +24,52 @@ public class SoundManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Score.OnScoreChange += PlaySound;
+        Score.OnScoreChange += PlayScoreSound;
     }
 
     private void OnDisable()
     {
-        Score.OnScoreChange -= PlaySound;
+        Score.OnScoreChange -= PlayScoreSound;
     }
 
-    public void PlaySound(string soundName)
+    public void PlayScoreSound(ScoreEventType type)
     {
-        AudioClip clip = GetClipByName(soundName);
+        switch (type)
+        {
+            case ScoreEventType.Small:
+                Play("small_sound");
+                break;
+            case ScoreEventType.Medium:
+                Play("medium_sound");
+                break;
+            case ScoreEventType.Big:
+                Play("big_sound");
+                break;
+            case ScoreEventType.Jackpot:
+                Play("jackpot_sound");
+                break;
+        }
+    }
 
+    void Play(string clipName)
+    {
+        AudioClip clip = GetClipByName(clipName);
         if (clip != null)
         {
             soundManager.PlayOneShot(clip);
         }
     }
 
-    AudioClip GetClipByName(string name)
+    AudioClip GetClipByName(string clipName)
     {
         foreach (AudioClip clip in wowSounds)
         {
-            if (clip.name == name)
+            if (clip.name == clipName)
             {
                 return clip;
             }
         }
-
-        Debug.LogWarning("Clip not found: " + name);
+        Debug.LogWarning("Sound " + clipName + " not found");
         return null;
-    }
-    
-    public string GetRandomAudioClip()
-    {
-        AudioClip clip = wowSounds[Random.Range(0, wowSounds.Length)];
-        return clip.name;
     }
 }
