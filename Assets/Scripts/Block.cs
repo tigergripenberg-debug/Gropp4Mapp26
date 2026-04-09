@@ -65,7 +65,6 @@ public class Block : MonoBehaviour
             }
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();
-            GridManager.Instance.OnTurnFinished();
             BlockSpawner.Instance.BlockPlaced();
 
         }

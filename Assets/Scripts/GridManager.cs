@@ -12,7 +12,9 @@ public class GridManager : MonoBehaviour
     public int[,] gridLogic;
     public Transform[,] visualGrid;
     public int turnsSinceClear = 0;
-    public int maxTurnsSinceClear = 3;
+    public int maxTurnsSinceClear = 0;
+    public bool hasImmunity = false;
+    public bool linesClearedThisRound = false;
     [SerializeField] GameObject gameOverCanvas;
 
     void Awake()
@@ -26,6 +28,7 @@ public class GridManager : MonoBehaviour
     {
         score = GameObject.FindGameObjectWithTag("Scorer").GetComponent<Score>();
         GenerateGrid();
+        AdjustCameraToScreen();
     }
 
     void OnDrawGizmos() //används för att rita upp grid i debugmode
@@ -106,16 +109,26 @@ public class GridManager : MonoBehaviour
 
     public void OnTurnFinished()
     {
-        bool didClear = CheckForMatches();
-
-        if (didClear)
+        if (linesClearedThisRound)
         {
-            turnsSinceClear = 0;
+            hasImmunity = true; 
+            turnsSinceClear = 0; 
+            Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
+    
+        else if (hasImmunity)
+        {
+            hasImmunity = false;
+            turnsSinceClear = 0; 
+            Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
+        }
+        
         else
         {
             turnsSinceClear++;
         }
+
+        linesClearedThisRound = false;
 
         Debug.Log("Turns since clear: " + turnsSinceClear);
 
@@ -170,6 +183,8 @@ public class GridManager : MonoBehaviour
 
         if (totalLines > 0)
         {
+            linesClearedThisRound = true;
+
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
@@ -314,5 +329,21 @@ public class GridManager : MonoBehaviour
             }
         }
         return cleared;
+    }
+    public void AdjustCameraToScreen()
+    {
+       //Lägger till 2 rutor i marginal på varje sida av griden.
+        float targetWidth = width + 2f;
+
+        //Räknar ut mobilens aspect ratio (bredd/höjd).
+        float aspectRatio = (float)Screen.width / (float)Screen.height;
+
+        //Räknar ut vilken ortografisk storlek kameran behöver ha för att visa hela griden i bredd.
+        float requiredCameraSize = (targetWidth / 2f) / aspectRatio;
+
+        Camera.main.orthographicSize = requiredCameraSize;
+        
+        // Sätter kamerans position så att den är centrerad på griden.
+        Camera.main.transform.position = new Vector3(0, 1f, -10f); 
     }
 }
