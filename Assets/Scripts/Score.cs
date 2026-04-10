@@ -15,14 +15,18 @@ public class Score : MonoBehaviour
         scoreText.text = score.ToString();
         highscoreText.text = "Best: " + highscore;
     }
+    
 
+    public static event System.Action<ScoreEventType> OnScoreChange;
+    
     public void AddScore(int combo)
     {
         int points = (combo * 100) * combo;
         score += points;
         scoreText.text = score.ToString();
-        soundManager.PlayWowSound();
-        Debug.Log("Playing sound inside score");
+        
+        ScoreEventType type = GetScoreEventType(combo);
+        OnScoreChange?.Invoke(type);
         if (highscore < score)
         {
             highscore = score;
@@ -31,4 +35,12 @@ public class Score : MonoBehaviour
             PlayerPrefs.Save();
         }
     }
+    private ScoreEventType GetScoreEventType(int combo)
+    {
+        if (combo < 2) return ScoreEventType.Small;
+        if (combo < 4) return ScoreEventType.Medium;
+        if (combo < 6) return ScoreEventType.Big;
+        return ScoreEventType.Jackpot;
+    }
+    
 }
