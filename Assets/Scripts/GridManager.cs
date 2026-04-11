@@ -356,20 +356,4 @@ public class GridManager : MonoBehaviour
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f); 
     }
-    public void AdjustCameraToScreen()
-    {
-       //Lägger till 2 rutor i marginal på varje sida av griden.
-        float targetWidth = width + 2f;
-
-        //Räknar ut mobilens aspect ratio (bredd/höjd).
-        float aspectRatio = (float)Screen.width / (float)Screen.height;
-
-        //Räknar ut vilken ortografisk storlek kameran behöver ha för att visa hela griden i bredd.
-        float requiredCameraSize = (targetWidth / 2f) / aspectRatio;
-
-        Camera.main.orthographicSize = requiredCameraSize;
-        
-        // Sätter kamerans position så att den är centrerad på griden.
-        Camera.main.transform.position = new Vector3(0, 1f, -10f); 
-    }
 }
