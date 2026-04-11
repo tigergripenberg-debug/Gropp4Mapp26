@@ -16,15 +16,12 @@ public class Score : MonoBehaviour
         highscoreText.text = "Best: " + highscore;
     }
     
-
     public static event System.Action<ScoreEventType> OnScoreChange;
-    
     public void AddScore(int combo)
     {
         int points = (combo * 100) * combo;
         score += points;
         scoreText.text = score.ToString();
-        
         ScoreEventType type = GetScoreEventType(combo);
         OnScoreChange?.Invoke(type);
         if (highscore < score)

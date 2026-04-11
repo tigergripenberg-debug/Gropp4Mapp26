@@ -9,7 +9,6 @@ public enum ScoreEventType
 }
 
 
-
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
@@ -20,6 +19,11 @@ public class SoundManager : MonoBehaviour
     {
         Instance = this;
         soundManager = GetComponent<AudioSource>();
+    }
+    
+    public void PlayPop()
+    {
+        Play("pop");
     }
 
     private void OnEnable()

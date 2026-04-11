@@ -26,7 +26,6 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
-        var soundManager = FindFirstObjectByType<SoundManager>();
         score = GameObject.FindGameObjectWithTag("Scorer").GetComponent<Score>();
         GenerateGrid();
     }
@@ -82,7 +81,7 @@ public class GridManager : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public void RestartGame() //använder onclick event i unity
+    public void RestartGame() //använder onclick event i unity, även om den ser ut att inte användas
     {
         score.score = 0;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -280,7 +279,7 @@ public class GridManager : MonoBehaviour
 
         return false;
     }
-
+    
     private bool ClearRow(int y)
     {
         StartCoroutine(ClearRowCoroutine(y));
@@ -297,6 +296,7 @@ public class GridManager : MonoBehaviour
             {
                 GameObject block = visualGrid[x, y].gameObject;
                 visualGrid[x, y] = null; // remove reference AFTER storing it
+                SoundManager.Instance.PlayPop();
                 Destroy(block);
                 yield return new WaitForSeconds(0.1f); // delay between each block
             }
@@ -312,6 +312,7 @@ public class GridManager : MonoBehaviour
             {
                 GameObject block = visualGrid[x, y].gameObject;
                 visualGrid[x, y] = null;
+                SoundManager.Instance.PlayPop();
                 Destroy(block);
                 yield return new WaitForSeconds(0.1f);
             }
