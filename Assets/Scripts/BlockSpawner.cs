@@ -48,6 +48,7 @@ public class BlockSpawner : MonoBehaviour
         if (BlocksUsed >= 3)
         {
             BlocksUsed = 0;
+            GridManager.Instance.OnTurnFinished();
             SpawnNewBlock();
         }
     }
