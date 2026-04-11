@@ -32,7 +32,7 @@ public class SoundManager : MonoBehaviour
         Score.OnScoreChange -= PlayScoreSound;
     }
 
-    public void PlayScoreSound(ScoreEventType type)
+    private void PlayScoreSound(ScoreEventType type)
     {
         switch (type)
         {

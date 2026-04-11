@@ -296,11 +296,8 @@ public class GridManager : MonoBehaviour
             if (visualGrid[x, y] != null)
             {
                 GameObject block = visualGrid[x, y].gameObject;
-
                 visualGrid[x, y] = null; // remove reference AFTER storing it
-
                 Destroy(block);
-
                 yield return new WaitForSeconds(0.1f); // delay between each block
             }
         }
@@ -320,9 +317,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-<<<<<<< Updated upstream
-=======
-
+    
     private bool ClearCol(int x)
     {
         StartCoroutine(ClearColCoroutine(x));
@@ -345,5 +340,4 @@ public class GridManager : MonoBehaviour
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f); 
     }
->>>>>>> Stashed changes
 }
