@@ -560,6 +560,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &730055202 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7541169870076372907, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
+  m_PrefabInstance: {fileID: 419717587106182168}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &765987100
 GameObject:
   m_ObjectHideFlags: 0
@@ -861,6 +872,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989958714}
   m_CullTransparentMesh: 1
+--- !u!1 &1375949087 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3146193504935898503, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
+  m_PrefabInstance: {fileID: 419717587106182168}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1423074466
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,8 +983,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ea3e16e47a1c24a96c2a609a29c350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BannerManager
-  bonusCanvas: {fileID: 0}
-  bonusText: {fileID: 0}
+  bonusCanvas: {fileID: 1375949087}
+  bonusText: {fileID: 730055202}
 --- !u!4 &1544709640
 Transform:
   m_ObjectHideFlags: 0
@@ -1115,6 +1131,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8e9d23772f1f2374f89217ce658a25b9, type: 3}
   - {fileID: 8300000, guid: 9ea640feff7b27249a5d24df967001b5, type: 3}
   - {fileID: 8300000, guid: e35ba5f7ca521ed4e97de8fb59c62680, type: 3}
+  - {fileID: 8300000, guid: 6b27d800bb6903747a3890275fc4800b, type: 3}
 --- !u!4 &1765800404
 Transform:
   m_ObjectHideFlags: 0
