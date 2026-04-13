@@ -16,6 +16,7 @@ public class GridManager : MonoBehaviour
     public bool hasImmunity = false;
     public bool linesClearedThisRound = false;
     [SerializeField] GameObject gameOverCanvas;
+    
 
     void Awake()
     {
@@ -26,6 +27,7 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
+        var soundManager = FindFirstObjectByType<SoundManager>();
         score = GameObject.FindGameObjectWithTag("Scorer").GetComponent<Score>();
         GenerateGrid();
         AdjustCameraToScreen();
@@ -143,7 +145,6 @@ public class GridManager : MonoBehaviour
     public bool CheckForMatches()
     {
         bool didClear = false;
-
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
 
