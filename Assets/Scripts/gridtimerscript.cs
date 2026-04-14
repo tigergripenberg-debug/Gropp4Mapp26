@@ -3,13 +3,13 @@ using UnityEngine.UI;
 
 public class gridtimerscript : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private Slider ring;
     [SerializeField] private Image fillcolor;
 
-    void Start()
+    void Awake()
     {
         ring = GetComponent<Slider>();
+        resetValue();
     }
     public void decreaseValue()
     {
@@ -17,6 +17,12 @@ public class gridtimerscript : MonoBehaviour
             return;
 
         ring.value--;
+        Refresh();
+    }
+    public void resetValue()
+    {
+        ring.value = 3;
+        Refresh();
     }
     public void increaseValue()
     {
@@ -24,11 +30,11 @@ public class gridtimerscript : MonoBehaviour
             return;
 
         ring.value++;
+        Refresh();
     }
-    // Update is called once per frame
-    void Update()
+
+    private void Refresh()
     {
-        Debug.Log(":" + ring.value);
         switch (ring.value)
         {
             case 1:
@@ -39,8 +45,6 @@ public class gridtimerscript : MonoBehaviour
                 break;
             case 3:
                 fillcolor.color = Color.green;
-                break;
-            default:
                 break;
         }
     }
