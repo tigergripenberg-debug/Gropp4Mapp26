@@ -5,18 +5,16 @@ using UnityEngine.SceneManagement;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
-    [Header("Settings")] public int width = 8;
-    public int height = 8;
-    public GameObject tilePrefab;
-    private Score score;
+    [Header("Settings")]
     public int[,] gridLogic;
     public Transform[,] visualGrid;
-    public int turnsSinceClear = 0;
-    public int maxTurnsSinceClear = 0;
-    public bool hasImmunity = false;
-    public bool linesClearedThisRound = false;
-    [SerializeField] GameObject gameOverCanvas;
-    
+    [SerializeField] private GameObject tilePrefab, gameOverCanvas;
+    private int width = 8, height = 8;
+    private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
+    private bool hasImmunity = false, linesClearedThisRound = false;
+    [SerializeField] private Score score;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private gridtimerscript gridtimerscript;
 
     void Awake()
     {
@@ -27,8 +25,6 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
-        var soundManager = FindFirstObjectByType<SoundManager>();
-        score = GameObject.FindGameObjectWithTag("Scorer").GetComponent<Score>();
         GenerateGrid();
         AdjustCameraToScreen();
     }
@@ -92,17 +88,13 @@ public class GridManager : MonoBehaviour
 
     void GenerateGrid()
     {
-
-        float xOffset = (width - 1) / 2f;
-        float yOffset = (height - 0) / 2f;
-
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
 
                 GameObject newTile = Instantiate(tilePrefab);
-                newTile.transform.position = new Vector2(x - xOffset, y - yOffset + 2f);
+                newTile.transform.position = GetWorldPosition(x, y);
                 newTile.name = $"Tile X:{x} Y:{y}";
                 newTile.transform.SetParent(transform);
             }
@@ -113,18 +105,19 @@ public class GridManager : MonoBehaviour
     {
         if (linesClearedThisRound)
         {
-            hasImmunity = true; 
-            turnsSinceClear = 0; 
+            hasImmunity = true;
+            turnsSinceClear = 0;
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
-    
+
         else if (hasImmunity)
         {
             hasImmunity = false;
-            turnsSinceClear = 0; 
+            turnsSinceClear = 0;
+            gridtimerscript.resetValue();
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
-        
+
         else
         {
             turnsSinceClear++;
@@ -245,7 +238,7 @@ public class GridManager : MonoBehaviour
 
         GenerateNewRow();
     }
-    
+
     void GenerateNewRow()
     {
         for (int x = 0; x < width; x++)
@@ -264,7 +257,7 @@ public class GridManager : MonoBehaviour
         }
         return false;
     }
-  
+
     public bool CanBlockFit(GameObject blockPrefab)
     {
         for (int x = 0; x < width; x++)
@@ -333,18 +326,18 @@ public class GridManager : MonoBehaviour
     }
     public void AdjustCameraToScreen()
     {
-       //Lägger till 2 rutor i marginal på varje sida av griden.
+        //Lägger till 2 rutor i marginal på varje sida av griden.
         float targetWidth = width + 2f;
 
         //Räknar ut mobilens aspect ratio (bredd/höjd).
-        float aspectRatio = (float)Screen.width / (float)Screen.height;
+        float aspectRatio = Screen.width / (float)Screen.height;
 
         //Räknar ut vilken ortografisk storlek kameran behöver ha för att visa hela griden i bredd.
-        float requiredCameraSize = (targetWidth / 2f) / aspectRatio;
+        float requiredCameraSize = targetWidth / 2f / aspectRatio;
 
         Camera.main.orthographicSize = requiredCameraSize;
-        
+
         // Sätter kamerans position så att den är centrerad på griden.
-        Camera.main.transform.position = new Vector3(0, 1f, -10f); 
+        Camera.main.transform.position = new Vector3(0, 1f, -10f);
     }
 }
