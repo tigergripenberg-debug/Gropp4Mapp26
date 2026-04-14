@@ -1,8 +1,11 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Block : MonoBehaviour
 {
+    public static bool canMoveBlocks;
+
     private Vector3 startPosition;
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
@@ -12,6 +15,18 @@ public class Block : MonoBehaviour
     {
         startPosition = transform.position;
         transform.localScale = previewSize;
+        canMoveBlocks = true;
+    }
+
+    private void Update()
+    {
+        // 
+        if (!canMoveBlocks) 
+            this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        
+        if (canMoveBlocks)
+            this.gameObject.layer = LayerMask.NameToLayer("Default");
+
     }
 
     void OnMouseDown()
