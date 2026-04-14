@@ -16,6 +16,11 @@ public class MenuController : MonoBehaviour
 
     public void OpenSettingsPanel()
     {
+        if (settingsPanel.activeInHierarchy)
+        {
+            CloseSettingsPanel();
+            return;
+        }
         settingsPanel.SetActive(true);
     }
 
