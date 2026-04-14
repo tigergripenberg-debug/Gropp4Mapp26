@@ -7,6 +7,7 @@ public class BlockSpawner : MonoBehaviour
 
     [Header("Settings")]
     public GameObject[] blockPrefabs;
+    [SerializeField] private gridtimerscript gridtimerscript;
     public Transform[] spawnPoints;
     void Awake()
     {
@@ -20,6 +21,7 @@ public class BlockSpawner : MonoBehaviour
 
     public void SpawnNewBlock()
     {
+        gridtimerscript.resetValue();
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             int randomIndex = Random.Range(0, blockPrefabs.Length);
@@ -44,7 +46,7 @@ public class BlockSpawner : MonoBehaviour
     public void BlockPlaced()
     {
         BlocksUsed++;
-
+        gridtimerscript.decreaseValue();
         if (BlocksUsed >= 3)
         {
             BlocksUsed = 0;
