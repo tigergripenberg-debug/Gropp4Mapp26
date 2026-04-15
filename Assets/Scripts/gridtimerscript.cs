@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class gridtimerscript : MonoBehaviour
 {
     private Slider ring;
+    private bool frozen = false;
     [SerializeField] private Image fillcolor;
 
     void Awake()
@@ -11,9 +12,22 @@ public class gridtimerscript : MonoBehaviour
         ring = GetComponent<Slider>();
         resetValue();
     }
+    public void freeze(bool state)
+    {
+        if (state)
+        {
+            fillcolor.color = Color.turquoise;
+            frozen = true;
+        }
+        else
+        {
+            frozen = false;
+            Refresh();
+        }
+    }
     public void decreaseValue()
     {
-        if (ring.value <= 0)
+        if (ring.value <= 0 || frozen)
             return;
 
         ring.value--;
@@ -21,11 +35,13 @@ public class gridtimerscript : MonoBehaviour
     }
     public void resetValue()
     {
+        if (frozen) return;
         ring.value = 3;
         Refresh();
     }
     public void increaseValue()
     {
+        if (frozen) return;
         if (ring.value >= 3)
             return;
 
@@ -35,6 +51,7 @@ public class gridtimerscript : MonoBehaviour
 
     private void Refresh()
     {
+        if (frozen) return;
         switch (ring.value)
         {
             case 1:
