@@ -4,8 +4,6 @@ using UnityEngine.EventSystems;
 
 public class Block : MonoBehaviour
 {
-    public static bool canMoveBlocks;
-
     private Vector3 startPosition;
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
@@ -15,22 +13,12 @@ public class Block : MonoBehaviour
     {
         startPosition = transform.position;
         transform.localScale = previewSize;
-        canMoveBlocks = true;
-    }
-
-    private void Update()
-    {
-        // 
-        if (!canMoveBlocks) 
-            this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        
-        if (canMoveBlocks)
-            this.gameObject.layer = LayerMask.NameToLayer("Default");
-
     }
 
     void OnMouseDown()
     {
+        if (MenuController.gameIsPaused) return;
+
         transform.localScale = normalSize;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
@@ -39,6 +27,8 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if (MenuController.gameIsPaused) return;
+
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
         transform.position = new Vector3(mousePos.x + touchOffset.x, mousePos.y + touchOffset.y + 2f, -1f);
