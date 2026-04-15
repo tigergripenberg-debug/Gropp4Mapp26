@@ -200,6 +200,7 @@ public class GridManager : MonoBehaviour
         if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
+            MenuController.gameIsPaused = true;
         }
     }
 
