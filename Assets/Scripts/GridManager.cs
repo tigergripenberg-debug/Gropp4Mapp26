@@ -83,6 +83,7 @@ public class GridManager : MonoBehaviour
     public void RestartGame() //använder onclick event i unity
     {
         score.score = 0;
+        MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -197,8 +198,10 @@ public class GridManager : MonoBehaviour
     {
         if (IsGameOver())
         {
+            // Opens gameOverPanel
             Debug.Log("Game Over");
             gameOverCanvas.SetActive(true);
+            MenuController.gameIsPaused = true;
             return;
         }
 
@@ -255,6 +258,7 @@ public class GridManager : MonoBehaviour
             if (visualGrid[x, 0] != null)
                 return true;
         }
+
         return false;
     }
 
