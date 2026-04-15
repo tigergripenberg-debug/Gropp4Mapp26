@@ -3,10 +3,14 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
+    public static bool gameIsPaused = false;
+
     [SerializeField] private GameObject settingsPanel;
+
     public void StartGame()
     {
         SceneManager.LoadScene(1);
+        gameIsPaused = false;
     }
 
     public void QuitGame()
@@ -27,19 +31,18 @@ public class MenuController : MonoBehaviour
     public void CloseSettingsPanel()
     {
         settingsPanel.SetActive(false);
-        
     }
 
     public void OpenPausePanel()
     {
         OpenSettingsPanel();
-        Block.canMoveBlocks = false;
+        gameIsPaused = true;
     }
 
     public void ClosePausePanel()
     {
         settingsPanel.SetActive(false);
-        Block.canMoveBlocks = true;
+        gameIsPaused = false;
     }
 
     public void GoToStartMenu()
