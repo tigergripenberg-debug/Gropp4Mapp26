@@ -53,5 +53,6 @@ public class BlockSpawner : MonoBehaviour
             GridManager.Instance.OnTurnFinished();
             SpawnNewBlock();
         }
+        GridManager.Instance.CheckIfPlayable();
     }
 }
