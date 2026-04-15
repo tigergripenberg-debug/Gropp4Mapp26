@@ -194,14 +194,47 @@ public class GridManager : MonoBehaviour
         return didClear;
     }
 
+    public void TriggerGameOver()
+    {
+        Debug.Log("Game Over");
+        if (gameOverCanvas != null)
+        {
+            gameOverCanvas.SetActive(true);
+        }
+    }
+
+    public void CheckIfPlayable()
+    {
+        //Kollar alla pusselbitar i spelet.
+        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
+        bool canPlayAnything = false;
+        int waitingBlocksCount = 0;
+
+        foreach (Block b in allBlocks)
+        {
+            //Kollar alla blocken nere i spawnen för att se om de går att spela eller inte.
+            if (b.GetComponent<Collider2D>().enabled == true)
+            {
+                waitingBlocksCount++;
+                if (CanBlockFit(b.gameObject))
+                {
+                    canPlayAnything = true;
+                    break;
+                }
+            }
+        }
+        //Om det finns block kvar eller inte men de inte går att spela så triggas game over.
+        if (waitingBlocksCount > 0 && canPlayAnything == false)
+        {
+            TriggerGameOver(); 
+        }
+    }
+
     public void MoveGrid()
     {
         if (IsGameOver())
         {
-            // Opens gameOverPanel
-            Debug.Log("Game Over");
-            gameOverCanvas.SetActive(true);
-            MenuController.gameIsPaused = true;
+            TriggerGameOver();
             return;
         }
 
