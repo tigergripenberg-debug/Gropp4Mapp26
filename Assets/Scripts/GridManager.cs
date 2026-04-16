@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     private bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Score score;
+    [SerializeField] private timer time;
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private gridtimerscript gridtimerscript;
 
@@ -82,7 +83,14 @@ public class GridManager : MonoBehaviour
 
     public void RestartGame() //använder onclick event i unity
     {
-        score.score = 0;
+        if (score != null)
+        {
+            score.score = 0;
+        }
+        else
+        {
+            time.time = 100f;
+        }
         MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -187,8 +195,14 @@ public class GridManager : MonoBehaviour
             foreach (var col in columnsToClear)
                 if (ClearColumn(col))
                     didClear = true;
-
-            score.AddScore(totalLines);
+            if (score != null)
+            {
+                score.AddScore(totalLines);
+            }
+            else
+            {
+                time.AddScore(totalLines);
+            }
         }
 
         return didClear;
@@ -227,7 +241,7 @@ public class GridManager : MonoBehaviour
         //Om det finns block kvar eller inte men de inte går att spela så triggas game over.
         if (waitingBlocksCount > 0 && canPlayAnything == false)
         {
-            TriggerGameOver(); 
+            TriggerGameOver();
         }
     }
 
