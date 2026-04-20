@@ -46,7 +46,7 @@ public class BlockSpawner : MonoBehaviour
     public void BlockPlaced()
     {
         BlocksUsed++;
-        gridtimerscript.decreaseValue();
+        gridtimerscript.instance.decreaseValue();
         if (BlocksUsed >= 3)
         {
             BlocksUsed = 0;

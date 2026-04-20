@@ -3,12 +3,14 @@ using UnityEngine.UI;
 
 public class gridtimerscript : MonoBehaviour
 {
+    public static gridtimerscript instance;
     private Slider ring;
     private bool frozen = false;
     [SerializeField] private Image fillcolor;
 
     void Awake()
     {
+        instance = this;
         ring = GetComponent<Slider>();
         resetValue();
     }

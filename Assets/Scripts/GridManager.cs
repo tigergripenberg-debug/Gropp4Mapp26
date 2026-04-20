@@ -116,6 +116,10 @@ public class GridManager : MonoBehaviour
         {
             hasImmunity = true;
             turnsSinceClear = 0;
+
+            gridtimerscript.instance.resetValue();
+            gridtimerscript.instance.freeze(true);
+
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
 
@@ -123,7 +127,10 @@ public class GridManager : MonoBehaviour
         {
             hasImmunity = false;
             turnsSinceClear = 0;
-            gridtimerscript.resetValue();
+
+            gridtimerscript.instance.freeze(false);
+            gridtimerscript.instance.resetValue();
+            
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
 
@@ -141,6 +148,7 @@ public class GridManager : MonoBehaviour
             Debug.Log("GRID PUSH!");
             MoveGrid();
             turnsSinceClear = 0;
+            gridtimerscript.instance.resetValue();
         }
     }
 

@@ -58,9 +58,11 @@ Assets/Scripts/
  BlockSpawner.cs
  GridManager.cs
  gridtimerscript.cs
+ leaderboardpanel.cs
  MenuController.cs
  Score.cs
  SoundManager.cs
+ Time.cs
  TutorialManager.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
