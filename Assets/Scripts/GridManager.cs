@@ -196,6 +196,9 @@ public class GridManager : MonoBehaviour
         {
             linesClearedThisRound = true;
 
+            gridtimerscript.instance.resetValue();
+            gridtimerscript.instance.freeze(true);
+
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
