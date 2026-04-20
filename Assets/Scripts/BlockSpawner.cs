@@ -46,6 +46,14 @@ public class BlockSpawner : MonoBehaviour
     public void BlockPlaced()
     {
         BlocksUsed++;
+        if (Score.Instance != null)
+        {
+            Score.Instance.RegisterBlockPlaced();
+        }
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.RegisterBlockPlaced();
+        }
         gridtimerscript.instance.decreaseValue();
         if (BlocksUsed >= 3)
         {

@@ -12,8 +12,7 @@ public class GridManager : MonoBehaviour
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     private bool hasImmunity = false, linesClearedThisRound = false;
-    [SerializeField] private Score score;
-    [SerializeField] private timer time;
+    [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private gridtimerscript gridtimerscript;
 
@@ -83,9 +82,9 @@ public class GridManager : MonoBehaviour
 
     public void RestartGame() //använder onclick event i unity
     {
-        if (score != null)
+        if (Score.Instance != null)
         {
-            score.score = 0;
+            Score.Instance.score = 0;
         }
         else
         {
@@ -192,13 +191,13 @@ public class GridManager : MonoBehaviour
 
         int totalLines = rowsToClear.Count + columnsToClear.Count;
 
-        if (totalLines > 0)
+       if (totalLines > 0)
         {
             linesClearedThisRound = true;
 
             gridtimerscript.instance.resetValue();
             gridtimerscript.instance.freeze(true);
-
+          
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
@@ -206,15 +205,28 @@ public class GridManager : MonoBehaviour
             foreach (var col in columnsToClear)
                 if (ClearColumn(col))
                     didClear = true;
-            if (score != null)
+
+            bool isBoardEmpty = true;
+            for (int x = 0; x < width; x++)
             {
-                score.AddScore(totalLines);
+                for (int y = 0; y < height; y++)
+                {
+                    if (gridLogic[x, y] == 1)
+                    {
+                        isBoardEmpty = false;
+                        break;
+                    }
+                }
+                if (!isBoardEmpty) break;
             }
-            else
-            {
-                time.AddScore(totalLines);
-            }
+
+        if (Timer.Instance != null)Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
+            
+        if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
+            
+        
         }
+        if (Score.Instance != null) Score.Instance.EvaluateComboState();
 
         return didClear;
     }
