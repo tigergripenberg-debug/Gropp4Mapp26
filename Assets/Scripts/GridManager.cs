@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -203,7 +204,7 @@ public class GridManager : MonoBehaviour
                     didClear = true;
 
             foreach (var col in columnsToClear)
-                if (ClearColumn(col))
+                if (ClearCol(col))
                     didClear = true;
 
             bool isBoardEmpty = true;
@@ -363,41 +364,49 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
-    public bool ClearRow(int y)
+    private bool ClearRow(int y)
     {
-        bool cleared = false;
+        StartCoroutine(ClearRowCoroutine(y));
+        return true;
+    }
 
+    private IEnumerator ClearRowCoroutine(int y)
+    {
         for (int x = 0; x < width; x++)
         {
             gridLogic[x, y] = 0;
 
             if (visualGrid[x, y] != null)
             {
-                Destroy(visualGrid[x, y].gameObject);
-                visualGrid[x, y] = null;
-                cleared = true;
+                GameObject block = visualGrid[x, y].gameObject;
+                visualGrid[x, y] = null; // remove reference AFTER storing it
+                SoundManager.Instance.PlayPop();
+                Destroy(block);
+                yield return new WaitForSeconds(0.1f); // delay between each block
             }
         }
-
-        return cleared;
     }
 
-    public bool ClearColumn(int x)
+    private IEnumerator ClearColCoroutine(int x)
     {
-        bool cleared = false;
-
         for (int y = 0; y < height; y++)
         {
             gridLogic[x, y] = 0;
-
             if (visualGrid[x, y] != null)
             {
-                Destroy(visualGrid[x, y].gameObject);
+                GameObject block = visualGrid[x, y].gameObject;
                 visualGrid[x, y] = null;
-                cleared = true;
+                SoundManager.Instance.PlayPop();
+                Destroy(block);
+                yield return new WaitForSeconds(0.1f);
             }
         }
-        return cleared;
+    }
+    
+    private bool ClearCol(int x)
+    {
+        StartCoroutine(ClearColCoroutine(x));
+        return true;
     }
     public void AdjustCameraToScreen()
     {
