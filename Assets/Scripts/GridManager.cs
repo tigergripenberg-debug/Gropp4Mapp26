@@ -369,6 +369,8 @@ public class GridManager : MonoBehaviour
         StartCoroutine(ClearRowCoroutine(y));
         return true;
     }
+    
+    public static event System.Action<SFXSounds> OnBlockClearedPlayPop;
 
     private IEnumerator ClearRowCoroutine(int y)
     {
@@ -380,7 +382,7 @@ public class GridManager : MonoBehaviour
             {
                 GameObject block = visualGrid[x, y].gameObject;
                 visualGrid[x, y] = null; // remove reference AFTER storing it
-                SoundManager.Instance.PlayPop();
+                OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
                 Destroy(block);
                 yield return new WaitForSeconds(0.1f); // delay between each block
             }
@@ -396,7 +398,7 @@ public class GridManager : MonoBehaviour
             {
                 GameObject block = visualGrid[x, y].gameObject;
                 visualGrid[x, y] = null;
-                SoundManager.Instance.PlayPop();
+                OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
                 Destroy(block);
                 yield return new WaitForSeconds(0.1f);
             }
