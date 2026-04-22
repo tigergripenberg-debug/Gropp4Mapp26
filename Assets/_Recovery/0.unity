@@ -180,6 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuController
   settingsPanel: {fileID: 419717587106182169}
+  leaderBoardPanel: {fileID: 0}
 --- !u!4 &96373927
 Transform:
   m_ObjectHideFlags: 0
@@ -363,7 +364,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   tilePrefab: {fileID: 3709587514387350726, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
   gameOverCanvas: {fileID: 1423074466}
-  score: {fileID: 746037268}
+  time: {fileID: 0}
   soundManager: {fileID: 1765800403}
   gridtimerscript: {fileID: 1533618364}
 --- !u!4 &418990016
@@ -602,17 +603,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &746037268 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6251533973658679705, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-  m_PrefabInstance: {fileID: 419717587106182168}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd27216bb53120145a21701f8068cf26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Score
 --- !u!1 &765987100
 GameObject:
   m_ObjectHideFlags: 0

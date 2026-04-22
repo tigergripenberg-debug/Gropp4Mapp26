@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Block : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class Block : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (MenuController.gameIsPaused) return;
+
         transform.localScale = normalSize;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
@@ -24,6 +27,8 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
+        if (MenuController.gameIsPaused) return;
+
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
         transform.position = new Vector3(mousePos.x + touchOffset.x, mousePos.y + touchOffset.y + 2f, -1f);
