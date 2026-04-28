@@ -70,7 +70,7 @@ PolygonCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 1, y: 1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -82,18 +82,18 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.4952184, y: -0.49452078}
-      - {x: 0.50105107, y: 0.5124387}
-      - {x: -0.5059649, y: 0.5100974}
-      - {x: -0.49207467, y: 1.5063356}
-      - {x: -1.5049404, y: 1.5095315}
-      - {x: -1.5052086, y: 0.4937343}
-      - {x: -0.51279455, y: 0.49353594}
-      - {x: -0.4994421, y: -0.50383186}
-      - {x: 0.4905206, y: -0.49931127}
-      - {x: 0.4990989, y: -1.4986229}
-      - {x: 1.5113721, y: -1.5077305}
-      - {x: 1.5052085, y: -0.49410176}
+    - - {x: 0.75192726, y: -0.22176754}
+      - {x: 0.7417158, y: 0.8493693}
+      - {x: -0.1850785, y: 0.8630723}
+      - {x: -0.10701114, y: 1.8593106}
+      - {x: -1.9220927, y: 1.8464622}
+      - {x: -1.9384052, y: 0.10867095}
+      - {x: -0.7855479, y: 0.124516726}
+      - {x: -0.78823984, y: -0.8407625}
+      - {x: 0.24985564, y: -0.8362419}
+      - {x: 0.25843418, y: -1.8997309}
+      - {x: 1.8483028, y: -1.8767499}
+      - {x: 1.874228, y: -0.2373929}
   m_UseDelaunayMesh: 1
 --- !u!114 &5529638414045044412
 MonoBehaviour:
@@ -121,11 +121,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.z
@@ -199,7 +199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.z
@@ -269,7 +269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
