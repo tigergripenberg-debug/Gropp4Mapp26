@@ -53,7 +53,6 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 
 [sourceFiles]
 Assets/Scripts/
- BackgroundController.cs
  BannerManager.cs
  Block.cs
  BlockSpawner.cs
@@ -63,7 +62,7 @@ Assets/Scripts/
  MenuController.cs
  Score.cs
  SoundManager.cs
- Timer.cs
+ Time.cs
  TutorialManager.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
@@ -418,7 +417,7 @@ Library/ScriptAssemblies/
  Unity.Properties.SourceGenerator.dll
  Unity.SourceGenerators.dll
  Unity.UIToolkit.SourceGenerator.dll
-../../../.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.2/Analyzers/Microsoft.Unity.Analyzers.dll
+../../../.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.1/Analyzers/Microsoft.Unity.Analyzers.dll
 
 [analyzerConfigFiles]
 Temp/obj/Assembly-CSharp/Assembly-CSharp.GeneratedMSBuildEditorConfig.editorconfig

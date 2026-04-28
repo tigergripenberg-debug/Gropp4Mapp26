@@ -144,7 +144,7 @@ Transform:
   m_GameObject: {fileID: 89454781}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: -5, z: 0}
+  m_LocalPosition: {x: 2.5, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -362,7 +362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ec0ab98725ad8e498cf85dde8f4a6cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  tilePrefab: {fileID: 3709587514387350726, guid: ed334b22f1e0b4b4085c3ae5c4fc09f3, type: 3}
+  tilePrefab: {fileID: 3709587514387350726, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
   gameOverCanvas: {fileID: 1423074466}
   time: {fileID: 0}
   soundManager: {fileID: 1765800403}
@@ -628,7 +628,7 @@ Transform:
   m_GameObject: {fileID: 765987100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: -5, z: 0}
+  m_LocalPosition: {x: -2.5, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1274,9 +1274,6 @@ MonoBehaviour:
   - {fileID: 373098617785032189, guid: abea4663fb7867e41bf41d176089998e, type: 3}
   - {fileID: 6534679884154745766, guid: 90ad24bf9b12834429d157c36689e471, type: 3}
   - {fileID: 3251219491014381092, guid: 8858eb0f26d8a874f88fa66374b59aa9, type: 3}
-  - {fileID: 1750946060526884066, guid: e0e3e666e799c1c448a1da99d16bd77e, type: 3}
-  - {fileID: 7200550138501144648, guid: 815ee10738e258c4aa5711aa63c5b9dc, type: 3}
-  - {fileID: 343364855792667137, guid: 92d339141be75bd4a92bae118546dd1c, type: 3}
   gridtimerscript: {fileID: 1533618364}
   spawnPoints:
   - {fileID: 765987101}
@@ -1323,11 +1320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 560653883303097335, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 220
-      objectReference: {fileID: 0}
-    - target: {fileID: 560653883303097335, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 166.27
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 560653883303097335, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1343,15 +1336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 968301393760314478, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_fontSize
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 968301393760314478, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 968301393760314478, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_enableAutoSizing
-      value: 0
+      value: 40.4
       objectReference: {fileID: 0}
     - target: {fileID: 1079456692051038761, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1383,11 +1368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2151737742447178540, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 2151737742447178540, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 130
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 2151737742447178540, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -1395,19 +1376,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2151737742447178540, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -134.6
+      value: -120
       objectReference: {fileID: 0}
     - target: {fileID: 2935736465279031018, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_fontSize
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 2935736465279031018, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 2935736465279031018, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
-      propertyPath: m_enableAutoSizing
-      value: 0
+      value: 55.4
       objectReference: {fileID: 0}
     - target: {fileID: 3386382636234350149, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

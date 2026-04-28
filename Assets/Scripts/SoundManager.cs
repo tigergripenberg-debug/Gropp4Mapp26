@@ -43,7 +43,6 @@ public class SoundManager : MonoBehaviour
     {
         Score.OnScoreChange -= PlayScoreSound;
         Block.OnBlockPlacement -= PlayPlacementSound;
-        GridManager.OnBlockClearedPlayPop -= PlayPop;
     }
     private void PlayPlacementSound(SFXSounds soundType)
     {

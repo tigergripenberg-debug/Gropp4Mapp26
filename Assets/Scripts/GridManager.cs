@@ -235,18 +235,10 @@ public class GridManager : MonoBehaviour
     public void TriggerGameOver()
     {
         Debug.Log("Game Over");
-        
-        MenuController.gameIsPaused = true;
-
-        StartCoroutine(ShowGameOverRoutine());
-    }
-    private System.Collections.IEnumerator ShowGameOverRoutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        if(gameOverCanvas != null)
+        if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
+            MenuController.gameIsPaused = true;
         }
     }
 
@@ -382,43 +374,34 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator ClearRowCoroutine(int y)
     {
-        List<GameObject> blocksToDestroy = new List<GameObject>();
-        
-        for(int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
         {
             gridLogic[x, y] = 0;
+
             if (visualGrid[x, y] != null)
             {
-                blocksToDestroy.Add(visualGrid[x, y].gameObject);
-                visualGrid[x, y] = null;
+                GameObject block = visualGrid[x, y].gameObject;
+                visualGrid[x, y] = null; // remove reference AFTER storing it
+                OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
+                Destroy(block);
+                yield return new WaitForSeconds(0.1f); // delay between each block
             }
-        }
-        foreach(GameObject block in blocksToDestroy)
-        {
-            OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
-            Destroy(block);
-            yield return new WaitForSeconds(0.1f);
         }
     }
 
     private IEnumerator ClearColCoroutine(int x)
     {
-        List<GameObject> blocksToDestroy = new List<GameObject>();
-
-        for(int y = 0; y < height; y++)
+        for (int y = 0; y < height; y++)
         {
             gridLogic[x, y] = 0;
-            if(visualGrid[x, y] != null)
+            if (visualGrid[x, y] != null)
             {
-                blocksToDestroy.Add(visualGrid[x, y].gameObject);
+                GameObject block = visualGrid[x, y].gameObject;
                 visualGrid[x, y] = null;
+                OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
+                Destroy(block);
+                yield return new WaitForSeconds(0.1f);
             }
-        }
-        foreach (GameObject block in blocksToDestroy)
-        {
-            OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
-            Destroy(block);
-            yield return new WaitForSeconds(0.1f);
         }
     }
     

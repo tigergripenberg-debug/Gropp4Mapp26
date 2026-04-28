@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 616852156023032290}
+  - component: {fileID: 8702364353129365114}
   - component: {fileID: 6182883911187969962}
-  - component: {fileID: 5643651469524573473}
   m_Layer: 0
   m_Name: Block_O
   m_TagString: Untagged
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1417973340101246019}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.15, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37,20 +37,8 @@ Transform:
   - {fileID: 3286711778106795328}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6182883911187969962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417973340101246019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20324512eca756d4387d47bd24bb023f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Block
---- !u!61 &5643651469524573473
-BoxCollider2D:
+--- !u!60 &8702364353129365114
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -83,7 +71,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.50337815, y: 0.5082183}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -93,8 +81,25 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.723102, y: 2.7134209}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.5, y: -0.5}
+      - {x: 1.5, y: -0.5}
+      - {x: 1.5, y: 1.5}
+      - {x: -0.5, y: 1.5}
+  m_UseDelaunayMesh: 1
+--- !u!114 &6182883911187969962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417973340101246019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20324512eca756d4387d47bd24bb023f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Block
 --- !u!1001 &1475378738880385114
 PrefabInstance:
   m_ObjectHideFlags: 0
