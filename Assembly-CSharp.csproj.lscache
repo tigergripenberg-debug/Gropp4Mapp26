@@ -53,6 +53,7 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 
 [sourceFiles]
 Assets/Scripts/
+ BackgroundController.cs
  BannerManager.cs
  Block.cs
  BlockSpawner.cs
@@ -62,7 +63,7 @@ Assets/Scripts/
  MenuController.cs
  Score.cs
  SoundManager.cs
- Time.cs
+ Timer.cs
  TutorialManager.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
