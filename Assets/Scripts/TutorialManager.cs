@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -6,7 +7,7 @@ public class TutorialManager : MonoBehaviour
     private void Start()
     {
         int playedTutorial = PlayerPrefs.GetInt("playedTutorial", 0);
-        if (playedTutorial == 0)
+        if (playedTutorial == 0 && SceneManager.GetActiveScene().buildIndex != 0)
         {
             ShowTutorial();
             PlayerPrefs.SetInt("playedTutorial", 1);
