@@ -71,7 +71,7 @@ PolygonCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 1, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -83,14 +83,14 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.5, y: 0.49931204}
-      - {x: 0.49907377, y: 1.5059701}
-      - {x: -1.5068336, y: 1.503493}
-      - {x: -1.5036452, y: 0.5006979}
-      - {x: -0.50340647, y: 0.4984073}
-      - {x: -0.5016987, y: -0.49910545}
-      - {x: 1.5030482, y: -0.5000675}
-      - {x: 1.5082377, y: 0.5008103}
+    - - {x: 0.8234155, y: 0.7867926}
+      - {x: 0.831473, y: 1.8024344}
+      - {x: -1.8302492, y: 1.808941}
+      - {x: -1.8270607, y: 0.22220117}
+      - {x: -0.88970834, y: 0.20194301}
+      - {x: -0.88800055, y: -0.7596346}
+      - {x: 1.7905288, y: -0.77856416}
+      - {x: 1.7867346, y: 0.77930707}
   m_UseDelaunayMesh: 1
 --- !u!114 &8691745927798686812
 MonoBehaviour:
@@ -130,7 +130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
@@ -212,7 +212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
@@ -294,7 +294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
@@ -380,7 +380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.y
