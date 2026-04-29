@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Block : MonoBehaviour
 {
@@ -73,8 +74,14 @@ public class Block : MonoBehaviour
             }
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();
-            BlockSpawner.Instance.BlockPlaced();
-
+            if (SceneManager.GetActiveScene().name == "Tutorial")
+            {
+                TutorialBlockSpawner.Instance.BlockPlaced();
+            }
+            else
+            {
+                BlockSpawner.Instance.BlockPlaced();
+            }
         }
         else
         {

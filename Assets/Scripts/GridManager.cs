@@ -16,12 +16,17 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private gridtimerscript gridtimerscript;
+    private bool isTutorialActive;
 
     void Awake()
     {
         Instance = this;
         gridLogic = new int[width, height];
         visualGrid = new Transform[width, height];
+        if (SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            isTutorialActive = true;
+        }
     }
 
     void Start()
@@ -374,6 +379,10 @@ public class GridManager : MonoBehaviour
 
     private bool ClearRow(int y)
     {
+        if (isTutorialActive)
+        {
+            TutorialManager.Instance.ShowTutorialText();
+        }
         StartCoroutine(ClearRowCoroutine(y));
         return true;
     }
@@ -426,6 +435,10 @@ public class GridManager : MonoBehaviour
     
     private bool ClearCol(int x)
     {
+        if (isTutorialActive)
+        {
+            TutorialManager.Instance.ShowTutorialText();
+        }
         StartCoroutine(ClearColCoroutine(x));
         return true;
     }

@@ -21,7 +21,7 @@ public class MenuController : MonoBehaviour
 
     public void StartTutorial()
     {
-        // TODO OPEN TUTORIAL SCENE
+        SceneManager.LoadScene("Tutorial");
     }
 
     public void OpenSettingsPanel()
