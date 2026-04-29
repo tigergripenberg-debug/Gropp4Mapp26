@@ -8,6 +8,12 @@ public enum ScoreEventType
     Jackpot
 }
 
+public enum SFXSounds
+{
+    pop_sound,
+    placement_sound
+}
+
 
 public class SoundManager : MonoBehaviour
 {
@@ -21,21 +27,28 @@ public class SoundManager : MonoBehaviour
         soundManager = GetComponent<AudioSource>();
     }
     
-    public void PlayPop()
+    public void PlayPop(SFXSounds soundType)
     {
-        Play("pop");
+        Play("pop_sound");
     }
 
     private void OnEnable()
     {
         Score.OnScoreChange += PlayScoreSound;
+        Block.OnBlockPlacement += PlayPlacementSound;
+        GridManager.OnBlockClearedPlayPop += PlayPop;
     }
-
+    
     private void OnDisable()
     {
         Score.OnScoreChange -= PlayScoreSound;
+        Block.OnBlockPlacement -= PlayPlacementSound;
+        GridManager.OnBlockClearedPlayPop -= PlayPop;
     }
-
+    private void PlayPlacementSound(SFXSounds soundType)
+    {
+        Play("placement_sound");
+    }
     private void PlayScoreSound(ScoreEventType type)
     {
         switch (type)
@@ -54,6 +67,7 @@ public class SoundManager : MonoBehaviour
                 break;
         }
     }
+    
 
     void Play(string clipName)
     {

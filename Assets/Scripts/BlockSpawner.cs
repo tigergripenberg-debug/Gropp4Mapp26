@@ -9,6 +9,7 @@ public class BlockSpawner : MonoBehaviour
     public GameObject[] blockPrefabs;
     [SerializeField] private gridtimerscript gridtimerscript;
     public Transform[] spawnPoints;
+
     void Awake()
     {
         Instance = this;
@@ -22,10 +23,10 @@ public class BlockSpawner : MonoBehaviour
     public void SpawnNewBlock()
     {
         gridtimerscript.resetValue();
+        
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             int randomIndex = Random.Range(0, blockPrefabs.Length);
-
             int attempts = 0;
 
             while (GridManager.Instance.CanBlockFit(blockPrefabs[randomIndex]) == false)
@@ -40,9 +41,30 @@ public class BlockSpawner : MonoBehaviour
                 }
             }
 
-            Instantiate(blockPrefabs[randomIndex], spawnPoints[i].position, Quaternion.identity);
+            
+            GameObject spawnedBlock = Instantiate(blockPrefabs[randomIndex], spawnPoints[i].position, Quaternion.identity);
+            
+            float minX = float.MaxValue, maxX = float.MinValue;
+            float minY = float.MaxValue, maxY = float.MinValue;
+
+            foreach (Transform child in spawnedBlock.transform)
+            {
+                if (child.localPosition.x < minX) minX = child.localPosition.x;
+                if (child.localPosition.x > maxX) maxX = child.localPosition.x;
+                if (child.localPosition.y < minY) minY = child.localPosition.y;
+                if (child.localPosition.y > maxY) maxY = child.localPosition.y;
+            }
+
+            
+            float centerX = (minX + maxX) / 2f;
+            float centerY = (minY + maxY) / 2f;
+
+            Vector3 offset = new Vector3(centerX * 0.6f, centerY * 0.6f, 0f);
+            
+            spawnedBlock.transform.position -= offset;
         }
     }
+
     public void BlockPlaced()
     {
         BlocksUsed++;
@@ -54,13 +76,16 @@ public class BlockSpawner : MonoBehaviour
         {
             Timer.Instance.RegisterBlockPlaced();
         }
+        
         gridtimerscript.instance.decreaseValue();
+        
         if (BlocksUsed >= 3)
         {
             BlocksUsed = 0;
             GridManager.Instance.OnTurnFinished();
             SpawnNewBlock();
         }
+        
         GridManager.Instance.CheckIfPlayable();
     }
 }
