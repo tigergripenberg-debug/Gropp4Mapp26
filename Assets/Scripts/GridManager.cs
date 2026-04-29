@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -130,7 +132,7 @@ public class GridManager : MonoBehaviour
 
             gridtimerscript.instance.freeze(false);
             gridtimerscript.instance.resetValue();
-            
+
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
 
@@ -192,13 +194,13 @@ public class GridManager : MonoBehaviour
 
         int totalLines = rowsToClear.Count + columnsToClear.Count;
 
-       if (totalLines > 0)
+        if (totalLines > 0)
         {
             linesClearedThisRound = true;
 
             gridtimerscript.instance.resetValue();
             gridtimerscript.instance.freeze(true);
-          
+
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
@@ -221,11 +223,11 @@ public class GridManager : MonoBehaviour
                 if (!isBoardEmpty) break;
             }
 
-        if (Timer.Instance != null)Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
-            
-        if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
-            
-        
+            if (Timer.Instance != null) Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
+
+            if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
+
+
         }
         if (Score.Instance != null) Score.Instance.EvaluateComboState();
 
@@ -235,7 +237,7 @@ public class GridManager : MonoBehaviour
     public void TriggerGameOver()
     {
         Debug.Log("Game Over");
-        
+
         MenuController.gameIsPaused = true;
 
         StartCoroutine(ShowGameOverRoutine());
@@ -244,7 +246,7 @@ public class GridManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        if(gameOverCanvas != null)
+        if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
         }
@@ -297,6 +299,8 @@ public class GridManager : MonoBehaviour
             gridLogic[x, 0] = 0;
         }
 
+        List<Task> moveTasks = new List<Task>();
+
         // Move everything DOWN
         for (int y = 0; y < height - 1; y++)
         {
@@ -307,7 +311,9 @@ public class GridManager : MonoBehaviour
 
                 if (visualGrid[x, y] != null)
                 {
-                    visualGrid[x, y].position = GetWorldPosition(x, y);
+                    Vector3 targetPosition = GetWorldPosition(x, y);
+                    // Start the task and add it to our list
+                    moveTasks.Add(AnimateBlockDown(visualGrid[x, y], targetPosition));
                 }
             }
         }
@@ -377,38 +383,17 @@ public class GridManager : MonoBehaviour
         StartCoroutine(ClearRowCoroutine(y));
         return true;
     }
-    
+
     public static event System.Action<SFXSounds> OnBlockClearedPlayPop;
 
     private IEnumerator ClearRowCoroutine(int y)
     {
         List<GameObject> blocksToDestroy = new List<GameObject>();
-        
-        for(int x = 0; x < width; x++)
+
+        for (int x = 0; x < width; x++)
         {
             gridLogic[x, y] = 0;
             if (visualGrid[x, y] != null)
-            {
-                blocksToDestroy.Add(visualGrid[x, y].gameObject);
-                visualGrid[x, y] = null;
-            }
-        }
-        foreach(GameObject block in blocksToDestroy)
-        {
-            OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
-            Destroy(block);
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    private IEnumerator ClearColCoroutine(int x)
-    {
-        List<GameObject> blocksToDestroy = new List<GameObject>();
-
-        for(int y = 0; y < height; y++)
-        {
-            gridLogic[x, y] = 0;
-            if(visualGrid[x, y] != null)
             {
                 blocksToDestroy.Add(visualGrid[x, y].gameObject);
                 visualGrid[x, y] = null;
@@ -421,7 +406,28 @@ public class GridManager : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
     }
-    
+
+    private IEnumerator ClearColCoroutine(int x)
+    {
+        List<GameObject> blocksToDestroy = new List<GameObject>();
+
+        for (int y = 0; y < height; y++)
+        {
+            gridLogic[x, y] = 0;
+            if (visualGrid[x, y] != null)
+            {
+                blocksToDestroy.Add(visualGrid[x, y].gameObject);
+                visualGrid[x, y] = null;
+            }
+        }
+        foreach (GameObject block in blocksToDestroy)
+        {
+            OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
+            Destroy(block);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     private bool ClearCol(int x)
     {
         StartCoroutine(ClearColCoroutine(x));
@@ -442,5 +448,28 @@ public class GridManager : MonoBehaviour
 
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
+    }
+    private async Task<bool> AnimateBlockDown(Transform block, Vector3 targetPos)
+    {
+        float duration = 0.05f; // Seconds to animate
+        float elapsed = 0f;
+        Vector3 startPos = block.position;
+
+        while (elapsed < duration)
+        {
+            if (block == null) return false; // Block was cleared during move
+
+            elapsed += Time.deltaTime;
+            float percent = elapsed / duration;
+
+            // Smooth interpolation
+            block.position = Vector3.Lerp(startPos, targetPos, percent);
+
+            // Yields back to Unity for one frame
+            await Task.Yield();
+        }
+
+        if (block != null) block.position = targetPos;
+        return true;
     }
 }
