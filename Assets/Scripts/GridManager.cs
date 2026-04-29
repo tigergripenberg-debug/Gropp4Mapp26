@@ -9,7 +9,7 @@ public class GridManager : MonoBehaviour
     [Header("Settings")]
     public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, gameOverCanvas;
+    [SerializeField] private GameObject tilePrefab, gameOverCanvas, bubble;
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     private bool hasImmunity = false, linesClearedThisRound = false;
@@ -397,6 +397,7 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block);
+            Instantiate(bubble,block.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -418,6 +419,7 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block);
+            Instantiate(bubble,block.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.1f);
         }
     }
