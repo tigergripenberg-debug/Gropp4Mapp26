@@ -23,8 +23,8 @@ public class BlockSpawner : MonoBehaviour
     public void SpawnNewBlock()
     {
         gridtimerscript.resetValue();
-        
-        for (int i = 0; i < spawnPoints.Length; i++)
+
+        foreach (var spawnpoint in spawnPoints)
         {
             int randomIndex = Random.Range(0, blockPrefabs.Length);
             int attempts = 0;
@@ -40,9 +40,8 @@ public class BlockSpawner : MonoBehaviour
                     break;
                 }
             }
-
             
-            GameObject spawnedBlock = Instantiate(blockPrefabs[randomIndex], spawnPoints[i].position, Quaternion.identity);
+            GameObject spawnedBlock = Instantiate(blockPrefabs[randomIndex], spawnpoint.position, Quaternion.identity);
             
             float minX = float.MaxValue, maxX = float.MinValue;
             float minY = float.MaxValue, maxY = float.MinValue;
