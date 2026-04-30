@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ScoreEventType
 {
@@ -20,6 +21,7 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance;
     [SerializeField] private AudioClip[] wowSounds;
     private AudioSource soundManager;
+    [SerializeField] private Slider volumeSlider;
 
     private void Awake()
     {
@@ -27,6 +29,16 @@ public class SoundManager : MonoBehaviour
         soundManager = GetComponent<AudioSource>();
     }
     
+
+    public void SetVolume(float volume)
+    {
+        soundManager.volume = volumeSlider.value;
+        PlayerPrefs.SetFloat("volume", volume);
+    }
+    public void SetMute(bool mute)
+    {
+        soundManager.mute = mute;
+    }
     public void PlayPop(SFXSounds soundType)
     {
         Play("pop_sound");

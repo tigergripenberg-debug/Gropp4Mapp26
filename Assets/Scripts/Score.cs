@@ -85,7 +85,7 @@ public class Score : MonoBehaviour
         
 
         CheckHighscore();
-        string message = $"Sprängde {linesCleared} rader! Bas: {pointsForLines}. Multiplier: x{comboMultiplier:F1} -> Totalt {pointsToGive} poäng!";
+        string message = $"Multiplier: x{comboMultiplier:F1}\n Total {pointsToGive} points!";
         OnScoreChange?.Invoke(type);
         OnScoreMessage?.Invoke(message);
     }
