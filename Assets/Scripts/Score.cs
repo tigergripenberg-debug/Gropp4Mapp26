@@ -17,6 +17,8 @@ public class Score : MonoBehaviour
     public int blocksSinceLastClear = 0;
 
     public static event System.Action<ScoreEventType> OnScoreChange;
+    public static event System.Action<string> OnScoreMessage;
+    
 
     void Awake()
     {
@@ -48,6 +50,7 @@ public class Score : MonoBehaviour
             }
         }
     }
+    
 
    public void CalculateAndAddScore(int linesCleared, bool isBoardEmpty)
     {
@@ -67,7 +70,7 @@ public class Score : MonoBehaviour
         
         int pointsToGive = Mathf.RoundToInt(pointsForLines * comboMultiplier);
 
-        Debug.Log($"Sprängde {linesCleared} rader! Bas: {pointsForLines}. Multiplier: x{comboMultiplier:F1} -> Totalt {pointsToGive} poäng!");
+        
 
         if (isBoardEmpty)
         {
@@ -79,9 +82,12 @@ public class Score : MonoBehaviour
         scoreText.text = score.ToString();
 
         ScoreEventType type = GetScoreEventType(currentCombo);
-        OnScoreChange?.Invoke(type);
+        
 
         CheckHighscore();
+        string message = $"Sprängde {linesCleared} rader! Bas: {pointsForLines}. Multiplier: x{comboMultiplier:F1} -> Totalt {pointsToGive} poäng!";
+        OnScoreChange?.Invoke(type);
+        OnScoreMessage?.Invoke(message);
     }
 
     private void CheckHighscore()
