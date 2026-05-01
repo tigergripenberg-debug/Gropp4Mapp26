@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,30 +22,64 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
     [SerializeField] private AudioClip[] wowSounds;
-    [SerializeField] private AudioClip[] music;
-    private AudioSource sfxSoundManager, musicSoundManager;
+    [SerializeField] private AudioClip music, comboMusic;
+    [SerializeField] private AudioSource sfxSoundManager, musicManager, comboMusicManager;
     [SerializeField] private Slider sfxVolumeSlider, musicVolumeSlider;
+    private float fadeDuration = 1f;
 
     private void Awake()
     {
         Instance = this;
-        sfxSoundManager = GetComponent<AudioSource>();
-        musicSoundManager = GetComponent<AudioSource>();
     }
 
     private void Start()
     {
-        musicSoundManager.Play();
+        musicManager.Play();
     }
+
+    public void StartComboMusic()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CrossFade(musicManager, comboMusicManager));
+    }
+
+    public void ExitComboMusic()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CrossFade(comboMusicManager, musicManager));
+    }
+
+    IEnumerator CrossFade(AudioSource from, AudioSource to)
+    {
+        float time = 0f;
+        if (!to.isPlaying)
+        {
+            to.Play();
+        }
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+            float t = time / fadeDuration;
+            from.volume = Mathf.Lerp(1f, 0f, t);
+            to.volume = Mathf.Lerp(0f, 1f, t);
+            yield return null;
+        }
+        from.volume = 0f;
+        to.volume = 1f;
+        from.Stop();
+    }
+    
 
     public void SetMusicVolume(float volume)
     {
-        musicSoundManager.volume = musicVolumeSlider.value;
+        musicManager.volume = musicVolumeSlider.value;
+        comboMusicManager.volume = musicVolumeSlider.value;
     }
 
     public void SetMusicMute(bool mute)
     {
-        musicSoundManager.mute = mute;
+        musicManager.mute = mute;
+        comboMusicManager.mute = mute;
     }
     public void SetSFXVolume(float volume)
     {

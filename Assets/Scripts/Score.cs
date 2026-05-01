@@ -43,10 +43,12 @@ public class Score : MonoBehaviour
     {
          if(blocksSinceLastClear >= 3)
         {
+            
             if (currentCombo > 0)
             {
                 Debug.Log("Combo bruten!");
                 currentCombo = 0;
+                SoundManager.Instance.ExitComboMusic();
             }
         }
     }
@@ -55,6 +57,7 @@ public class Score : MonoBehaviour
    public void CalculateAndAddScore(int linesCleared, bool isBoardEmpty)
     {
         currentCombo++;
+        if (currentCombo == 1) SoundManager.Instance.StartComboMusic();
         blocksSinceLastClear = 0; 
         int pointsForLines = 0;
         switch (linesCleared)
