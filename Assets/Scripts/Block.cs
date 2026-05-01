@@ -52,7 +52,6 @@ public class Block : MonoBehaviour
 
     void OnMouseUp()
     {
-        SetAsPlaced();
         Vector2Int snappedGrid = GridManager.Instance.WorldToGrid(transform.position);
         Vector2 snappedWorld = GridManager.Instance.GetWorldPosition(snappedGrid.x, snappedGrid.y);
         transform.position = new Vector3(snappedWorld.x, snappedWorld.y, 0f);
@@ -76,6 +75,7 @@ public class Block : MonoBehaviour
 
         if (isValid)
         {
+            SetAsPlaced();
             foreach (Transform child in transform)
             {
                 Vector2Int childPos = GridManager.Instance.WorldToGrid(child.position);

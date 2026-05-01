@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20324512eca756d4387d47bd24bb023f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Block
-  tile: {fileID: 3709587514387350726, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+  tileSR: []
 --- !u!60 &2028062648354835651
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -128,6 +128,14 @@ PrefabInstance:
     - target: {fileID: 5652062524933553047, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_Color.r
       value: 0.005606967
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.1
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -212,6 +220,14 @@ PrefabInstance:
       value: 0.005606967
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -253,15 +269,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9176919487319554482, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_Color.b
-      value: 0.5335629
+      value: 0.1960784
       objectReference: {fileID: 0}
     - target: {fileID: 9176919487319554482, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_Color.g
-      value: 1
+      value: 0.8039216
       objectReference: {fileID: 0}
     - target: {fileID: 9176919487319554482, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 0.1960784
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -296,6 +312,14 @@ PrefabInstance:
     - target: {fileID: 5652062524933553047, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_Color.r
       value: 0.005606967
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.1
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
@@ -378,6 +402,14 @@ PrefabInstance:
     - target: {fileID: 5652062524933553047, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_Color.r
       value: 0.005606967
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.1
       objectReference: {fileID: 0}
     - target: {fileID: 8508860996795829479, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
       propertyPath: m_LocalPosition.x
