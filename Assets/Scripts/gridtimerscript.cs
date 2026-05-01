@@ -7,6 +7,8 @@ public class gridtimerscript : MonoBehaviour
     private Slider ring;
     private bool frozen = false;
     [SerializeField] private Image fillcolor;
+    [SerializeField] private Image counterObj;
+    [SerializeField] private Sprite[] counterSprites;
 
     void Awake()
     {
@@ -18,6 +20,8 @@ public class gridtimerscript : MonoBehaviour
     {
         if (state)
         {
+            //change to blue sprite
+            counterObj.GetComponent<Image>().sprite = counterSprites[3];
             fillcolor.color = Color.turquoise;
             frozen = true;
         }
@@ -54,15 +58,20 @@ public class gridtimerscript : MonoBehaviour
     private void Refresh()
     {
         if (frozen) return;
+
+        //change sprite instead of colour switch
         switch (ring.value)
         {
             case 1:
+                counterObj.GetComponent<Image>().sprite = counterSprites[0];
                 fillcolor.color = Color.red;
                 break;
             case 2:
+                counterObj.GetComponent<Image>().sprite = counterSprites[1];
                 fillcolor.color = Color.yellow;
                 break;
             case 3:
+                counterObj.GetComponent<Image>().sprite = counterSprites[2];
                 fillcolor.color = Color.green;
                 break;
         }
