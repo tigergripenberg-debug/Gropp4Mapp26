@@ -46,6 +46,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Grid
+    uniqueID: 2713767689
+    locked: 0
+  - name: PlacedBlocks
+    uniqueID: 3029998835
+    locked: 0
+  - name: Blocks
+    uniqueID: 2417594215
+    locked: 0
   - name: Bubble
     uniqueID: 3495085819
     locked: 0
