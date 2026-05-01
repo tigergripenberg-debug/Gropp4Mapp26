@@ -250,7 +250,7 @@ RectTransform:
   m_Father: {fileID: 1410626028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -339,6 +339,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ec0ab98725ad8e498cf85dde8f4a6cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!114 &529271316 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1663776364995373660, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+  m_PrefabInstance: {fileID: 4383733186862942267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &758621303
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,7 +622,7 @@ RectTransform:
   m_Father: {fileID: 1994737455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -685,8 +696,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1860778903}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -998,8 +1009,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 302788659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1179,6 +1190,11 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &2077905979 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5460570232672495420, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+  m_PrefabInstance: {fileID: 4383733186862942267}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &2135225719 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6708097494209000625, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
@@ -1394,13 +1410,17 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 418990015}
+    - target: {fileID: 1896984503456949911, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: fillColor
+      value: 
+      objectReference: {fileID: 529271316}
     - target: {fileID: 1944399680046280154, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_Name
       value: SFX Sound Slider
       objectReference: {fileID: 0}
     - target: {fileID: 3437728136547954153, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3662639748930896960, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_Name
@@ -1538,6 +1558,18 @@ PrefabInstance:
       propertyPath: m_HorizontalAlignment
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8377635107044098084, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 418990015}
+    - target: {fileID: 8377635107044098084, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RestartGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 8377635107044098084, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GridManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 9006843989792108816, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -1663,6 +1695,10 @@ PrefabInstance:
       propertyPath: soundManager
       value: 
       objectReference: {fileID: 1765800403}
+    - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
+      propertyPath: gameOverCanvas
+      value: 
+      objectReference: {fileID: 2077905979}
     - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
       propertyPath: gridtimerscript
       value: 
