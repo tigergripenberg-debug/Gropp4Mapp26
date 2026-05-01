@@ -160,10 +160,9 @@ public class GridManager : MonoBehaviour
     public bool CheckForMatches()
     {
         bool didClear = false;
+        bool bonusLine = false;
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
-
-        // Check rows
         for (int y = 0; y < height; y++)
         {
             bool full = true;
@@ -175,11 +174,8 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
-
             if (full) rowsToClear.Add(y);
         }
-
-        // Check columns
         for (int x = 0; x < width; x++)
         {
             bool full = true;
@@ -191,27 +187,20 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
-
             if (full) columnsToClear.Add(x);
-        }
-
+        } 
         int totalLines = rowsToClear.Count + columnsToClear.Count;
-
        if (totalLines > 0)
         {
             linesClearedThisRound = true;
-
             gridtimerscript.instance.resetValue();
             gridtimerscript.instance.freeze(true);
-          
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
-
             foreach (var col in columnsToClear)
                 if (ClearCol(col))
                     didClear = true;
-
             bool isBoardEmpty = true;
             for (int x = 0; x < width; x++)
             {
@@ -225,15 +214,10 @@ public class GridManager : MonoBehaviour
                 }
                 if (!isBoardEmpty) break;
             }
-
         if (Timer.Instance != null)Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
-            
         if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
-            
-        
         }
         if (Score.Instance != null) Score.Instance.EvaluateComboState();
-
         return didClear;
     }
 

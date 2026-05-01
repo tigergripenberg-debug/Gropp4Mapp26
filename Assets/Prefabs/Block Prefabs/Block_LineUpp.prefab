@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20324512eca756d4387d47bd24bb023f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Block
+  tile: {fileID: 3709587514387350726, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
 --- !u!1001 &6917424034686892032
 PrefabInstance:
   m_ObjectHideFlags: 0

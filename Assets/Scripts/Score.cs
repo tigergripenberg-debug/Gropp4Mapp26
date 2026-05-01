@@ -56,7 +56,6 @@ public class Score : MonoBehaviour
     {
         currentCombo++;
         blocksSinceLastClear = 0; 
-
         int pointsForLines = 0;
         switch (linesCleared)
         {
@@ -65,25 +64,16 @@ public class Score : MonoBehaviour
             case 3: pointsForLines = 600; break; 
             default: pointsForLines = 1000; break; 
         }
-
         float comboMultiplier = 1.0f + (currentCombo * currentCombo * 0.1f);
-        
         int pointsToGive = Mathf.RoundToInt(pointsForLines * comboMultiplier);
-
-        
-
         if (isBoardEmpty)
         {
             pointsToGive += 1000;
             Debug.Log("PERFECT CLEAR! +1000 bonuspoäng!");
         }
-
         score += pointsToGive;
         scoreText.text = score.ToString();
-
         ScoreEventType type = GetScoreEventType(currentCombo);
-        
-
         CheckHighscore();
         string message = $"Multiplier: x{comboMultiplier:F1}\n Total {pointsToGive} points!";
         OnScoreChange?.Invoke(type);

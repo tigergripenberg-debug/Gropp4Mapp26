@@ -9,17 +9,30 @@ public class Block : MonoBehaviour
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
     private Vector3 normalSize = new Vector3(1f, 1f, 1f);
+    [SerializeField] SpriteRenderer[] tileSR;
+    //[SerializeField] GameObject tileBorder;
 
     void Start()
     {
+        tileSR = GetComponentsInChildren<SpriteRenderer>();
         startPosition = transform.position;
         transform.localScale = previewSize;
+        SetAsActive();
+    }
+
+    private void SetAsActive()
+    {
+        foreach (SpriteRenderer sr in tileSR) sr.sortingLayerName = "Blocks";
+    }
+
+    private void SetAsPlaced()
+    {
+        foreach (SpriteRenderer sr in tileSR) sr.sortingLayerName = "PlacedBlocks";
     }
 
     void OnMouseDown()
     {
         if (MenuController.gameIsPaused) return;
-
         transform.localScale = normalSize;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
@@ -39,6 +52,7 @@ public class Block : MonoBehaviour
 
     void OnMouseUp()
     {
+        SetAsPlaced();
         Vector2Int snappedGrid = GridManager.Instance.WorldToGrid(transform.position);
         Vector2 snappedWorld = GridManager.Instance.GetWorldPosition(snappedGrid.x, snappedGrid.y);
         transform.position = new Vector3(snappedWorld.x, snappedWorld.y, 0f);
