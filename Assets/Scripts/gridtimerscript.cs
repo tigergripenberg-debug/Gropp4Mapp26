@@ -1,31 +1,50 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class gridtimerscript : MonoBehaviour
+public class GridTimerScript : MonoBehaviour
 {
-    public static gridtimerscript instance;
+    public static GridTimerScript Instance;
     private Slider ring;
-    private bool frozen = false;
-    [SerializeField] private Image fillcolor;
+    private bool frozen;
+    [SerializeField] private Image fillColor;
+    private int maxValue = 3;
 
     void Awake()
     {
-        instance = this;
+        Instance = this;
         ring = GetComponent<Slider>();
         resetValue();
     }
-    public void freeze(bool state)
+
+    void OnEnable()
     {
-        if (state)
+        Score.OnComboChanged += HandleComboChanged;
+    }
+
+    void OnDisable()
+    {
+        Score.OnComboChanged -= HandleComboChanged;
+    }
+    
+    private void HandleComboChanged(int combo)
+    {
+        if (combo > 0)
         {
-            fillcolor.color = Color.turquoise;
-            frozen = true;
+            Debug.Log("Freezing with combo");
+            freeze(true);
+            resetValue(); 
         }
         else
         {
-            frozen = false;
-            Refresh();
+            Debug.Log("Unfreezing");
+            freeze(false);
         }
+    }
+    
+    public void freeze(bool state)
+    {
+        frozen = state;
+        Refresh();
     }
     public void decreaseValue()
     {
@@ -37,33 +56,27 @@ public class gridtimerscript : MonoBehaviour
     }
     public void resetValue()
     {
-        if (frozen) return;
-        ring.value = 3;
-        Refresh();
-    }
-    public void increaseValue()
-    {
-        if (frozen) return;
-        if (ring.value >= 3)
-            return;
-
-        ring.value++;
+        ring.value = maxValue;
         Refresh();
     }
 
     private void Refresh()
     {
-        if (frozen) return;
-        switch (ring.value)
+        if (frozen)
+        {
+            fillColor.color = Color.cyan;
+            return;
+        }
+        switch ((int)ring.value)
         {
             case 1:
-                fillcolor.color = Color.red;
+                fillColor.color = Color.red;
                 break;
             case 2:
-                fillcolor.color = Color.yellow;
+                fillColor.color = Color.yellow;
                 break;
             case 3:
-                fillcolor.color = Color.green;
+                fillColor.color = Color.green;
                 break;
         }
     }

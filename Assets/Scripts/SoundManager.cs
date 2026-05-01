@@ -26,6 +26,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSoundManager, musicManager, comboMusicManager;
     [SerializeField] private Slider sfxVolumeSlider, musicVolumeSlider;
     private float fadeDuration = 1f;
+    private bool isInComboState = false;
 
     private void Awake()
     {
@@ -48,7 +49,7 @@ public class SoundManager : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(CrossFade(comboMusicManager, musicManager));
     }
-
+    
     IEnumerator CrossFade(AudioSource from, AudioSource to)
     {
         float time = 0f;
@@ -100,13 +101,32 @@ public class SoundManager : MonoBehaviour
         Score.OnScoreChange += PlayScoreSound;
         Block.OnBlockPlacement += PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop += PlayPop;
+        Score.OnComboChanged += HandleCombo;
     }
-    
+
+ 
+
     private void OnDisable()
     {
         Score.OnScoreChange -= PlayScoreSound;
         Block.OnBlockPlacement -= PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop -= PlayPop;
+        Score.OnComboChanged -= HandleCombo;
+    }   
+    private void HandleCombo(int combo)
+    {
+        if (combo >= 2 && !isInComboState)
+        {
+            isInComboState = true;
+            StopAllCoroutines();
+            StartCoroutine(CrossFade(musicManager, comboMusicManager));
+        }
+        else if (combo == 0 && isInComboState)
+        {
+            isInComboState = false;
+            StopAllCoroutines();
+            StartCoroutine(CrossFade(comboMusicManager, musicManager));
+        }
     }
     private void PlayPlacementSound(SFXSounds soundType)
     {

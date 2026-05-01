@@ -6,7 +6,6 @@ public class TutorialBlockSpawner : MonoBehaviour
     public static TutorialBlockSpawner Instance;
     private int blocksUsed = 0;
     public GameObject[] blockPrefabs;
-    [SerializeField] private gridtimerscript gridtimerscript;
     public Transform[] spawnPoints;
 
     private void Start()
@@ -19,7 +18,7 @@ public class TutorialBlockSpawner : MonoBehaviour
     private void SpawnNewBlock()
     {
         int index = 0;
-        gridtimerscript.resetValue();
+        GridTimerScript.Instance.resetValue();
         foreach (Transform spawnPoint in spawnPoints)
         {
             GameObject spawnedBlock1 = Instantiate(blockPrefabs[index++], spawnPoint.position, Quaternion.identity);
@@ -52,7 +51,7 @@ public class TutorialBlockSpawner : MonoBehaviour
             Timer.Instance.RegisterBlockPlaced();
         }
         
-        gridtimerscript.instance.decreaseValue();
+        GridTimerScript.Instance.decreaseValue();
         
         if (blocksUsed >= 3)
         {

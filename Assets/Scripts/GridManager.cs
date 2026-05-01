@@ -15,7 +15,6 @@ public class GridManager : MonoBehaviour
     private bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
-    [SerializeField] private gridtimerscript gridtimerscript;
     private bool isTutorialActive;
 
     void Awake()
@@ -122,8 +121,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = true;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
 
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
@@ -133,8 +132,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = false;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.freeze(false);
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.freeze(false);
+            GridTimerScript.Instance.resetValue();
             
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
@@ -153,7 +152,7 @@ public class GridManager : MonoBehaviour
             Debug.Log("GRID PUSH!");
             MoveGrid();
             turnsSinceClear = 0;
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.resetValue();
         }
     }
 
@@ -193,8 +192,8 @@ public class GridManager : MonoBehaviour
        if (totalLines > 0)
         {
             linesClearedThisRound = true;
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
@@ -217,7 +216,7 @@ public class GridManager : MonoBehaviour
         if (Timer.Instance != null)Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
         if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
         }
-        if (Score.Instance != null) Score.Instance.EvaluateComboState();
+        Score.Instance.RegisterTurnResult(totalLines > 0);
         return didClear;
     }
 

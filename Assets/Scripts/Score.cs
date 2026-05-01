@@ -18,6 +18,7 @@ public class Score : MonoBehaviour
 
     public static event System.Action<ScoreEventType> OnScoreChange;
     public static event System.Action<string> OnScoreMessage;
+    public static event System.Action<int> OnComboChanged;
     
 
     void Awake()
@@ -39,7 +40,7 @@ public class Score : MonoBehaviour
         scoreText.text = score.ToString();
         CheckHighscore();
     }
-    public void EvaluateComboState()
+    /*public void EvaluateComboState()
     {
          if(blocksSinceLastClear >= 3)
         {
@@ -51,13 +52,33 @@ public class Score : MonoBehaviour
                 SoundManager.Instance.ExitComboMusic();
             }
         }
+    }*/
+    
+    public void RegisterTurnResult(bool cleared)
+    {
+        if (cleared)
+        {
+            currentCombo++;
+            blocksSinceLastClear = 0;
+            if (currentCombo == 2)
+                SoundManager.Instance.StartComboMusic();
+        }
+        else
+        {
+            blocksSinceLastClear++;
+            if (blocksSinceLastClear >= 3 && currentCombo > 0)
+            {
+                currentCombo = 0;
+                SoundManager.Instance.ExitComboMusic();
+            }
+        }
     }
     
 
    public void CalculateAndAddScore(int linesCleared, bool isBoardEmpty)
     {
         currentCombo++;
-        if (currentCombo == 1) SoundManager.Instance.StartComboMusic();
+        OnComboChanged?.Invoke(currentCombo);
         blocksSinceLastClear = 0; 
         int pointsForLines = 0;
         switch (linesCleared)
