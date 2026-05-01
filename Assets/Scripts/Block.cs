@@ -9,6 +9,7 @@ public class Block : MonoBehaviour
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
     private Vector3 normalSize = new Vector3(1f, 1f, 1f);
+    [SerializeField] private Color[] possibleColors;
     [SerializeField] SpriteRenderer[] tileSR;
     //[SerializeField] GameObject tileBorder;
 
@@ -17,7 +18,18 @@ public class Block : MonoBehaviour
         tileSR = GetComponentsInChildren<SpriteRenderer>();
         startPosition = transform.position;
         transform.localScale = previewSize;
+        SetRandomColor();
         SetAsActive();
+    }
+
+    private void SetRandomColor()
+    {
+        var blockColor = possibleColors[Random.Range(0, possibleColors.Length)];
+        foreach (SpriteRenderer sr in tileSR)
+        {
+            sr.color = blockColor;
+        }
+        
     }
 
     private void SetAsActive()
