@@ -9,19 +9,23 @@ public class GridManager : MonoBehaviour
     [Header("Settings")]
     public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, gameOverCanvas;
+    [SerializeField] private GameObject tilePrefab, gameOverCanvas, bubble;
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     private bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
-    [SerializeField] private gridtimerscript gridtimerscript;
+    private bool isTutorialActive;
 
     void Awake()
     {
         Instance = this;
         gridLogic = new int[width, height];
         visualGrid = new Transform[width, height];
+        if (SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            isTutorialActive = true;
+        }
     }
 
     void Start()
@@ -117,8 +121,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = true;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
 
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
@@ -128,8 +132,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = false;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.freeze(false);
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.freeze(false);
+            GridTimerScript.Instance.resetValue();
             
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
@@ -148,17 +152,16 @@ public class GridManager : MonoBehaviour
             Debug.Log("GRID PUSH!");
             MoveGrid();
             turnsSinceClear = 0;
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.resetValue();
         }
     }
 
     public bool CheckForMatches()
     {
         bool didClear = false;
+        bool bonusLine = false;
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
-
-        // Check rows
         for (int y = 0; y < height; y++)
         {
             bool full = true;
@@ -170,11 +173,8 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
-
             if (full) rowsToClear.Add(y);
         }
-
-        // Check columns
         for (int x = 0; x < width; x++)
         {
             bool full = true;
@@ -186,27 +186,20 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
-
             if (full) columnsToClear.Add(x);
-        }
-
+        } 
         int totalLines = rowsToClear.Count + columnsToClear.Count;
-
        if (totalLines > 0)
         {
             linesClearedThisRound = true;
-
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
-          
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
-
             foreach (var col in columnsToClear)
                 if (ClearCol(col))
                     didClear = true;
-
             bool isBoardEmpty = true;
             for (int x = 0; x < width; x++)
             {
@@ -220,15 +213,10 @@ public class GridManager : MonoBehaviour
                 }
                 if (!isBoardEmpty) break;
             }
-
         if (Timer.Instance != null)Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
-            
         if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
-            
-        
         }
-        if (Score.Instance != null) Score.Instance.EvaluateComboState();
-
+        Score.Instance.RegisterTurnResult(totalLines > 0);
         return didClear;
     }
 
@@ -374,6 +362,10 @@ public class GridManager : MonoBehaviour
 
     private bool ClearRow(int y)
     {
+        if (isTutorialActive)
+        {
+            TutorialManager.Instance.ShowTutorialText();
+        }
         StartCoroutine(ClearRowCoroutine(y));
         return true;
     }
@@ -397,6 +389,7 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block);
+            Instantiate(bubble,block.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -418,12 +411,17 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block);
+            Instantiate(bubble,block.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.1f);
         }
     }
     
     private bool ClearCol(int x)
     {
+        if (isTutorialActive)
+        {
+            TutorialManager.Instance.ShowTutorialText();
+        }
         StartCoroutine(ClearColCoroutine(x));
         return true;
     }

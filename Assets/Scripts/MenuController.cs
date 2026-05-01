@@ -19,9 +19,9 @@ public class MenuController : MonoBehaviour
         gameIsPaused = false;
     }
 
-    public void QuitGame()
+    public void StartTutorial()
     {
-        Application.Quit();
+        SceneManager.LoadScene("Tutorial");
     }
 
     public void OpenSettingsPanel()

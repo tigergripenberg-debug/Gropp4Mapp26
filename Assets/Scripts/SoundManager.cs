@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ScoreEventType
 {
@@ -19,14 +22,75 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
     [SerializeField] private AudioClip[] wowSounds;
-    private AudioSource soundManager;
+    [SerializeField] private AudioClip music, comboMusic;
+    [SerializeField] private AudioSource sfxSoundManager, musicManager, comboMusicManager;
+    [SerializeField] private Slider sfxVolumeSlider, musicVolumeSlider;
+    private float fadeDuration = 1f;
+    private bool isInComboState = false;
 
     private void Awake()
     {
         Instance = this;
-        soundManager = GetComponent<AudioSource>();
+    }
+
+    private void Start()
+    {
+        musicManager.Play();
+    }
+
+    public void StartComboMusic()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CrossFade(musicManager, comboMusicManager));
+    }
+
+    public void ExitComboMusic()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CrossFade(comboMusicManager, musicManager));
     }
     
+    IEnumerator CrossFade(AudioSource from, AudioSource to)
+    {
+        float time = 0f;
+        if (!to.isPlaying)
+        {
+            to.Play();
+        }
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+            float t = time / fadeDuration;
+            from.volume = Mathf.Lerp(1f, 0f, t);
+            to.volume = Mathf.Lerp(0f, 1f, t);
+            yield return null;
+        }
+        from.volume = 0f;
+        to.volume = 1f;
+        from.Stop();
+    }
+    
+
+    public void SetMusicVolume(float volume)
+    {
+        musicManager.volume = musicVolumeSlider.value;
+        comboMusicManager.volume = musicVolumeSlider.value;
+    }
+
+    public void SetMusicMute(bool mute)
+    {
+        musicManager.mute = mute;
+        comboMusicManager.mute = mute;
+    }
+    public void SetSFXVolume(float volume)
+    {
+        sfxSoundManager.volume = sfxVolumeSlider.value;
+        PlayerPrefs.SetFloat("volume", volume);
+    }
+    public void SetSFXMute(bool mute)
+    {
+        sfxSoundManager.mute = mute;
+    }
     public void PlayPop(SFXSounds soundType)
     {
         Play("pop_sound");
@@ -37,13 +101,32 @@ public class SoundManager : MonoBehaviour
         Score.OnScoreChange += PlayScoreSound;
         Block.OnBlockPlacement += PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop += PlayPop;
+        Score.OnComboChanged += HandleCombo;
     }
-    
+
+ 
+
     private void OnDisable()
     {
         Score.OnScoreChange -= PlayScoreSound;
         Block.OnBlockPlacement -= PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop -= PlayPop;
+        Score.OnComboChanged -= HandleCombo;
+    }   
+    private void HandleCombo(int combo)
+    {
+        if (combo >= 2 && !isInComboState)
+        {
+            isInComboState = true;
+            StopAllCoroutines();
+            StartCoroutine(CrossFade(musicManager, comboMusicManager));
+        }
+        else if (combo == 0 && isInComboState)
+        {
+            isInComboState = false;
+            StopAllCoroutines();
+            StartCoroutine(CrossFade(comboMusicManager, musicManager));
+        }
     }
     private void PlayPlacementSound(SFXSounds soundType)
     {
@@ -74,7 +157,7 @@ public class SoundManager : MonoBehaviour
         AudioClip clip = GetClipByName(clipName);
         if (clip != null)
         {
-            soundManager.PlayOneShot(clip);
+            sfxSoundManager.PlayOneShot(clip);
         }
     }
 

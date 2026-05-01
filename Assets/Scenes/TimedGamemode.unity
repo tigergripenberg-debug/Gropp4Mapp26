@@ -191,6 +191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuController
   settingsPanel: {fileID: 419717587106182169}
+  leaderBoardPanel: {fileID: 0}
 --- !u!4 &96373927
 Transform:
   m_ObjectHideFlags: 0
@@ -374,7 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   tilePrefab: {fileID: 3709587514387350726, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
   gameOverCanvas: {fileID: 1423074466}
-  score: {fileID: 0}
+  bubble: {fileID: 0}
   time: {fileID: 2129666103}
   soundManager: {fileID: 1765800403}
   gridtimerscript: {fileID: 1533618364}
@@ -1342,6 +1343,8 @@ MonoBehaviour:
   timeText: {fileID: 1348558199}
   hightimeText: {fileID: 40676217}
   time: 0
+  currentCombo: 0
+  blocksSinceLastClear: 0
 --- !u!1001 &419717587106182168
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1569,7 +1572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1476767069677289164, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
       propertyPath: m_Name
-      value: tutorialManager
+      value: TutorialManager
       objectReference: {fileID: 0}
     - target: {fileID: 1493836709492950060, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
       propertyPath: m_AnchorMax.y

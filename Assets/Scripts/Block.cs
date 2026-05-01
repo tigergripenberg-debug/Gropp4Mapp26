@@ -1,6 +1,7 @@
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class Block : MonoBehaviour
 {
@@ -8,17 +9,53 @@ public class Block : MonoBehaviour
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
     private Vector3 normalSize = new Vector3(1f, 1f, 1f);
+    [SerializeField] private Color[] possibleColors;
+    [SerializeField] SpriteRenderer[] tileSR;
+    //[SerializeField] GameObject tileBorder;
 
     void Start()
     {
+        tileSR = GetComponentsInChildren<SpriteRenderer>();
         startPosition = transform.position;
         transform.localScale = previewSize;
+        SetRandomColor();
+        SetAsActive();
+    }
+
+    private void SetRandomColor()
+    {
+        var blockColor = possibleColors[Random.Range(0, possibleColors.Length)];
+        foreach (SpriteRenderer sr in tileSR)
+        {
+            sr.color = blockColor;
+        }
+    }
+    IEnumerator SetRainbowColor()
+    {
+        while (true)
+        {
+            foreach (SpriteRenderer sr in tileSR)
+            {
+                sr.color = possibleColors[Random.Range(0, possibleColors.Length)];
+                
+            } 
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    private void SetAsActive()
+    {
+        foreach (SpriteRenderer sr in tileSR) sr.sortingLayerName = "Blocks";
+    }
+
+    private void SetAsPlaced()
+    {
+        foreach (SpriteRenderer sr in tileSR) sr.sortingLayerName = "PlacedBlocks";
     }
 
     void OnMouseDown()
     {
         if (MenuController.gameIsPaused) return;
-
         transform.localScale = normalSize;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
@@ -61,6 +98,7 @@ public class Block : MonoBehaviour
 
         if (isValid)
         {
+            SetAsPlaced();
             foreach (Transform child in transform)
             {
                 Vector2Int childPos = GridManager.Instance.WorldToGrid(child.position);
@@ -73,8 +111,14 @@ public class Block : MonoBehaviour
             }
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();
-            BlockSpawner.Instance.BlockPlaced();
-
+            if (SceneManager.GetActiveScene().name == "Tutorial")
+            {
+                TutorialBlockSpawner.Instance.BlockPlaced();
+            }
+            else
+            {
+                BlockSpawner.Instance.BlockPlaced();
+            }
         }
         else
         {
