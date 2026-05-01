@@ -159,7 +159,6 @@ public class GridManager : MonoBehaviour
     public bool CheckForMatches()
     {
         bool didClear = false;
-        bool bonusLine = false;
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
         for (int y = 0; y < height; y++)
