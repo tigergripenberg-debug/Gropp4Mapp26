@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,24 +21,39 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
     [SerializeField] private AudioClip[] wowSounds;
-    private AudioSource soundManager;
-    [SerializeField] private Slider volumeSlider;
+    [SerializeField] private AudioClip[] music;
+    private AudioSource sfxSoundManager, musicSoundManager;
+    [SerializeField] private Slider sfxVolumeSlider, musicVolumeSlider;
 
     private void Awake()
     {
         Instance = this;
-        soundManager = GetComponent<AudioSource>();
+        sfxSoundManager = GetComponent<AudioSource>();
+        musicSoundManager = GetComponent<AudioSource>();
     }
-    
 
-    public void SetVolume(float volume)
+    private void Start()
     {
-        soundManager.volume = volumeSlider.value;
+        musicSoundManager.Play();
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        musicSoundManager.volume = musicVolumeSlider.value;
+    }
+
+    public void SetMusicMute(bool mute)
+    {
+        musicSoundManager.mute = mute;
+    }
+    public void SetSFXVolume(float volume)
+    {
+        sfxSoundManager.volume = sfxVolumeSlider.value;
         PlayerPrefs.SetFloat("volume", volume);
     }
-    public void SetMute(bool mute)
+    public void SetSFXMute(bool mute)
     {
-        soundManager.mute = mute;
+        sfxSoundManager.mute = mute;
     }
     public void PlayPop(SFXSounds soundType)
     {
@@ -86,7 +102,7 @@ public class SoundManager : MonoBehaviour
         AudioClip clip = GetClipByName(clipName);
         if (clip != null)
         {
-            soundManager.PlayOneShot(clip);
+            sfxSoundManager.PlayOneShot(clip);
         }
     }
 

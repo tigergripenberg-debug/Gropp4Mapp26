@@ -1,7 +1,7 @@
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class Block : MonoBehaviour
 {
@@ -29,7 +29,18 @@ public class Block : MonoBehaviour
         {
             sr.color = blockColor;
         }
-        
+    }
+    IEnumerator SetRainbowColor()
+    {
+        while (true)
+        {
+            foreach (SpriteRenderer sr in tileSR)
+            {
+                sr.color = possibleColors[Random.Range(0, possibleColors.Length)];
+                
+            } 
+            yield return new WaitForSeconds(1f);
+        }
     }
 
     private void SetAsActive()
