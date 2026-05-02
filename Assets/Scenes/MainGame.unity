@@ -1335,6 +1335,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 642888739545730190, guid: bf7170e17f90359418646bca34a94b06, type: 3}
+      propertyPath: blockPrefab
+      value: 
+      objectReference: {fileID: 3709587514387350726, guid: 3a6dcb28ff1248f488e7198da5007087, type: 3}
+    - target: {fileID: 642888739545730190, guid: bf7170e17f90359418646bca34a94b06, type: 3}
       propertyPath: gridtimerscript
       value: 
       objectReference: {fileID: 2170316417285935242}
@@ -1468,11 +1472,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4523189626711089725, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4523189626711089725, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4787960101122979248, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_fontStyle

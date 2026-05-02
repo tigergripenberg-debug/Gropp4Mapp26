@@ -227,7 +227,7 @@ public class GridManager : MonoBehaviour
 
         StartCoroutine(ShowGameOverRoutine());
     }
-    private System.Collections.IEnumerator ShowGameOverRoutine()
+    private IEnumerator ShowGameOverRoutine()
     {
         yield return new WaitForSeconds(0.5f);
 
@@ -247,7 +247,7 @@ public class GridManager : MonoBehaviour
         foreach (Block b in allBlocks)
         {
             //Kollar alla blocken nere i spawnen för att se om de går att spela eller inte.
-            if (b.GetComponent<Collider2D>().enabled == true)
+            if (b.GetComponent<Collider2D>().enabled)
             {
                 waitingBlocksCount++;
                 if (CanBlockFit(b.gameObject))
@@ -329,7 +329,7 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
-    public bool CanBlockFit(GameObject blockPrefab)
+    public bool CanShapeFit(ShapeBehaviour shape)
     {
         for (int x = 0; x < width; x++)
         {

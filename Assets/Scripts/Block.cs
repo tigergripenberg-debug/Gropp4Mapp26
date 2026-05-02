@@ -11,7 +11,7 @@ public class Block : MonoBehaviour
     private Vector3 normalSize = new Vector3(1f, 1f, 1f);
     [SerializeField] private Color[] possibleColors;
     [SerializeField] SpriteRenderer[] tileSR;
-    //[SerializeField] GameObject tileBorder;
+    [SerializeField] private GameObject tilePrefab;
 
     void Start()
     {
