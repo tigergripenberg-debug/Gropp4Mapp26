@@ -1,7 +1,5 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
-
-
 public class ShapeBehaviour : MonoBehaviour
 {
     private Vector3 offset;
@@ -10,10 +8,11 @@ public class ShapeBehaviour : MonoBehaviour
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private SpriteRenderer[] childSR;
     public Color[] possibleColors;
+    public Shape ShapeData { get; private set;  }
     public static event System.Action<SFXSounds> OnBlockPlacement;
-    
-    public void Initialize(Color[] colors)
+    public void Initialize(Shape shape, Color[] colors)
     {
+        ShapeData = shape;
         possibleColors = colors;
         childSR = GetComponentsInChildren<SpriteRenderer>();
         SetRandomColor();
@@ -21,7 +20,6 @@ public class ShapeBehaviour : MonoBehaviour
         startPosition = transform.position;
         transform.localScale = previewScale;
     }
-    
     public void FitColliderToShape()
     {
         BoxCollider2D col = GetComponent<BoxCollider2D>();
@@ -32,10 +30,8 @@ public class ShapeBehaviour : MonoBehaviour
         foreach (Transform child in transform)
         {
             Vector3 pos = child.localPosition;
-
             if (pos.x < min.x) min.x = pos.x;
             if (pos.y < min.y) min.y = pos.y;
-
             if (pos.x > max.x) max.x = pos.x;
             if (pos.y > max.y) max.y = pos.y;
         }
@@ -43,7 +39,6 @@ public class ShapeBehaviour : MonoBehaviour
         col.size = size + new Vector2(2f,2f); // small padding (important)
         col.offset = (min + max) / 2f;
     }
-    
     private void SetRandomColor()
     {
         var blockColor = possibleColors[Random.Range(0, possibleColors.Length)];
@@ -52,7 +47,14 @@ public class ShapeBehaviour : MonoBehaviour
             sr.color = blockColor;
         }
     }
-    
+    private Vector3 GetSnappedPosition()
+    {
+        Transform reference = transform.GetChild(0);
+        Vector2Int gridPos = GridManager.Instance.WorldToGrid(reference.position);
+        Vector2 snappedWorld = GridManager.Instance.GetWorldPosition(gridPos.x, gridPos.y);
+        Vector3 offset = transform.position - reference.position;
+        return new Vector3(snappedWorld.x, snappedWorld.y, 0) + offset;
+    }
     private void OnMouseDown()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -60,68 +62,34 @@ public class ShapeBehaviour : MonoBehaviour
         offset = transform.position - mouseWorld;
         transform.localScale = normalScale;
     }
-
     private void OnMouseDrag()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
         transform.position = mouseWorld + offset;
     }
-    
     void OnMouseUp()
     {
-        Vector2Int snappedGrid = GridManager.Instance.WorldToGrid(transform.position);
-        Vector2 snappedWorld = GridManager.Instance.GetWorldPosition(snappedGrid.x, snappedGrid.y);
-        transform.position = new Vector3(snappedWorld.x, snappedWorld.y, 0f);
-        bool isValid = true;
-        foreach (Transform child in transform)
+        transform.position = GetSnappedPosition();
+        if (GridManager.Instance.CanShapeFit(this))
         {
-            Vector2Int childPos = GridManager.Instance.WorldToGrid(child.position);
-            int childX = childPos.x;
-            int childY = childPos.y;
-            if (childX < 0 || childX >= 8 || childY < 0 || childY >= 8)
-            {
-                isValid = false;
-                break;
-            }
-            if (GridManager.Instance.gridLogic[childX, childY] == 1)
-            {
-                isValid = false;
-                break;
-            }
-        }
-
-        if (isValid)
-        {
-            SetAsPlaced();
-            foreach (Transform child in transform)
-            {
-                Vector2Int childPos = GridManager.Instance.WorldToGrid(child.position);
-                int childX = childPos.x;
-                int childY = childPos.y;
-                GridManager.Instance.gridLogic[childX, childY] = 1;
-                GridManager.Instance.visualGrid[childX, childY] = child;
-                child.name = $"Block X:{childX} Y:{childY}";
-                OnBlockPlacement?.Invoke(SFXSounds.placement_sound);
-            }
+            GridManager.Instance.PlaceShape(this);
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();
             BlockSpawner.Instance.BlockPlaced();
-            GridManager.Instance.CheckIfPlayable();
+            SetAsPlaced();
         }
         else
         {
-            SetAsActive();
             transform.position = startPosition;
             transform.localScale = previewScale;
+            SetAsActive();
         }
     }
-
     private void SetAsActive()
     {
         foreach (var sr in childSR) sr.sortingLayerName = "Blocks";
     }
-
     private void SetAsPlaced()
     {
         foreach (var sr in childSR) sr.sortingLayerName = "PlacedBlocks";

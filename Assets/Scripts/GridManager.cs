@@ -240,17 +240,17 @@ public class GridManager : MonoBehaviour
     public void CheckIfPlayable()
     {
         //Kollar alla pusselbitar i spelet.
-        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
+        ShapeBehaviour[] allShapes = FindObjectsByType<ShapeBehaviour>(FindObjectsSortMode.None);
         bool canPlayAnything = false;
         int waitingBlocksCount = 0;
 
-        foreach (Block b in allBlocks)
+        foreach (ShapeBehaviour shape  in allShapes)
         {
             //Kollar alla blocken nere i spawnen för att se om de går att spela eller inte.
-            if (b.GetComponent<Collider2D>().enabled)
+            if (shape.GetComponent<Collider2D>().enabled)
             {
                 waitingBlocksCount++;
-                if (CanBlockFit(b.gameObject))
+                if (CanShapeFitAnywhere(shape))
                 {
                     canPlayAnything = true;
                     break;
@@ -263,6 +263,46 @@ public class GridManager : MonoBehaviour
             TriggerGameOver();
         }
     }
+    public bool CanShapeFitAnywhere(ShapeBehaviour shapeBehaviour)
+    {
+        Shape shape = shapeBehaviour.ShapeData;
+        
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (CanPlaceShapeAtPosition(shape, x, y))
+                    return true;
+            }
+        }
+        return false;
+    }
+    bool CanPlaceShapeAtPosition(Shape shape, int originX, int originY)
+    {
+        foreach (var cell in shape.cells)
+        {
+            int x = originX + cell.x;
+            int y = originY + cell.y;
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                return false;
+
+            if (gridLogic[x, y] == 1)
+                return false;
+        }
+        return true;
+    }
+    
+    public void PlaceShape(ShapeBehaviour shape)
+    {
+        foreach (Transform child in shape.transform)
+        {
+            Vector2Int gridPos = WorldToGrid(child.position);
+            int x = gridPos.x;
+            int y = gridPos.y;
+            gridLogic[x, y] = 1;
+            visualGrid[x, y] = child;
+        }
+    }
 
     public void MoveGrid()
     {
@@ -271,41 +311,32 @@ public class GridManager : MonoBehaviour
             TriggerGameOver();
             return;
         }
-
-        // Destroy bottom row (y = 0)
         for (int x = 0; x < width; x++)
         {
             if (visualGrid[x, 0] != null)
             {
                 Destroy(visualGrid[x, 0].gameObject);
             }
-
             visualGrid[x, 0] = null;
             gridLogic[x, 0] = 0;
         }
-
-        // Move everything DOWN
         for (int y = 0; y < height - 1; y++)
         {
             for (int x = 0; x < width; x++)
             {
                 visualGrid[x, y] = visualGrid[x, y + 1];
                 gridLogic[x, y] = gridLogic[x, y + 1];
-
                 if (visualGrid[x, y] != null)
                 {
                     visualGrid[x, y].position = GetWorldPosition(x, y);
                 }
             }
         }
-
-        // Clear TOP row (now empty)
         for (int x = 0; x < width; x++)
         {
             visualGrid[x, height - 1] = null;
             gridLogic[x, height - 1] = 0;
         }
-
         GenerateNewRow();
     }
 
@@ -331,32 +362,17 @@ public class GridManager : MonoBehaviour
 
     public bool CanShapeFit(ShapeBehaviour shape)
     {
-        for (int x = 0; x < width; x++)
+        foreach (Transform child in shape.transform)
         {
-            for (int y = 0; y < height; y++)
-            {
-                bool fitsHere = true;
-
-                foreach (Transform child in blockPrefab.transform)
-                {
-                    int testX = x + Mathf.RoundToInt(child.localPosition.x);
-                    int testY = y + Mathf.RoundToInt(child.localPosition.y);
-
-                    if (testX < 0 || testX >= width || testY < 0 || testY >= height || gridLogic[testX, testY] == 1)
-                    {
-                        fitsHere = false;
-                        break;
-                    }
-                }
-
-                if (fitsHere)
-                {
-                    return true;
-                }
-            }
+            Vector2Int gridPos = WorldToGrid(child.position);
+            int x = gridPos.x;
+            int y = gridPos.y;
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                return false;
+            if (gridLogic[x, y] == 1)
+                return false;
         }
-
-        return false;
+        return true;
     }
 
     private bool ClearRow(int y)
