@@ -53,7 +53,7 @@ public class BlockSpawner : MonoBehaviour
                 GameObject block = Instantiate(blockPrefab, shapeGO.transform);
                 block.transform.localPosition = localPos;
             }
-            SH.Initialize(shape, blockColors);
+            SH.Initialize(shape, blockColors, blockPrefab);
             SH.FitColliderToShape();
         }
     }

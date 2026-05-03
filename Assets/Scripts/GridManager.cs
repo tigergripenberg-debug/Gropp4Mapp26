@@ -277,7 +277,7 @@ public class GridManager : MonoBehaviour
         }
         return false;
     }
-    bool CanPlaceShapeAtPosition(Shape shape, int originX, int originY)
+    public bool CanPlaceShapeAtPosition(Shape shape, int originX, int originY)
     {
         foreach (var cell in shape.cells)
         {

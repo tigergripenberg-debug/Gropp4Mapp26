@@ -50,6 +50,7 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
   - {r: 0.4117647, g: 0.4117647, b: 0.4117647, a: 1}
+  blockPrefab: {fileID: 3007790078228690655, guid: c938d0af5e804b648bc7bea92c58f630, type: 3}
 --- !u!61 &7410826126823671881
 BoxCollider2D:
   m_ObjectHideFlags: 0
