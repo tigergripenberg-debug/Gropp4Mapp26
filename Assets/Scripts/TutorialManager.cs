@@ -59,7 +59,7 @@ public class TutorialManager : MonoBehaviour
     }
 
 
-    private void ShowTutorial()
+    public void ShowTutorial()
     {
         if (tutorialPanel.activeInHierarchy)
         {
