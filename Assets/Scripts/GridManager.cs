@@ -292,15 +292,24 @@ public class GridManager : MonoBehaviour
         return true;
     }
     
-    public void PlaceShape(ShapeBehaviour shape)
+    public void PlaceShape(ShapeBehaviour shapeBehaviour)
     {
-        foreach (Transform child in shape.transform)
+        Shape shape = shapeBehaviour.ShapeData;
+        Vector2Int origin = WorldToGrid(shapeBehaviour.transform.position);
+        foreach (var cell in shape.cells)
         {
-            Vector2Int gridPos = WorldToGrid(child.position);
-            int x = gridPos.x;
-            int y = gridPos.y;
+            int x = origin.x + cell.x;
+            int y = origin.y + cell.y;
             gridLogic[x, y] = 1;
-            visualGrid[x, y] = child;
+            foreach (Transform child in shapeBehaviour.transform)
+            {
+                Vector2Int childPos = WorldToGrid(child.position);
+                if (childPos.x == x && childPos.y == y)
+                {
+                    visualGrid[x, y] = child;
+                    break;
+                }
+            }
         }
     }
 
@@ -360,19 +369,10 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
-    public bool CanShapeFit(ShapeBehaviour shape)
+    public bool CanShapeFit(ShapeBehaviour shapeBehaviour)
     {
-        foreach (Transform child in shape.transform)
-        {
-            Vector2Int gridPos = WorldToGrid(child.position);
-            int x = gridPos.x;
-            int y = gridPos.y;
-            if (x < 0 || x >= width || y < 0 || y >= height)
-                return false;
-            if (gridLogic[x, y] == 1)
-                return false;
-        }
-        return true;
+        Vector2Int origin = WorldToGrid(shapeBehaviour.transform.position);
+        return CanPlaceShapeAtPosition(shapeBehaviour.ShapeData, origin.x, origin.y);
     }
 
     private bool ClearRow(int y)

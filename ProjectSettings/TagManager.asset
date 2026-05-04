@@ -52,6 +52,9 @@ TagManager:
   - name: PlacedBlocks
     uniqueID: 3029998835
     locked: 0
+  - name: Ghost
+    uniqueID: 2241832735
+    locked: 0
   - name: Blocks
     uniqueID: 2417594215
     locked: 0

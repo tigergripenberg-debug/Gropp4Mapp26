@@ -46,11 +46,11 @@ public class BlockSpawner : MonoBehaviour
             var SH = shapeGO.AddComponent<ShapeBehaviour>();
             shapeGO.AddComponent<BoxCollider2D>();
             shapeGO.transform.position = spawnPoints[i].position;
-            Vector2 center = shape.GetCenter();
+            Vector2Int origin = shape.GetOriginCell();
             foreach (var cell in shape.cells)
-            {
-                Vector3 localPos = new Vector3(cell.x - center.x, cell.y - center.y, 0f);
+            { 
                 GameObject block = Instantiate(blockPrefab, shapeGO.transform);
+                Vector3 localPos = new Vector3(cell.x - origin.x, cell.y - origin.y, 0f);
                 block.transform.localPosition = localPos;
             }
             SH.Initialize(shape, blockColors, blockPrefab);

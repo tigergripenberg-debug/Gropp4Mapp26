@@ -24,4 +24,19 @@ public class Shape
         }
         return (min + max) / 2f;
     }
+    public Vector2Int GetOriginCell()
+    {
+        Vector2Int best = cells[0];
+
+        foreach (var cell in cells)
+        {
+            // bottom-left most cell
+            if (cell.y < best.y || (cell.y == best.y && cell.x < best.x))
+            {
+                best = cell;
+            }
+        }
+
+        return best;
+    }
 }
