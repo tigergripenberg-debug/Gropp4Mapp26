@@ -308,7 +308,7 @@ public class GridManager : MonoBehaviour
 
                 if (visualGrid[x, y] != null)
                 {
-                    visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 0.2f).SetEase(Ease.InOutSine);
+                    visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 1f).SetEase(Ease.InOutElastic);
                 }
             }
         }
