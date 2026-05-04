@@ -451,7 +451,7 @@ public class GridManager : MonoBehaviour
     }
     private async Task<bool> AnimateBlockDown(Transform block, Vector3 targetPos)
     {
-        float duration = 0.05f; // Seconds to animate
+        float duration = 0.07f; // Seconds to animate
         float elapsed = 0f;
         Vector3 startPos = block.position;
 
