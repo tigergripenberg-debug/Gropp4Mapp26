@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06bdf9e5c64635a4aa561f6da9772800, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  grabOffset: {x: 1, y: 1}
+  currentGridPosition: {x: 0, y: 0}
   possibleColors:
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}

@@ -1,13 +1,15 @@
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Random = UnityEngine.Random;
+
 public class ShapeBehaviour : MonoBehaviour
 {
     Vector2Int grabOffset, currentGridPosition;
+    private Vector3 dragOffset = new Vector3(0f,1f,0f);
     private Vector3 startPosition;
     private Vector3 previewScale = new Vector3(0.6f, 0.6f, 1f);
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private SpriteRenderer[] childSR;
+    private Color shapeColor;
     public Color[] possibleColors; // colors are set inside of blockspawner
     public Shape ShapeData { get; private set;  }
     private GameObject ghost;
@@ -45,10 +47,10 @@ public class ShapeBehaviour : MonoBehaviour
     }
     private void SetRandomColor()
     {
-        var blockColor = possibleColors[Random.Range(0, possibleColors.Length)];
+        shapeColor = possibleColors[Random.Range(0, possibleColors.Length)];
         foreach (SpriteRenderer sr in childSR)
         {
-            sr.color = blockColor;
+            sr.color = shapeColor;
         }
     }
 
@@ -72,23 +74,33 @@ public class ShapeBehaviour : MonoBehaviour
             GameObject block = Instantiate(blockPrefab, ghost.transform);
             block.transform.localPosition = new Vector3(cell.x - origin.x, cell.y - origin.y, 0f);
             var sr = block.GetComponent<SpriteRenderer>();
-            sr.color = new Color(1f, 1f, 1f, 0.5f);
+            sr.color = new Color(shapeColor.r,shapeColor.g,shapeColor.b,0.5f);
             sr.sortingLayerName = "Ghost";
         }
-        
     }
-
+    
+    private void UpdateGhostVisibility()
+    {
+        Vector2Int origin = ShapeData.GetOriginCell();
+        int i = 0;
+        foreach (Vector2Int cell in ShapeData.cells)
+        {
+            Transform block = ghost.transform.GetChild(i);
+            int x = currentGridPosition.x + (cell.x - origin.x);
+            int y = currentGridPosition.y + (cell.y - origin.y);
+            bool insideGrid = GridManager.Instance.IsInsideGrid(x, y);
+            block.gameObject.SetActive(insideGrid);
+            i++;
+        }
+    }
+    
     private void OnMouseDrag()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
-        Vector2Int mouseGrid = GridManager.Instance.WorldToGrid(mouseWorld);
-        currentGridPosition = mouseGrid + grabOffset;
-        Vector2 world = GridManager.Instance.GetWorldPosition(
-            currentGridPosition.x,
-            currentGridPosition.y
-        );
-        transform.position = new Vector3(world.x, world.y, 0f);
+        transform.position = mouseWorld + dragOffset;
+        Vector3 pieceWorld = transform.position;
+        currentGridPosition = GridManager.Instance.WorldToGrid(pieceWorld);
         UpdateGhost();
     }
 
@@ -105,33 +117,37 @@ public class ShapeBehaviour : MonoBehaviour
             currentGridPosition.y
         );
         SetGhostColor(valid);
+        UpdateGhostVisibility();
     }
     
     private void SetGhostColor(bool valid)
     {
-        Color color = valid ? Color.green : Color.red;
-        color.a = 0.5f;
         foreach (Transform child in ghost.transform)
         {
-            child.GetComponent<SpriteRenderer>().color = color;
+            SpriteRenderer sr = child.GetComponent<SpriteRenderer>();
+            Color c = sr.color;
+            c.a = valid ? 0.5f : 0f;
+            sr.color = c;
         }
     }
     void OnMouseUp()
     {
-        Destroy(ghost);
-
-        Vector2 world = GridManager.Instance.GetWorldPosition(
+        if (ghost != null)
+        {
+            Destroy(ghost);
+        }
+        bool valid = GridManager.Instance.CanPlaceShapeAtPosition(
+            ShapeData,
             currentGridPosition.x,
             currentGridPosition.y
         );
-
-        transform.position = new Vector3(world.x, world.y, 0f);
-
-        if (GridManager.Instance.CanPlaceShapeAtPosition(
-                ShapeData,
-                currentGridPosition.x,
-                currentGridPosition.y))
+        if (valid)
         {
+            Vector2 world = GridManager.Instance.GetWorldPosition(
+                currentGridPosition.x,
+                currentGridPosition.y
+            );
+            transform.position = new Vector3(world.x, world.y, 0f);
             GridManager.Instance.PlaceShape(this);
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();

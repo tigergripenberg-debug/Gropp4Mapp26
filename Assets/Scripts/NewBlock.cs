@@ -3,6 +3,7 @@ using UnityEngine;
 public class NewBlock : MonoBehaviour
 {
     private SpriteRenderer sr;
+    public Shape ShapeData { get; private set; }
 
     void Awake()
     {

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,8 +16,7 @@ public class GridManager : MonoBehaviour
     private bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
-    [SerializeField] private gridtimerscript gridtimerscript;
-
+    
     void Awake()
     {
         Instance = this;
@@ -119,8 +117,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = true;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
 
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
@@ -130,8 +128,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = false;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.freeze(false);
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.freeze(false);
+            GridTimerScript.Instance.resetValue();
 
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
@@ -150,7 +148,7 @@ public class GridManager : MonoBehaviour
             Debug.Log("GRID PUSH!");
             MoveGrid();
             turnsSinceClear = 0;
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.resetValue();
         }
     }
 
@@ -198,8 +196,8 @@ public class GridManager : MonoBehaviour
         {
             linesClearedThisRound = true;
 
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
 
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
@@ -222,14 +220,10 @@ public class GridManager : MonoBehaviour
                 }
                 if (!isBoardEmpty) break;
             }
-
             if (Timer.Instance != null) Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
-
             if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
-
-
         }
-        if (Score.Instance != null) Score.Instance.EvaluateComboState();
+        if (Score.Instance != null) Score.Instance.RegisterTurnResult(didClear);
 
         return didClear;
     }
@@ -237,35 +231,64 @@ public class GridManager : MonoBehaviour
     public void TriggerGameOver()
     {
         Debug.Log("Game Over");
-
         MenuController.gameIsPaused = true;
-
         StartCoroutine(ShowGameOverRoutine());
     }
-    private System.Collections.IEnumerator ShowGameOverRoutine()
+    private IEnumerator ShowGameOverRoutine()
     {
         yield return new WaitForSeconds(0.5f);
-
         if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
         }
     }
 
+    public bool CanPlaceShapeAtPosition(Shape shape, int originX, int originY)
+    {
+        Vector2Int origin = shape.GetOriginCell();
+        foreach (Vector2Int cell in shape.cells)
+        {
+            int x = originX + (cell.x - origin.x);
+            int y = originY + (cell.y - origin.y);
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                return false;
+            if (gridLogic[x, y] == 1)
+                return false;
+        }
+        return true;
+    }
+    
+    public void PlaceShape(ShapeBehaviour shapeBehaviour)
+    {
+        Shape shape = shapeBehaviour.ShapeData;
+        Vector2Int origin = shape.GetOriginCell();
+        Vector2Int gridPos = WorldToGrid(shapeBehaviour.transform.position);
+        int i = 0;
+        foreach (Vector2Int cell in shape.cells)
+        {
+            int x = gridPos.x + (cell.x - origin.x);
+            int y = gridPos.y + (cell.y - origin.y);
+            Transform child = shapeBehaviour.transform.GetChild(i);
+            gridLogic[x, y] = 1;
+            visualGrid[x, y] = child;
+            i++;
+        }
+    }
+    
     public void CheckIfPlayable()
     {
         //Kollar alla pusselbitar i spelet.
-        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
+        ShapeBehaviour[] allBlocks = FindObjectsByType<ShapeBehaviour>(FindObjectsSortMode.None);
         bool canPlayAnything = false;
         int waitingBlocksCount = 0;
 
-        foreach (Block b in allBlocks)
+        foreach (ShapeBehaviour b in allBlocks)
         {
             //Kollar alla blocken nere i spawnen för att se om de går att spela eller inte.
             if (b.GetComponent<Collider2D>().enabled == true)
             {
                 waitingBlocksCount++;
-                if (CanBlockFit(b.gameObject))
+                if (CanShapeFit(b.ShapeData))
                 {
                     canPlayAnything = true;
                     break;
@@ -281,13 +304,11 @@ public class GridManager : MonoBehaviour
 
     public void MoveGrid()
     {
-        if (IsGameOver())
+        if (WouldPushCauseGameOver())
         {
             TriggerGameOver();
             return;
         }
-
-        // Destroy bottom row (y = 0)
         for (int x = 0; x < width; x++)
         {
             if (visualGrid[x, 0] != null)
@@ -298,42 +319,53 @@ public class GridManager : MonoBehaviour
             visualGrid[x, 0] = null;
             gridLogic[x, 0] = 0;
         }
-
         List<Task> moveTasks = new List<Task>();
-
-        // Move everything DOWN
-        for (int y = 0; y < height - 1; y++)
+        for (int y = 1; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                visualGrid[x, y] = visualGrid[x, y + 1];
-                gridLogic[x, y] = gridLogic[x, y + 1];
+                visualGrid[x, y - 1] = visualGrid[x, y];
+                gridLogic[x, y - 1] = gridLogic[x, y];
 
-                if (visualGrid[x, y] != null)
+                if (visualGrid[x, y - 1] != null)
                 {
-                    Vector3 targetPosition = GetWorldPosition(x, y);
-                    // Start the task and add it to our list
-                    moveTasks.Add(AnimateBlockDown(visualGrid[x, y], targetPosition));
+                    Vector3 targetPosition = GetWorldPosition(x, y - 1);
+                    moveTasks.Add(AnimateBlockDown(visualGrid[x, y - 1], targetPosition));
                 }
             }
         }
-
-        // Clear TOP row (now empty)
         for (int x = 0; x < width; x++)
         {
             visualGrid[x, height - 1] = null;
             gridLogic[x, height - 1] = 0;
-        }
-
+        }   
         GenerateNewRow();
+    }
+
+    bool WouldPushCauseGameOver()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            if (visualGrid[x, 0] != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public bool IsInsideGrid(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 
     void GenerateNewRow()
     {
         for (int x = 0; x < width; x++)
         {
-            Debug.Log("Generating new row");
-            visualGrid[x, height - 1] = null;
+            GameObject newBlock = Instantiate(tilePrefab);
+            newBlock.transform.position = GetWorldPosition(x, height - 1);
+            visualGrid[x, height - 1] = newBlock.transform;
             gridLogic[x, height - 1] = 0;
         }
     }
@@ -344,37 +376,32 @@ public class GridManager : MonoBehaviour
             if (visualGrid[x, 0] != null)
                 return true;
         }
-
         return false;
     }
 
-    public bool CanBlockFit(GameObject blockPrefab)
+    public bool CanShapeFit(Shape shape) 
     {
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 bool fitsHere = true;
-
-                foreach (Transform child in blockPrefab.transform)
+                foreach (var cell in shape.cells)
                 {
-                    int testX = x + Mathf.RoundToInt(child.localPosition.x);
-                    int testY = y + Mathf.RoundToInt(child.localPosition.y);
-
+                    int testX = x + Mathf.RoundToInt(cell.x);
+                    int testY = y + Mathf.RoundToInt(cell.y);
                     if (testX < 0 || testX >= width || testY < 0 || testY >= height || gridLogic[testX, testY] == 1)
                     {
                         fitsHere = false;
                         break;
                     }
                 }
-
                 if (fitsHere)
                 {
                     return true;
                 }
             }
         }
-
         return false;
     }
 

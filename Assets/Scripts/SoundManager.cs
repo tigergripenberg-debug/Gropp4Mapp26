@@ -25,6 +25,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip music, comboMusic;
     [SerializeField] private AudioSource sfxSoundManager, musicManager, comboMusicManager;
     [SerializeField] private Slider sfxVolumeSlider, musicVolumeSlider;
+    private float currentVolume;
     private float fadeDuration = 1f;
     private bool isInComboState = false;
 
@@ -57,24 +58,27 @@ public class SoundManager : MonoBehaviour
         {
             to.Play();
         }
+        float fromStart = from.volume;
+        float toTarget = to.volume;
         while (time < fadeDuration)
         {
             time += Time.deltaTime;
             float t = time / fadeDuration;
-            from.volume = Mathf.Lerp(1f, 0f, t);
-            to.volume = Mathf.Lerp(0f, 1f, t);
+            from.volume = Mathf.Lerp(fromStart, 0f, t);
+            to.volume = Mathf.Lerp(0f, toTarget, t);
             yield return null;
         }
         from.volume = 0f;
-        to.volume = 1f;
+        to.volume = toTarget;
         from.Stop();
     }
     
 
     public void SetMusicVolume(float volume)
     {
-        musicManager.volume = musicVolumeSlider.value;
-        comboMusicManager.volume = musicVolumeSlider.value;
+        currentVolume = volume;
+        musicManager.volume = volume;
+        comboMusicManager.volume = volume;
     }
 
     public void SetMusicMute(bool mute)
@@ -99,17 +103,15 @@ public class SoundManager : MonoBehaviour
     private void OnEnable()
     {
         Score.OnScoreChange += PlayScoreSound;
-        Block.OnBlockPlacement += PlayPlacementSound;
+        ShapeBehaviour.OnBlockPlacement += PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop += PlayPop;
         Score.OnComboChanged += HandleCombo;
     }
 
- 
-
     private void OnDisable()
     {
         Score.OnScoreChange -= PlayScoreSound;
-        Block.OnBlockPlacement -= PlayPlacementSound;
+        ShapeBehaviour.OnBlockPlacement -= PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop -= PlayPop;
         Score.OnComboChanged -= HandleCombo;
     }   

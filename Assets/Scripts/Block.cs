@@ -36,7 +36,7 @@ public class Block : MonoBehaviour
         transform.position = new Vector3(mousePos.x + touchOffset.x, mousePos.y + touchOffset.y + 2f, -1f);
     }
 
-    public static event System.Action<SFXSounds> OnBlockPlacement;
+    //public static event System.Action<SFXSounds> OnBlockPlacement;
 
     void OnMouseUp()
     {
@@ -72,7 +72,7 @@ public class Block : MonoBehaviour
                 GridManager.Instance.gridLogic[childX, childY] = 1;
                 GridManager.Instance.visualGrid[childX, childY] = child;
                 child.name = $"Block X:{childX} Y:{childY}";
-                OnBlockPlacement?.Invoke(SFXSounds.placement_sound);
+                //OnBlockPlacement?.Invoke(SFXSounds.placement_sound);
             }
             IsPlaced = true;
             GetComponent<Collider2D>().enabled = false;
