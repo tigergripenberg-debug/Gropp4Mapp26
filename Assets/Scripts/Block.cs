@@ -1,9 +1,9 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class Block : MonoBehaviour
 {
+    public bool IsPickedUp { get; private set; } = false;
+    public bool IsPlaced { get; private set; } = false;
     private Vector3 startPosition;
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
@@ -17,6 +17,8 @@ public class Block : MonoBehaviour
 
     void OnMouseDown()
     {
+        IsPickedUp = true;
+
         if (MenuController.gameIsPaused) return;
 
         transform.localScale = normalSize;
@@ -33,11 +35,12 @@ public class Block : MonoBehaviour
         mousePos.z = 0;
         transform.position = new Vector3(mousePos.x + touchOffset.x, mousePos.y + touchOffset.y + 2f, -1f);
     }
-    
+
     public static event System.Action<SFXSounds> OnBlockPlacement;
 
     void OnMouseUp()
     {
+        IsPickedUp = false;
         Vector2Int snappedGrid = GridManager.Instance.WorldToGrid(transform.position);
         Vector2 snappedWorld = GridManager.Instance.GetWorldPosition(snappedGrid.x, snappedGrid.y);
         transform.position = new Vector3(snappedWorld.x, snappedWorld.y, 0f);
@@ -71,6 +74,7 @@ public class Block : MonoBehaviour
                 child.name = $"Block X:{childX} Y:{childY}";
                 OnBlockPlacement?.Invoke(SFXSounds.placement_sound);
             }
+            IsPlaced = true;
             GetComponent<Collider2D>().enabled = false;
             GridManager.Instance.CheckForMatches();
             BlockSpawner.Instance.BlockPlaced();
