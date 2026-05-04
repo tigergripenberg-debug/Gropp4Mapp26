@@ -16,7 +16,6 @@ public class GridManager : MonoBehaviour
     private bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
-    [SerializeField] private gridtimerscript gridtimerscript;
 
     void Awake()
     {
@@ -118,8 +117,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = true;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
 
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
@@ -129,8 +128,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = false;
             turnsSinceClear = 0;
 
-            gridtimerscript.instance.freeze(false);
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.freeze(false);
+            GridTimerScript.Instance.resetValue();
 
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
@@ -149,7 +148,7 @@ public class GridManager : MonoBehaviour
             Debug.Log("GRID PUSH!");
             MoveGrid();
             turnsSinceClear = 0;
-            gridtimerscript.instance.resetValue();
+            GridTimerScript.Instance.resetValue();
         }
     }
 
@@ -197,8 +196,8 @@ public class GridManager : MonoBehaviour
         {
             linesClearedThisRound = true;
 
-            gridtimerscript.instance.resetValue();
-            gridtimerscript.instance.freeze(true);
+            GridTimerScript.Instance.resetValue();
+            GridTimerScript.Instance.freeze(true);
 
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
@@ -228,7 +227,7 @@ public class GridManager : MonoBehaviour
 
 
         }
-        if (Score.Instance != null) Score.Instance.EvaluateComboState();
+        if (Score.Instance != null) Score.Instance.RegisterTurnResult(didClear);
 
         return didClear;
     }
@@ -253,30 +252,31 @@ public class GridManager : MonoBehaviour
 
     public void CheckIfPlayable()
     {
-        //Kollar alla pusselbitar i spelet.
-        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
-        bool canPlayAnything = false;
-        int waitingBlocksCount = 0;
-
-        foreach (Block b in allBlocks)
+        ShapeBehaviour[] allBlocks = FindObjectsByType<ShapeBehaviour>(FindObjectsSortMode.None);
+        foreach (ShapeBehaviour b in allBlocks)
         {
-            //Kollar alla blocken nere i spawnen för att se om de går att spela eller inte.
-            if (b.GetComponent<Collider2D>().enabled == true)
+            if (!b.GetComponent<Collider2D>().enabled)
+                continue;
+            if (CanFitAnywhere(b.ShapeData))
+                return;
+        }
+        TriggerGameOver();
+    }
+    
+    public bool CanFitAnywhere(Shape shape)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
             {
-                waitingBlocksCount++;
-                if (CanBlockFit(b.gameObject))
-                {
-                    canPlayAnything = true;
-                    break;
-                }
+                if (CanPlaceShapeAtPosition(shape, new Vector2Int(x, y)))
+                    return true;
             }
         }
-        //Om det finns block kvar eller inte men de inte går att spela så triggas game over.
-        if (waitingBlocksCount > 0 && canPlayAnything == false)
-        {
-            TriggerGameOver();
-        }
+        return false;
     }
+    
+    
 
     public void MoveGrid()
     {
@@ -285,20 +285,15 @@ public class GridManager : MonoBehaviour
             TriggerGameOver();
             return;
         }
-
-        // Destroy bottom row (y = 0)
         for (int x = 0; x < width; x++)
         {
             if (visualGrid[x, 0] != null)
             {
                 Destroy(visualGrid[x, 0].gameObject);
             }
-
             visualGrid[x, 0] = null;
             gridLogic[x, 0] = 0;
         }
-
-        // Move everything DOWN
         for (int y = 0; y < height - 1; y++)
         {
             for (int x = 0; x < width; x++)
@@ -312,14 +307,11 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-
-        // Clear TOP row (now empty)
         for (int x = 0; x < width; x++)
         {
             visualGrid[x, height - 1] = null;
             gridLogic[x, height - 1] = 0;
         }
-
         GenerateNewRow();
     }
 
@@ -339,37 +331,33 @@ public class GridManager : MonoBehaviour
             if (visualGrid[x, 0] != null)
                 return true;
         }
-
         return false;
     }
 
-    public bool CanBlockFit(GameObject blockPrefab)
+    public bool CanBlockFit(Shape shape)
     {
+        Vector2Int origin = shape.GetOriginCell();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 bool fitsHere = true;
-
-                foreach (Transform child in blockPrefab.transform)
+                foreach (Vector2Int cell in shape.cells)
                 {
-                    int testX = x + Mathf.RoundToInt(child.localPosition.x);
-                    int testY = y + Mathf.RoundToInt(child.localPosition.y);
-
+                    int testX = x + (origin.x);
+                    int testY = y + (origin.y);
                     if (testX < 0 || testX >= width || testY < 0 || testY >= height || gridLogic[testX, testY] == 1)
                     {
                         fitsHere = false;
                         break;
                     }
                 }
-
                 if (fitsHere)
                 {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
@@ -383,50 +371,117 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator ClearRowCoroutine(int y)
     {
-        List<GameObject> blocksToDestroy = new List<GameObject>();
+        List<Transform> blocksToDestroy = new List<Transform>();
 
         for (int x = 0; x < width; x++)
         {
-            gridLogic[x, y] = 0;
             if (visualGrid[x, y] != null)
             {
-                blocksToDestroy.Add(visualGrid[x, y].gameObject);
+                blocksToDestroy.Add(visualGrid[x, y]);
                 visualGrid[x, y] = null;
             }
+            gridLogic[x, y] = 0;
         }
-        foreach (GameObject block in blocksToDestroy)
+        foreach (Transform block in blocksToDestroy)
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
-            Destroy(block);
+            Destroy(block.gameObject);
             yield return new WaitForSeconds(0.1f);
         }
     }
 
     private IEnumerator ClearColCoroutine(int x)
     {
-        List<GameObject> blocksToDestroy = new List<GameObject>();
+        List<Transform> blocksToDestroy = new List<Transform>();
 
         for (int y = 0; y < height; y++)
         {
-            gridLogic[x, y] = 0;
             if (visualGrid[x, y] != null)
             {
-                blocksToDestroy.Add(visualGrid[x, y].gameObject);
+                blocksToDestroy.Add(visualGrid[x, y]);
                 visualGrid[x, y] = null;
             }
+            gridLogic[x, y] = 0;
         }
-        foreach (GameObject block in blocksToDestroy)
+        foreach (Transform block in blocksToDestroy)
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
-            Destroy(block);
+            Destroy(block.gameObject);
             yield return new WaitForSeconds(0.1f);
         }
     }
 
+    /*public bool CanPlaceShapeAtPosition(Shape shape, int gridX, int gridY)
+    {
+        foreach (Vector2Int cell in shape.cells)
+        {
+            int x = gridX + cell.x;
+            int y = gridY + cell.y;
+            if (!IsInsideGrid(x, y))
+                return false;
+            if (gridLogic[x, y] == 1)
+                return false;
+        }
+        return true;
+    }
+    */
+    
+    public bool CanPlaceShapeAtPosition(Shape shape, Vector2Int gridPos)
+    {
+        Vector2Int origin = shape.GetOriginCell();
+
+        foreach (Vector2Int cell in shape.cells)
+        {
+            int x = gridPos.x + (cell.x - origin.x);
+            int y = gridPos.y + (cell.y - origin.y);
+
+            if (!IsInsideGrid(x, y))
+                return false;
+
+            if (gridLogic[x, y] == 1)
+                return false;
+        }
+
+        return true;
+    }
+    
+    public void PlaceShape(ShapeBehaviour shapeBehaviour)
+    {
+        if (shapeBehaviour.transform.childCount == 0)
+        {
+            Debug.LogError("Shape has no children! Not built yet.");
+            return;
+        }
+        Shape shape = shapeBehaviour.ShapeData;
+        Vector2Int gridPos = WorldToGrid(shapeBehaviour.transform.position);
+        Vector2Int origin = shape.GetOriginCell();
+        int i = 0;
+        foreach (Vector2Int cell in shape.cells)
+        {
+            int x = gridPos.x + (cell.x - origin.x);
+            int y = gridPos.y + (cell.y - origin.y);
+            if (!IsInsideGrid(x, y))
+                continue;
+            if (gridLogic[x, y] == 1)
+                continue;
+            gridLogic[x, y] = 1;
+            Transform block = shapeBehaviour.transform.GetChild(i);
+            block.SetParent(transform);
+            block.position = GetWorldPosition(x, y);
+            visualGrid[x, y] = block;
+            i++;
+        }
+        Destroy(shapeBehaviour.gameObject);
+    }
+    
     private bool ClearCol(int x)
     {
         StartCoroutine(ClearColCoroutine(x));
         return true;
+    }
+    public bool IsInsideGrid(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
     public void AdjustCameraToScreen()
     {

@@ -20,11 +20,25 @@ public class ShapeBehaviour : MonoBehaviour
         blockPrefab = prefab;
         ShapeData = shape;
         possibleColors = colors;
+        BuildShape();
         childSR = GetComponentsInChildren<SpriteRenderer>();
         SetRandomColor();
         SetAsActive();
         startPosition = transform.position;
         transform.localScale = previewScale;
+    }
+    private void BuildShape()
+    {
+        Vector2Int origin = ShapeData.GetOriginCell();
+        foreach (var cell in ShapeData.cells)
+        {
+            GameObject block = Instantiate(blockPrefab, transform);
+            block.transform.localPosition = new Vector3(
+                cell.x - origin.x,
+                cell.y - origin.y,
+                0f
+            );
+        }
     }
     public void FitColliderToShape()
     {
@@ -113,9 +127,7 @@ public class ShapeBehaviour : MonoBehaviour
         ghost.transform.position = new Vector3(world.x, world.y, 0f);
         bool valid = GridManager.Instance.CanPlaceShapeAtPosition(
             ShapeData,
-            currentGridPosition.x,
-            currentGridPosition.y
-        );
+            currentGridPosition);
         SetGhostColor(valid);
         UpdateGhostVisibility();
     }
@@ -136,11 +148,10 @@ public class ShapeBehaviour : MonoBehaviour
         {
             Destroy(ghost);
         }
+        Vector2Int gridPos = GridManager.Instance.WorldToGrid(GridManager.Instance.GetWorldPosition(currentGridPosition.x,currentGridPosition.y));
         bool valid = GridManager.Instance.CanPlaceShapeAtPosition(
             ShapeData,
-            currentGridPosition.x,
-            currentGridPosition.y
-        );
+            gridPos);
         if (valid)
         {
             Vector2 world = GridManager.Instance.GetWorldPosition(
