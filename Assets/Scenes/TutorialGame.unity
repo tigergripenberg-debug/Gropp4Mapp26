@@ -1183,8 +1183,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1573957938}
   - component: {fileID: 1573957937}
+  - component: {fileID: 1573957939}
   m_Layer: 0
-  m_Name: Square
+  m_Name: hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1237,7 +1238,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 24a395405c47cb443aba1fbaa6155389, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1258,12 +1259,27 @@ Transform:
   m_GameObject: {fileID: 1573957936}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.08, y: -0.36, z: 0}
+  m_LocalPosition: {x: -3, y: -5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1573957939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573957936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 008c4b72174708c499522ec305e61ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::dotweentest
+  handopen: {fileID: 21300000, guid: 24a395405c47cb443aba1fbaa6155389, type: 3}
+  handclose: {fileID: 21300000, guid: 7fea7658c2aded74b9dabe343b43a278, type: 3}
+  duration: 1.5
 --- !u!1 &1744016313 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3146193504935898503, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
@@ -1585,6 +1601,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scorer
       objectReference: {fileID: 0}
+    - target: {fileID: 3791280884757919417, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4026742943402655183, guid: 190db1030743f8349b0bb28c7905a46e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1705,6 +1725,10 @@ PrefabInstance:
     - target: {fileID: 1476767069677289164, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
       propertyPath: m_Name
       value: tutorialManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476767069677289164, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1493836709492950060, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1874,6 +1898,10 @@ PrefabInstance:
       propertyPath: handclose
       value: 
       objectReference: {fileID: 21300000, guid: 7fea7658c2aded74b9dabe343b43a278, type: 3}
+    - target: {fileID: 8624859755923564414, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8624859755923564414, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
       propertyPath: blocks.Array.size
       value: 3
