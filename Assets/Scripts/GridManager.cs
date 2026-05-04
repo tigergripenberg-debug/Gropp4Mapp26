@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,23 +11,19 @@ public class GridManager : MonoBehaviour
     [Header("Settings")]
     public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, gameOverCanvas, bubble;
+    [SerializeField] private GameObject tilePrefab, gameOverCanvas;
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     private bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
-    private bool isTutorialActive;
+    [SerializeField] private gridtimerscript gridtimerscript;
 
     void Awake()
     {
         Instance = this;
         gridLogic = new int[width, height];
         visualGrid = new Transform[width, height];
-        if (SceneManager.GetActiveScene().name == "Tutorial")
-        {
-            isTutorialActive = true;
-        }
     }
 
     void Start()
@@ -121,8 +119,8 @@ public class GridManager : MonoBehaviour
             hasImmunity = true;
             turnsSinceClear = 0;
 
-            GridTimerScript.Instance.resetValue();
-            GridTimerScript.Instance.freeze(true);
+            gridtimerscript.instance.resetValue();
+            gridtimerscript.instance.freeze(true);
 
             Debug.Log("Rad sprängd! Nästa runda är helt immun.");
         }
@@ -132,9 +130,9 @@ public class GridManager : MonoBehaviour
             hasImmunity = false;
             turnsSinceClear = 0;
 
-            GridTimerScript.Instance.freeze(false);
-            GridTimerScript.Instance.resetValue();
-            
+            gridtimerscript.instance.freeze(false);
+            gridtimerscript.instance.resetValue();
+
             Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
         }
 
@@ -152,7 +150,7 @@ public class GridManager : MonoBehaviour
             Debug.Log("GRID PUSH!");
             MoveGrid();
             turnsSinceClear = 0;
-            GridTimerScript.Instance.resetValue();
+            gridtimerscript.instance.resetValue();
         }
     }
 
@@ -161,6 +159,8 @@ public class GridManager : MonoBehaviour
         bool didClear = false;
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
+
+        // Check rows
         for (int y = 0; y < height; y++)
         {
             bool full = true;
@@ -172,8 +172,11 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
+
             if (full) rowsToClear.Add(y);
         }
+
+        // Check columns
         for (int x = 0; x < width; x++)
         {
             bool full = true;
@@ -185,20 +188,27 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
+
             if (full) columnsToClear.Add(x);
-        } 
+        }
+
         int totalLines = rowsToClear.Count + columnsToClear.Count;
-       if (totalLines > 0)
+
+        if (totalLines > 0)
         {
             linesClearedThisRound = true;
-            GridTimerScript.Instance.resetValue();
-            GridTimerScript.Instance.freeze(true);
+
+            gridtimerscript.instance.resetValue();
+            gridtimerscript.instance.freeze(true);
+
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
                     didClear = true;
+
             foreach (var col in columnsToClear)
                 if (ClearCol(col))
                     didClear = true;
+
             bool isBoardEmpty = true;
             for (int x = 0; x < width; x++)
             {
@@ -212,26 +222,31 @@ public class GridManager : MonoBehaviour
                 }
                 if (!isBoardEmpty) break;
             }
-        if (Timer.Instance != null)Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
-        if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
+
+            if (Timer.Instance != null) Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
+
+            if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
+
+
         }
-        Score.Instance.RegisterTurnResult(totalLines > 0);
+        if (Score.Instance != null) Score.Instance.EvaluateComboState();
+
         return didClear;
     }
 
     public void TriggerGameOver()
     {
         Debug.Log("Game Over");
-        
+
         MenuController.gameIsPaused = true;
 
         StartCoroutine(ShowGameOverRoutine());
     }
-    private IEnumerator ShowGameOverRoutine()
+    private System.Collections.IEnumerator ShowGameOverRoutine()
     {
         yield return new WaitForSeconds(0.5f);
 
-        if(gameOverCanvas != null)
+        if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
         }
@@ -240,17 +255,17 @@ public class GridManager : MonoBehaviour
     public void CheckIfPlayable()
     {
         //Kollar alla pusselbitar i spelet.
-        ShapeBehaviour[] allShapes = FindObjectsByType<ShapeBehaviour>(FindObjectsSortMode.None);
+        Block[] allBlocks = FindObjectsByType<Block>(FindObjectsSortMode.None);
         bool canPlayAnything = false;
         int waitingBlocksCount = 0;
 
-        foreach (ShapeBehaviour shape  in allShapes)
+        foreach (Block b in allBlocks)
         {
             //Kollar alla blocken nere i spawnen för att se om de går att spela eller inte.
-            if (shape.GetComponent<Collider2D>().enabled)
+            if (b.GetComponent<Collider2D>().enabled == true)
             {
                 waitingBlocksCount++;
-                if (CanShapeFitAnywhere(shape))
+                if (CanBlockFit(b.gameObject))
                 {
                     canPlayAnything = true;
                     break;
@@ -263,55 +278,6 @@ public class GridManager : MonoBehaviour
             TriggerGameOver();
         }
     }
-    public bool CanShapeFitAnywhere(ShapeBehaviour shapeBehaviour)
-    {
-        Shape shape = shapeBehaviour.ShapeData;
-        
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (CanPlaceShapeAtPosition(shape, x, y))
-                    return true;
-            }
-        }
-        return false;
-    }
-    public bool CanPlaceShapeAtPosition(Shape shape, int originX, int originY)
-    {
-        foreach (var cell in shape.cells)
-        {
-            int x = originX + cell.x;
-            int y = originY + cell.y;
-            if (x < 0 || x >= width || y < 0 || y >= height)
-                return false;
-
-            if (gridLogic[x, y] == 1)
-                return false;
-        }
-        return true;
-    }
-    
-    public void PlaceShape(ShapeBehaviour shapeBehaviour)
-    {
-        Shape shape = shapeBehaviour.ShapeData;
-        Vector2Int origin = WorldToGrid(shapeBehaviour.transform.position);
-        foreach (var cell in shape.cells)
-        {
-            int x = origin.x + cell.x;
-            int y = origin.y + cell.y;
-            gridLogic[x, y] = 1;
-            foreach (Transform child in shapeBehaviour.transform)
-            {
-                Vector2Int childPos = WorldToGrid(child.position);
-                if (childPos.x == x && childPos.y == y)
-                {
-                    visualGrid[x, y] = child;
-                    break;
-                }
-            }
-        }
-    }
 
     public void MoveGrid()
     {
@@ -320,32 +286,45 @@ public class GridManager : MonoBehaviour
             TriggerGameOver();
             return;
         }
+
+        // Destroy bottom row (y = 0)
         for (int x = 0; x < width; x++)
         {
             if (visualGrid[x, 0] != null)
             {
                 Destroy(visualGrid[x, 0].gameObject);
             }
+
             visualGrid[x, 0] = null;
             gridLogic[x, 0] = 0;
         }
+
+        List<Task> moveTasks = new List<Task>();
+
+        // Move everything DOWN
         for (int y = 0; y < height - 1; y++)
         {
             for (int x = 0; x < width; x++)
             {
                 visualGrid[x, y] = visualGrid[x, y + 1];
                 gridLogic[x, y] = gridLogic[x, y + 1];
+
                 if (visualGrid[x, y] != null)
                 {
-                    visualGrid[x, y].position = GetWorldPosition(x, y);
+                    Vector3 targetPosition = GetWorldPosition(x, y);
+                    // Start the task and add it to our list
+                    moveTasks.Add(AnimateBlockDown(visualGrid[x, y], targetPosition));
                 }
             }
         }
+
+        // Clear TOP row (now empty)
         for (int x = 0; x < width; x++)
         {
             visualGrid[x, height - 1] = null;
             gridLogic[x, height - 1] = 0;
         }
+
         GenerateNewRow();
     }
 
@@ -369,54 +348,52 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
-    public bool CanShapeFit(ShapeBehaviour shapeBehaviour)
+    public bool CanBlockFit(GameObject blockPrefab)
     {
-        Vector2Int origin = WorldToGrid(shapeBehaviour.transform.position);
-        return CanPlaceShapeAtPosition(shapeBehaviour.ShapeData, origin.x, origin.y);
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                bool fitsHere = true;
+
+                foreach (Transform child in blockPrefab.transform)
+                {
+                    int testX = x + Mathf.RoundToInt(child.localPosition.x);
+                    int testY = y + Mathf.RoundToInt(child.localPosition.y);
+
+                    if (testX < 0 || testX >= width || testY < 0 || testY >= height || gridLogic[testX, testY] == 1)
+                    {
+                        fitsHere = false;
+                        break;
+                    }
+                }
+
+                if (fitsHere)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private bool ClearRow(int y)
     {
-        if (isTutorialActive)
-        {
-            TutorialManager.Instance.ShowTutorialText();
-        }
         StartCoroutine(ClearRowCoroutine(y));
         return true;
     }
-    
+
     public static event System.Action<SFXSounds> OnBlockClearedPlayPop;
 
     private IEnumerator ClearRowCoroutine(int y)
     {
         List<GameObject> blocksToDestroy = new List<GameObject>();
-        
-        for(int x = 0; x < width; x++)
+
+        for (int x = 0; x < width; x++)
         {
             gridLogic[x, y] = 0;
             if (visualGrid[x, y] != null)
-            {
-                blocksToDestroy.Add(visualGrid[x, y].gameObject);
-                visualGrid[x, y] = null;
-            }
-        }
-        foreach(GameObject block in blocksToDestroy)
-        {
-            OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
-            Destroy(block);
-            Instantiate(bubble,block.transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    private IEnumerator ClearColCoroutine(int x)
-    {
-        List<GameObject> blocksToDestroy = new List<GameObject>();
-
-        for(int y = 0; y < height; y++)
-        {
-            gridLogic[x, y] = 0;
-            if(visualGrid[x, y] != null)
             {
                 blocksToDestroy.Add(visualGrid[x, y].gameObject);
                 visualGrid[x, y] = null;
@@ -426,17 +403,33 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block);
-            Instantiate(bubble,block.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.1f);
         }
     }
-    
+
+    private IEnumerator ClearColCoroutine(int x)
+    {
+        List<GameObject> blocksToDestroy = new List<GameObject>();
+
+        for (int y = 0; y < height; y++)
+        {
+            gridLogic[x, y] = 0;
+            if (visualGrid[x, y] != null)
+            {
+                blocksToDestroy.Add(visualGrid[x, y].gameObject);
+                visualGrid[x, y] = null;
+            }
+        }
+        foreach (GameObject block in blocksToDestroy)
+        {
+            OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
+            Destroy(block);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     private bool ClearCol(int x)
     {
-        if (isTutorialActive)
-        {
-            TutorialManager.Instance.ShowTutorialText();
-        }
         StartCoroutine(ClearColCoroutine(x));
         return true;
     }
@@ -455,5 +448,28 @@ public class GridManager : MonoBehaviour
 
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
+    }
+    private async Task<bool> AnimateBlockDown(Transform block, Vector3 targetPos)
+    {
+        float duration = 0.07f; // Seconds to animate
+        float elapsed = 0f;
+        Vector3 startPos = block.position;
+
+        while (elapsed < duration)
+        {
+            if (block == null) return false; // Block was cleared during move
+
+            elapsed += Time.deltaTime;
+            float percent = elapsed / duration;
+
+            // Smooth interpolation
+            block.position = Vector3.Lerp(startPos, targetPos, percent);
+
+            // Yields back to Unity for one frame
+            await Task.Yield();
+        }
+
+        if (block != null) block.position = targetPos;
+        return true;
     }
 }

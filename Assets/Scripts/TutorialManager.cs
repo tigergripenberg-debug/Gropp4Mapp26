@@ -1,54 +1,75 @@
-using System;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
-using TMPro;
+using UnityEngine.SceneManagement;
 
 public class TutorialManager : MonoBehaviour
 {
-    public static TutorialManager Instance;
-    
-    [SerializeField] private GameObject tutorialTextPanel;
-    [SerializeField] private TMP_Text tutorialText;
-    [TextArea]
-    [SerializeField] private String[] tutorialTexts;
-    private int index = 0;
-    //[SerializeField] private GameObject tutorialPanel;
+    [SerializeField] private GameObject tutorialPanel, hand;
+    [SerializeField] private GameObject[] blocks;
+    private hand handscript;
     private void Start()
     {
-        Instance = this;
-    }
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)){ CloseOverlay(); }
-    }
-    public void ShowTutorialText()
-    {
-        if (index >= tutorialTexts.Length)
+        handscript = hand.GetComponent<hand>();
+        if (SceneManager.GetActiveScene().name == "TutorialGame")
         {
-            index = tutorialTexts.Length-1;
+            StartCoroutine(TutorialSequence());
         }
-        tutorialText.SetText(tutorialTexts[index]);
-        tutorialTextPanel.SetActive(true);
+        int playedTutorial = PlayerPrefs.GetInt("playedTutorial", 0);
+        if (playedTutorial == 0 && SceneManager.GetActiveScene().buildIndex != 0 && SceneManager.GetActiveScene().name != "TutorialGame")
+        {
+            ShowTutorial();
+            PlayerPrefs.SetInt("playedTutorial", 1);
+            PlayerPrefs.Save();
+        }
     }
-    private void CloseOverlay()
+    private IEnumerator TutorialSequence()
     {
-        tutorialTextPanel.SetActive(false);
-        index++;
+        for (int i = 0; i < blocks.Length && i < 3; i++)
+        {
+            Block blockScript = blocks[i].GetComponent<Block>();
+            startHand(blocks[i].transform.position, i);
+
+            // Wait until this block is placed
+            while (!blockScript.IsPlaced)
+            {
+
+                yield return null; // Check each frame without freezing
+            }
+        }
+        handscript.Stop();
     }
-    //     int playedTutorial = PlayerPrefs.GetInt("playedTutorial", 0);
-    //     if (playedTutorial == 0 && SceneManager.GetActiveScene().buildIndex != 0)
-    //     {
-    //         ShowTutorial();
-    //         PlayerPrefs.SetInt("playedTutorial", 1);
-    //         PlayerPrefs.Save();
-    //     }
-    // }
-    // public void ShowTutorial()
-    // {
-    //     if (tutorialPanel.activeInHierarchy)
-    //     {
-    //         tutorialPanel.SetActive(false);
-    //     }
-    //     else
-    //         tutorialPanel.SetActive(true);
-    // }
+    private void startHand(Vector2 startPosition, int index)
+    {
+        foreach (GameObject item in blocks)
+        {
+            item.GetComponent<BoxCollider2D>().enabled = false;
+        }
+        blocks[index].GetComponent<BoxCollider2D>().enabled = true;
+        Vector2 blockTarget = new Vector2(-3.5f, 0f);
+        if (index == 1)
+        {
+            blockTarget = new(-1.5f, 0);
+        }
+        else if (index == 2)
+        {
+            blockTarget = new(-0.5f, 0);
+        }
+        handscript.animate(startPos: startPosition, end: blockTarget);
+    }
+
+
+    private void ShowTutorial()
+    {
+        if (tutorialPanel.activeInHierarchy)
+        {
+            tutorialPanel.SetActive(false);
+        }
+        else
+            tutorialPanel.SetActive(true);
+    }
+    public void LoadTutorial()
+    {
+        SceneManager.LoadScene("TutorialGame");
+    }
 }
