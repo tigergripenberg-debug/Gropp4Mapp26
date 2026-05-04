@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class TutorialManager : MonoBehaviour
 {
-    [SerializeField] private GameObject tutorialPanel, hand;
+    [SerializeField] private GameObject tutorialPanel;
+    [SerializeField] private GameObject hand;
     [SerializeField] private GameObject[] blocks;
     private hand handscript;
     private void Start()

@@ -525,6 +525,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: tutorialManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1476767069677289164, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1493836709492950060, guid: e7f6fb69d925f3d4ea50c49913957c11, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1

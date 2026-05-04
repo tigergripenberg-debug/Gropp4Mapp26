@@ -10,6 +10,7 @@ public class MenuController : MonoBehaviour
 
     public void StartGame()
     {
+        Debug.Log("changing to scene 1");
         SceneManager.LoadScene(1);
         gameIsPaused = false;
     }
