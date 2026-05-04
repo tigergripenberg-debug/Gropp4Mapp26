@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Unity.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -299,8 +298,6 @@ public class GridManager : MonoBehaviour
             gridLogic[x, 0] = 0;
         }
 
-        List<Task> moveTasks = new List<Task>();
-
         // Move everything DOWN
         for (int y = 0; y < height - 1; y++)
         {
@@ -311,9 +308,7 @@ public class GridManager : MonoBehaviour
 
                 if (visualGrid[x, y] != null)
                 {
-                    Vector3 targetPosition = GetWorldPosition(x, y);
-                    // Start the task and add it to our list
-                    moveTasks.Add(AnimateBlockDown(visualGrid[x, y], targetPosition));
+                    visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 1f).SetEase(Ease.InOutElastic);
                 }
             }
         }
@@ -448,28 +443,5 @@ public class GridManager : MonoBehaviour
 
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
-    }
-    private async Task<bool> AnimateBlockDown(Transform block, Vector3 targetPos)
-    {
-        float duration = 0.07f; // Seconds to animate
-        float elapsed = 0f;
-        Vector3 startPos = block.position;
-
-        while (elapsed < duration)
-        {
-            if (block == null) return false; // Block was cleared during move
-
-            elapsed += Time.deltaTime;
-            float percent = elapsed / duration;
-
-            // Smooth interpolation
-            block.position = Vector3.Lerp(startPos, targetPos, percent);
-
-            // Yields back to Unity for one frame
-            await Task.Yield();
-        }
-
-        if (block != null) block.position = targetPos;
-        return true;
     }
 }
