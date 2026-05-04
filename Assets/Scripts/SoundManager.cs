@@ -36,6 +36,9 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
+        currentVolume = musicVolumeSlider.value;
+        musicManager.volume = currentVolume;
+        comboMusicManager.volume = currentVolume;
         musicManager.Play();
     }
 
@@ -59,7 +62,7 @@ public class SoundManager : MonoBehaviour
             to.Play();
         }
         float fromStart = from.volume;
-        float toTarget = to.volume;
+        float toTarget = currentVolume;
         while (time < fadeDuration)
         {
             time += Time.deltaTime;
