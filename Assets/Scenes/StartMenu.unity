@@ -943,7 +943,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Quit
+  m_text: 'Tutorial
 
 '
   m_isRightToLeft: 0
@@ -1175,7 +1175,7 @@ GameObject:
   - component: {fileID: 906502865}
   - component: {fileID: 906502864}
   m_Layer: 5
-  m_Name: QuitButton
+  m_Name: TutorialButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1223,8 +1223,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 0.60784316, b: 0.7490196, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.4292453, b: 0.4344092, a: 1}
-    m_PressedColor: {r: 0.7490196, g: 0.023158327, b: 0, a: 1}
+    m_HighlightedColor: {r: 0.427451, g: 1, b: 0.4536736, a: 1}
+    m_PressedColor: {r: 0, g: 0.7490196, b: 0.064901754, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -1245,9 +1245,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1190436182}
-        m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
-        m_MethodName: QuitGame
+      - m_Target: {fileID: 441646407}
+        m_TargetAssemblyTypeName: TutorialManager, Assembly-CSharp
+        m_MethodName: ShowTutorial
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1256,7 +1256,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
 --- !u!114 &906502865
 MonoBehaviour:
   m_ObjectHideFlags: 0
