@@ -10,7 +10,7 @@ public class GridManager : MonoBehaviour
     [Header("Settings")]
     public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, gameOverCanvas;
+    [SerializeField] private GameObject tilePrefab, gameOverCanvas,blockPrefab;
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     private bool hasImmunity = false, linesClearedThisRound = false;
@@ -232,18 +232,42 @@ public class GridManager : MonoBehaviour
         return didClear;
     }
 
+    private void FillBoardAtGameOver()
+    {
+        if (!IsGameOver()) return;
+        StartCoroutine(FillBoardRoutine());
+    }
+
+    private IEnumerator FillBoardRoutine()
+    {
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                if (visualGrid[x, y] == null)
+                {
+                    Vector3 position = GetWorldPosition(x,y);
+                    var tile = Instantiate(blockPrefab, position, Quaternion.identity);
+                    var sr = tile.GetComponent<SpriteRenderer>();
+                    sr.color = Color.gray6;
+                    visualGrid[x, y] = tile.transform;
+                }
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+    }
+                    
+                    
     public void TriggerGameOver()
     {
         Debug.Log("Game Over");
-
         MenuController.gameIsPaused = true;
-
         StartCoroutine(ShowGameOverRoutine());
     }
-    private System.Collections.IEnumerator ShowGameOverRoutine()
+    private IEnumerator ShowGameOverRoutine()
     {
+        FillBoardAtGameOver();
         yield return new WaitForSeconds(0.5f);
-
         if (gameOverCanvas != null)
         {
             gameOverCanvas.SetActive(true);
