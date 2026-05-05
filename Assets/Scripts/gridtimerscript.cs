@@ -27,20 +27,16 @@ public class GridTimerScript : MonoBehaviour
     {
         Score.OnComboChanged -= HandleComboChanged;
     }
-    
-    private void HandleComboChanged(int combo)
+
+    public void SetColorCyan()
     {
-        if (combo > 0)
-        {
-            Debug.Log("Freezing with combo");
-            freeze(true);
-            resetValue(); 
-        }
-        else
-        {
-            Debug.Log("Unfreezing");
-            freeze(false);
-        }
+        frozen = true;
+        Refresh();
+    }
+    public void SetColorGreen()
+    {
+        frozen = false;
+        Refresh();
     }
     
     public void freeze(bool state)
@@ -64,26 +60,40 @@ public class GridTimerScript : MonoBehaviour
 
     private void Refresh()
     {
-        if (frozen)
+        bool isAcuallyImmune = frozen || (GridManager.Instance != null && (GridManager.Instance.hasImmunity || GridManager.Instance.linesClearedThisRound));
+
+        if (isAcuallyImmune)
         {
-            counterObj.GetComponent<Image>().sprite = counterSprites[3];
+            counterObj.sprite = counterSprites[3];
             fillColor.color = Color.cyan;
             return;
         }
         switch ((int)ring.value)
         {
             case 1:
-            counterObj.GetComponent<Image>().sprite = counterSprites[0];
+            counterObj.sprite = counterSprites[0];
                 fillColor.color = Color.red;
                 break;
             case 2:
-                counterObj.GetComponent<Image>().sprite = counterSprites[1];
+                counterObj.sprite = counterSprites[1];
                 fillColor.color = Color.yellow;
                 break;
             case 3:
-                counterObj.GetComponent<Image>().sprite = counterSprites[2];
+                counterObj.sprite = counterSprites[2];
                 fillColor.color = Color.green;
                 break;
+        }
+    }
+    private void HandleComboChanged(int combo)
+    {
+        if (combo > 0)
+        {
+            SetColorCyan();
+            resetValue(); 
+        }
+        else
+        {
+            SetColorGreen();
         }
     }
 }

@@ -8,7 +8,6 @@ public class Score : MonoBehaviour
     [Header("UI & References")]
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highscoreText;
-    private SoundManager soundManager;
     
     [Header("Score Stats")]
     public int score;
@@ -19,7 +18,6 @@ public class Score : MonoBehaviour
     public static event System.Action<ScoreEventType> OnScoreChange;
     public static event System.Action<string> OnScoreMessage;
     public static event System.Action<int> OnComboChanged;
-    
 
     void Awake()
     {
@@ -28,7 +26,6 @@ public class Score : MonoBehaviour
 
     void Start()
     {
-        soundManager = FindFirstObjectByType<SoundManager>();
         highscore = PlayerPrefs.GetInt("Highscore", 0);
         scoreText.text = score.ToString();
         highscoreText.text = "Best: " + highscore;
@@ -36,50 +33,43 @@ public class Score : MonoBehaviour
 
     public void RegisterBlockPlaced()
     {
+        // 1. Varje gång ett block läggs ökar vi räknaren.
+        // Om vi precis sprängde en rad är denna redan satt till -1, och blir nu 0.
         blocksSinceLastClear++;
+
+        // 2. Har vi lagt 3 block utan att rensa något? Då dör kombon!
+        if (blocksSinceLastClear >= 3 && currentCombo > 0)
+        {
+            currentCombo = 0;
+            OnComboChanged?.Invoke(currentCombo);
+
+            if(SoundManager.Instance != null)
+            {
+                SoundManager.Instance.ExitComboMusic();
+            }
+            Debug.Log("Combo bruten! Du lade 3 block utan att spränga en rad.");
+        }
+        else if (currentCombo > 0 && blocksSinceLastClear >= 0)
+        {
+            int blocksLeft = 3 - blocksSinceLastClear;
+            Debug.Log("Kombon lever! Du har " + blocksLeft + " block till på dig.");
+        }
+
         scoreText.text = score.ToString();
         CheckHighscore();
     }
-    /*public void EvaluateComboState()
-    {
-         if(blocksSinceLastClear >= 3)
-        {
-            
-            if (currentCombo > 0)
-            {
-                Debug.Log("Combo bruten!");
-                currentCombo = 0;
-                SoundManager.Instance.ExitComboMusic();
-            }
-        }
-    }*/
-    
-    public void RegisterTurnResult(bool cleared)
-    {
-        if (cleared)
-        {
-            currentCombo++;
-            blocksSinceLastClear = 0;
-            if (currentCombo == 2)
-                SoundManager.Instance.StartComboMusic();
-        }
-        else
-        {
-            blocksSinceLastClear++;
-            if (blocksSinceLastClear >= 3 && currentCombo > 0)
-            {
-                currentCombo = 0;
-                SoundManager.Instance.ExitComboMusic();
-            }
-        }
-    }
-    
 
-   public void CalculateAndAddScore(int linesCleared, bool isBoardEmpty)
+    public void CalculateAndAddScore(int linesCleared, bool isBoardEmpty)
     {
         currentCombo++;
+        
+        // --- MAGIN HÄNDER HÄR ---
+        // Vi sätter den till -1! Eftersom RegisterBlockPlaced körs millisekunden 
+        // efter detta, kommer räknaren nollställas till exakt 0.
+        blocksSinceLastClear = -1; 
+        
         OnComboChanged?.Invoke(currentCombo);
-        blocksSinceLastClear = 0; 
+
         int pointsForLines = 0;
         switch (linesCleared)
         {
@@ -88,17 +78,22 @@ public class Score : MonoBehaviour
             case 3: pointsForLines = 600; break; 
             default: pointsForLines = 1000; break; 
         }
+        
         float comboMultiplier = 1.0f + (currentCombo * currentCombo * 0.1f);
         int pointsToGive = Mathf.RoundToInt(pointsForLines * comboMultiplier);
+        
         if (isBoardEmpty)
         {
             pointsToGive += 1000;
             Debug.Log("PERFECT CLEAR! +1000 bonuspoäng!");
         }
+        
         score += pointsToGive;
         scoreText.text = score.ToString();
+        
         ScoreEventType type = GetScoreEventType(currentCombo);
         CheckHighscore();
+        
         string message = $"Multiplier: x{comboMultiplier:F1}\n Total {pointsToGive} points!";
         OnScoreChange?.Invoke(type);
         OnScoreMessage?.Invoke(message);

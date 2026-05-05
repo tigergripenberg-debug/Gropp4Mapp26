@@ -13,7 +13,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject tilePrefab, gameOverCanvas;
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
-    private bool hasImmunity = false, linesClearedThisRound = false;
+    public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
 
@@ -26,6 +26,7 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         GenerateGrid();
         AdjustCameraToScreen();
     }
@@ -111,46 +112,36 @@ public class GridManager : MonoBehaviour
     }
 
     public void OnTurnFinished()
+{
+    if (linesClearedThisRound)
     {
-        if (linesClearedThisRound)
-        {
-            hasImmunity = true;
-            turnsSinceClear = 0;
-
-            GridTimerScript.Instance.resetValue();
-            GridTimerScript.Instance.freeze(true);
-
-            Debug.Log("Rad sprängd! Nästa runda är helt immun.");
-        }
-
-        else if (hasImmunity)
-        {
-            hasImmunity = false;
-            turnsSinceClear = 0;
-
-            GridTimerScript.Instance.freeze(false);
-            GridTimerScript.Instance.resetValue();
-
-            Debug.Log("Immun runda! Brädet rör sig inte. Nästa runda är vi sårbara igen.");
-        }
-
-        else
-        {
-            turnsSinceClear++;
-        }
-
+        hasImmunity = true;
         linesClearedThisRound = false;
-
-        Debug.Log("Turns since clear: " + turnsSinceClear);
-
-        if (turnsSinceClear > maxTurnsSinceClear)
-        {
-            Debug.Log("GRID PUSH!");
-            MoveGrid();
-            turnsSinceClear = 0;
-            GridTimerScript.Instance.resetValue();
-        }
+        turnsSinceClear = 0;
+        
+        GridTimerScript.Instance.resetValue();
     }
+    else if (hasImmunity)
+    {
+        hasImmunity = false;
+        turnsSinceClear = 0;
+        
+        GridTimerScript.Instance.resetValue();
+        GridTimerScript.Instance.freeze(false);
+        Debug.Log("Runda klar: Immuniteten har löpt ut.");
+    }
+    else
+    {
+        turnsSinceClear++;
+    }
+
+    if (turnsSinceClear > maxTurnsSinceClear)
+    {
+        MoveGrid();
+        turnsSinceClear = 0;
+        GridTimerScript.Instance.resetValue();
+    }
+}
 
     public bool CheckForMatches()
     {
@@ -197,7 +188,7 @@ public class GridManager : MonoBehaviour
             linesClearedThisRound = true;
 
             GridTimerScript.Instance.resetValue();
-            GridTimerScript.Instance.freeze(true);
+            GridTimerScript.Instance.SetColorCyan();
 
             foreach (var row in rowsToClear)
                 if (ClearRow(row))
@@ -227,7 +218,7 @@ public class GridManager : MonoBehaviour
 
 
         }
-        if (Score.Instance != null) Score.Instance.RegisterTurnResult(didClear);
+        //if (Score.Instance != null) Score.Instance.RegisterTurnResult(didClear);
 
         return didClear;
     }
