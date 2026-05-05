@@ -44,22 +44,48 @@ public class BlockSpawner : MonoBehaviour
             Shape shape = RandomShape();
             GameObject shapeGO = new GameObject("Shape");
             var SH = shapeGO.AddComponent<ShapeBehaviour>();
-            shapeGO.AddComponent<BoxCollider2D>();
+            BoxCollider2D col = shapeGO.AddComponent<BoxCollider2D>();
+            col.enabled = false;
             shapeGO.transform.position = spawnPoints[i].position;
             Vector2Int origin = shape.GetOriginCell();
+            
             foreach (var cell in shape.cells)
             { 
                 GameObject block = Instantiate(blockPrefab, shapeGO.transform);
-                Vector3 localPos = new Vector3(cell.x - origin.x, cell.y - origin.y, 0f);
+                UnityEngine.Vector3 localPos = new UnityEngine.Vector3(cell.x - origin.x, cell.y - origin.y, 0f);
                 block.transform.localPosition = localPos;
             }
+            
+            if(shapeGO.transform.childCount > 0)
+            {
+                float minX = shapeGO.transform.GetChild(0).localPosition.x;
+                float maxX = minX;
+                float minY = shapeGO.transform.GetChild(0).localPosition.y;
+                float maxY = minY;
+
+                foreach (Transform child in shapeGO.transform)
+                {
+                if(child.localPosition.x < minX) minX = child.localPosition.x;
+                if(child.localPosition.x > maxX) maxX = child.localPosition.x;
+                if(child.localPosition.y < minY) minY = child.localPosition.y;
+                if(child.localPosition.y > maxY) maxY = child.localPosition.y;
+                }
+                float centerX = (minX + maxX) / 2f;
+                float centerY = (minY + maxY) / 2f;
+
+                UnityEngine.Vector3 offset = new UnityEngine.Vector3(centerX * 0.6f, centerY * 0.6f, 0f);
+                shapeGO.transform.position -= offset;
+            }
+
             SH.Initialize(shape, blockColors, blockPrefab);
             SH.FitColliderToShape();
+            col.enabled = true;
         }
     }
     public void BlockPlaced()
     {
         BlocksUsed++;
+        
         if (Score.Instance != null)
         {
             Score.Instance.RegisterBlockPlaced();
@@ -68,13 +94,19 @@ public class BlockSpawner : MonoBehaviour
         {
             Timer.Instance.RegisterBlockPlaced();
         }
-        GridTimerScript.Instance.decreaseValue();
+
+        if (!GridManager.Instance.linesClearedThisRound && !GridManager.Instance.hasImmunity)
+        {
+            GridTimerScript.Instance.decreaseValue();
+        }
+        
         if (BlocksUsed >= 3)
         {
             BlocksUsed = 0;
             GridManager.Instance.OnTurnFinished();
             SpawnShapes();
         }
+        
         GridManager.Instance.CheckIfPlayable();
     }
 }

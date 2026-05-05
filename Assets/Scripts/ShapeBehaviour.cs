@@ -77,6 +77,9 @@ public class ShapeBehaviour : MonoBehaviour
         grabOffset = shapeGrid - mouseGrid;
         transform.localScale = normalScale;
         CreateGhost();
+        Vector3 pieceWorld = transform.position;
+        currentGridPosition = GridManager.Instance.WorldToGrid(pieceWorld);
+        UpdateGhost();
     }
 
     private void CreateGhost()
@@ -88,7 +91,7 @@ public class ShapeBehaviour : MonoBehaviour
             GameObject block = Instantiate(blockPrefab, ghost.transform);
             block.transform.localPosition = new Vector3(cell.x - origin.x, cell.y - origin.y, 0f);
             var sr = block.GetComponent<SpriteRenderer>();
-            sr.color = new Color(shapeColor.r,shapeColor.g,shapeColor.b,0.5f);
+            sr.color = new Color(shapeColor.r,shapeColor.g,shapeColor.b,0f);
             sr.sortingLayerName = "Ghost";
         }
     }
@@ -161,7 +164,11 @@ public class ShapeBehaviour : MonoBehaviour
             transform.position = new Vector3(world.x, world.y, 0f);
             GridManager.Instance.PlaceShape(this);
             GetComponent<Collider2D>().enabled = false;
-            GridManager.Instance.CheckForMatches();
+            bool didClear = GridManager.Instance.CheckForMatches();
+            if (didClear)
+            {
+                GridManager.Instance.linesClearedThisRound = true;
+            }
             BlockSpawner.Instance.BlockPlaced();
             SetAsPlaced();
             OnBlockPlacement?.Invoke(SFXSounds.placement_sound);
