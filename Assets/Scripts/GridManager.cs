@@ -218,7 +218,6 @@ public class GridManager : MonoBehaviour
 
 
         }
-        //if (Score.Instance != null) Score.Instance.RegisterTurnResult(didClear);
 
         return didClear;
     }
