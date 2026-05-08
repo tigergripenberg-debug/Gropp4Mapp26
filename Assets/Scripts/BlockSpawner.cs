@@ -10,7 +10,6 @@ public class BlockSpawner : MonoBehaviour
     public Transform[] spawnPoints;
     public GameObject blockPrefab;
     [SerializeField] Color[] blockColors;
-
     private Shape[] shapes = ShapeLibrary.allShapes;
 
     void Awake()
@@ -73,6 +72,7 @@ public class BlockSpawner : MonoBehaviour
             col.enabled = true;
         }
     }
+    
     public void BlockPlaced()
     {
         BlocksUsed++;

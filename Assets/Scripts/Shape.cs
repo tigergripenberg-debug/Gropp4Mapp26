@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 public class Shape
 {
     public Vector2Int[] cells;
+    public int CellCount => cells.Length;
     
     public Shape(Vector2Int[] cells)
     {

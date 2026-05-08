@@ -665,6 +665,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
+      propertyPath: blockPrefab
+      value: 
+      objectReference: {fileID: 3007790078228690655, guid: c938d0af5e804b648bc7bea92c58f630, type: 3}
+    - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
       propertyPath: soundManager
       value: 
       objectReference: {fileID: 1765800403}
