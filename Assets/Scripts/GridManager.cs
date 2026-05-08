@@ -60,6 +60,25 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public float GetBoardFillPercentage()
+    {
+        int occupied = 0;
+        int total = width * height;
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (gridLogic[x, y] == 1)
+                {
+                    occupied++;
+                    Debug.Log($"{occupied}");
+                }
+            }
+        }
+        return (float)occupied / total;
+    }
+
     public Vector2 GetWorldPosition(int x, int y)
     {
         float xOffset = (width - 1) / 2f;
@@ -355,7 +374,6 @@ public class GridManager : MonoBehaviour
 
     public bool CanBlockFit(Shape shape)
     {
-        Vector2Int origin = shape.GetOriginCell();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -363,8 +381,8 @@ public class GridManager : MonoBehaviour
                 bool fitsHere = true;
                 foreach (Vector2Int cell in shape.cells)
                 {
-                    int testX = x + (origin.x);
-                    int testY = y + (origin.y);
+                    int testX = x + cell.x;
+                    int testY = y + cell.y;
                     if (testX < 0 || testX >= width || testY < 0 || testY >= height || gridLogic[testX, testY] == 1)
                     {
                         fitsHere = false;
@@ -430,37 +448,18 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    /*public bool CanPlaceShapeAtPosition(Shape shape, int gridX, int gridY)
-    {
-        foreach (Vector2Int cell in shape.cells)
-        {
-            int x = gridX + cell.x;
-            int y = gridY + cell.y;
-            if (!IsInsideGrid(x, y))
-                return false;
-            if (gridLogic[x, y] == 1)
-                return false;
-        }
-        return true;
-    }
-    */
-
     public bool CanPlaceShapeAtPosition(Shape shape, Vector2Int gridPos)
     {
         Vector2Int origin = shape.GetOriginCell();
-
         foreach (Vector2Int cell in shape.cells)
         {
             int x = gridPos.x + (cell.x - origin.x);
             int y = gridPos.y + (cell.y - origin.y);
-
             if (!IsInsideGrid(x, y))
                 return false;
-
             if (gridLogic[x, y] == 1)
                 return false;
         }
-
         return true;
     }
 

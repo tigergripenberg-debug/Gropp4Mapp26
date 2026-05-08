@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BlockSpawner : MonoBehaviour
@@ -27,11 +29,50 @@ public class BlockSpawner : MonoBehaviour
         return randomShape;
     }
 
+    private Shape GetWeightedRandomShape()
+    {
+        float fill = GridManager.Instance.GetBoardFillPercentage();
+        Shape[] validShapes = ShapeLibrary.allShapes.Where(s => GridManager.Instance.CanBlockFit(s)).ToArray();
+        if (validShapes.Length == 0) return null;
+        int maxCells = validShapes.Max(s => s.CellCount);
+        for (int attempt = 0; attempt < 20; attempt++)
+        {
+            List<float> weights = new();
+            float totalWeight = 0f;
+            foreach (Shape shape in validShapes)
+            {
+                float weight = Mathf.Lerp(shape.CellCount, (maxCells + 1) - shape.CellCount, fill);
+                weights.Add(weight);
+                totalWeight += weight;
+                
+            }
+            for (int i = 0; i < validShapes.Length; i++)
+            {
+                float chance = (weights[i] / totalWeight) * 100;
+                Debug.Log(
+                    $"{validShapes[i].Name} " +
+                    $"Weight: {weights[i]:F2} " +
+                    $"Chance: {chance:F1}");
+            }
+            float random = Random.value * totalWeight;
+            for (int i = 0; i < validShapes.Length; i++)
+            {
+                random -= weights[i];
+                if (random <= 0f)
+                {
+                    return validShapes[i];
+                    
+                }
+            }
+        }
+        return validShapes[0];
+    }
+
     private void SpawnShapes()
     {
         for (int i = 0; i < spawnPoints.Length; i++)
         {
-            Shape shape = RandomShape();
+            Shape shape = GetWeightedRandomShape();
             GameObject shapeGO = new GameObject("Shape");
             var SH = shapeGO.AddComponent<ShapeBehaviour>();
             BoxCollider2D col = shapeGO.AddComponent<BoxCollider2D>();
