@@ -1273,9 +1273,17 @@ PrefabInstance:
       propertyPath: musicVolumeSlider
       value: 
       objectReference: {fileID: 758621304}
-    - target: {fileID: 1022348105151305645, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
-      propertyPath: Loop
-      value: 1
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: wowSounds.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[6]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 754b923e278c06c4ababab60135ce6cc, type: 3}
+    - target: {fileID: 5248637459201962429, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: m_Resource
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6167997956629970020, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: m_LocalPosition.x

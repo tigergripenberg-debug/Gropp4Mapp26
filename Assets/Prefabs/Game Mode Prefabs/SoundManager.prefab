@@ -176,7 +176,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -440,6 +440,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9ea640feff7b27249a5d24df967001b5, type: 3}
   - {fileID: 8300000, guid: 6b27d800bb6903747a3890275fc4800b, type: 3}
   - {fileID: 8300000, guid: 4e6cbc3a1ecfb8b4281e15f0b08227a6, type: 3}
+  - {fileID: 8300000, guid: c75cbd721ff4a454bb1349ec13b333f4, type: 3}
+  - {fileID: 8300000, guid: 754b923e278c06c4ababab60135ce6cc, type: 3}
   music: {fileID: 8300000, guid: 62e3f9224038e144bb1c4ac2f7328397, type: 3}
   comboMusic: {fileID: 8300000, guid: 59f24fdca3341e04ca70b1af6b721f40, type: 3}
   sfxSoundManager: {fileID: 5248637459201962429}
