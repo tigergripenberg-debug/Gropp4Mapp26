@@ -45,4 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuController
   settingsPanel: {fileID: 0}
+  menuPanel: {fileID: 0}
   leaderBoardPanel: {fileID: 0}
+  mpEntryLength: 0.28
