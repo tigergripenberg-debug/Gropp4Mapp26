@@ -11,16 +11,7 @@ public class BlockSpawner : MonoBehaviour
     public GameObject blockPrefab;
     [SerializeField] Color[] blockColors;
 
-    private Shape[] shapes = new Shape[]
-    {
-        ShapeLibrary.LShape,
-        ShapeLibrary.IShape,
-        ShapeLibrary.IShapeStanding,
-        ShapeLibrary.Square,
-        ShapeLibrary.SShape,
-        ShapeLibrary.TShape,
-        ShapeLibrary.ZShape
-    };
+    private Shape[] shapes = ShapeLibrary.allShapes;
 
     void Awake()
     {
