@@ -53,7 +53,7 @@ public class SoundManager : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(CrossFade(comboMusicManager, musicManager));
     }
-    
+
     IEnumerator CrossFade(AudioSource from, AudioSource to)
     {
         float time = 0f;
@@ -75,7 +75,7 @@ public class SoundManager : MonoBehaviour
         to.volume = toTarget;
         from.Stop();
     }
-    
+
 
     public void SetMusicVolume(float volume)
     {
@@ -102,12 +102,22 @@ public class SoundManager : MonoBehaviour
     {
         Play("pop_sound");
     }
+    public void PlayMoved(SFXSounds soundType)
+    {
+        PlayDelayed("moved_sound", 0.2f);
+    }
+    public void PlayDeath(SFXSounds soundType)
+    {
+        Play("death_sound");
+    }
 
     private void OnEnable()
     {
         Score.OnScoreChange += PlayScoreSound;
         ShapeBehaviour.OnBlockPlacement += PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop += PlayPop;
+        GridManager.OnGridMovedPlayPop += PlayMoved;
+        GridManager.OnGameOverPlayPop += PlayDeath;
         Score.OnComboChanged += HandleCombo;
     }
 
@@ -116,8 +126,10 @@ public class SoundManager : MonoBehaviour
         Score.OnScoreChange -= PlayScoreSound;
         ShapeBehaviour.OnBlockPlacement -= PlayPlacementSound;
         GridManager.OnBlockClearedPlayPop -= PlayPop;
+        GridManager.OnGridMovedPlayPop -= PlayMoved;
+        GridManager.OnGameOverPlayPop -= PlayDeath;
         Score.OnComboChanged -= HandleCombo;
-    }   
+    }
     private void HandleCombo(int combo)
     {
         if (combo >= 2 && !isInComboState)
@@ -155,7 +167,7 @@ public class SoundManager : MonoBehaviour
                 break;
         }
     }
-    
+
 
     void Play(string clipName)
     {
@@ -165,12 +177,27 @@ public class SoundManager : MonoBehaviour
             sfxSoundManager.PlayOneShot(clip);
         }
     }
+    void PlayDelayed(string clipName, float delay)
+    {
+        AudioClip clip = GetClipByName(clipName);
+        if (clip != null)
+        {
+            StartCoroutine(ExecuteDelayedSfx(clip, delay));
+        }
+    }
+
+    IEnumerator ExecuteDelayedSfx(AudioClip clip, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        // PlayOneShot allows multiple sounds to overlap on one source
+        sfxSoundManager.PlayOneShot(clip);
+    }
 
     AudioClip GetClipByName(string clipName)
     {
         foreach (AudioClip clip in wowSounds)
         {
-            if (clip.name == clipName)
+            if (clip.name.ToLower() == clipName.ToLower())
             {
                 return clip;
             }
