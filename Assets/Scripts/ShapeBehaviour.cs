@@ -187,5 +187,6 @@ public class ShapeBehaviour : MonoBehaviour
     private void SetAsPlaced()
     {
         foreach (var sr in childSR) sr.sortingLayerName = "PlacedBlocks";
+        transform.SetParent(GridManager.PlacedBlockParent, true);
     }
 }

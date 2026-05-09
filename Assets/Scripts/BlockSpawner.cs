@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BlockSpawner : MonoBehaviour
 {
@@ -13,62 +15,108 @@ public class BlockSpawner : MonoBehaviour
     public GameObject blockPrefab;
     [SerializeField] Color[] blockColors;
     private Shape[] shapes = ShapeLibrary.allShapes;
+    public List<Shape> currentShapes = new();
 
     void Awake()
     {
         Instance = this;
     }
-    void Start()
-    {
-        SpawnShapes();
-    }
-
-    Shape RandomShape()
-    {
-        Shape randomShape = shapes[Random.Range(0, shapes.Length)];
-        return randomShape;
-    }
-
+    // void Start()
+    // {
+    //     SpawnShapes();
+    // }
+    
     private Shape GetWeightedRandomShape()
     {
         float fill = GridManager.Instance.GetBoardFillPercentage();
-        Shape[] validShapes = ShapeLibrary.allShapes.Where(s => GridManager.Instance.CanBlockFit(s)).ToArray();
+        Shape[] validShapes = shapes.Where(s => GridManager.Instance.CanBlockFit(s)).ToArray();
         if (validShapes.Length == 0) return null;
         int maxCells = validShapes.Max(s => s.CellCount);
-        for (int attempt = 0; attempt < 20; attempt++)
+        
+        List<float> weights = new();
+        float totalWeight = 0f;
+        foreach (Shape shape in validShapes)
         {
-            List<float> weights = new();
-            float totalWeight = 0f;
-            foreach (Shape shape in validShapes)
-            {
-                float weight = Mathf.Lerp(shape.CellCount, (maxCells + 1) - shape.CellCount, fill);
-                weights.Add(weight);
-                totalWeight += weight;
-                
-            }
-            for (int i = 0; i < validShapes.Length; i++)
-            {
-                float chance = (weights[i] / totalWeight) * 100;
-                Debug.Log(
-                    $"{validShapes[i].Name} " +
-                    $"Weight: {weights[i]:F2} " +
-                    $"Chance: {chance:F1}");
-            }
-            float random = Random.value * totalWeight;
-            for (int i = 0; i < validShapes.Length; i++)
-            {
-                random -= weights[i];
-                if (random <= 0f)
-                {
-                    return validShapes[i];
-                    
-                }
-            }
+            float weight = Mathf.Lerp(shape.CellCount, (maxCells + 1) - shape.CellCount, fill);
+            weights.Add(weight);
+            totalWeight += weight;
         }
+        for (int i = 0; i < validShapes.Length; i++) // this forloop is strictly for debuglog to see block % spawnrate, not necessary at release
+        {
+            float chance = (weights[i] / totalWeight) * 100;
+            Debug.Log(
+                $"{validShapes[i].Name} " +
+                $"Weight: {weights[i]:F2} " +
+                $"Chance: {chance:F1}");
+        }
+        float random = Random.value * totalWeight;
+        for (int i = 0; i < validShapes.Length; i++)
+        {
+            random -= weights[i];
+            if (random <= 0f)
+            {
+                currentShapes.Add(validShapes[i]);
+                Debug.Log("Shapes list length" + currentShapes.Count);
+                return validShapes[i];
+            }
+        } 
         return validShapes[0];
     }
 
-    private void SpawnShapes()
+    private GameObject CreateShapeVisuals(Shape shape, Transform spawnpoint)
+    {
+        GameObject shapeGO = new GameObject("Shape");
+        shapeGO.transform.SetParent(transform);
+        ShapeBehaviour shapeBehaviour = shapeGO.AddComponent<ShapeBehaviour>();
+        BoxCollider2D col = shapeGO.AddComponent<BoxCollider2D>();
+        col.enabled = false;
+        shapeGO.transform.position = spawnpoint.position;
+        Vector2Int origin = shape.GetOriginCell();
+        foreach (var cell in shape.cells)
+        {
+            GameObject block = Instantiate(blockPrefab, shapeGO.transform);
+            Vector3 localPos = new Vector3(cell.x - origin.x, cell.y - origin.y, 0f);
+            block.transform.localPosition = localPos;
+        }
+
+        if (shapeGO.transform.childCount > 0)
+        {
+            float minX = shapeGO.transform.GetChild(0).localPosition.x;
+            float maxX = minX;
+            float minY = shapeGO.transform.GetChild(0).localPosition.y;
+            float maxY = minY;
+
+            foreach (Transform child in shapeGO.transform)
+            {
+                Vector3 pos = child.localPosition;
+                if (pos.x < minX) minX = pos.x;
+                if (pos.x > maxX) maxX = pos.x;
+                if (pos.y < minY) minY = pos.y;
+                if (pos.y > maxY) maxY = pos.y;
+            }
+            float centerX = (minX + maxX) / 2f;
+            float centerY = (minY + maxY) / 2f;
+            Vector3 offset = new Vector3(centerX * 0.6f, centerY * 0.6f, 0f);
+            shapeGO.transform.position -= offset;
+        }
+        shapeBehaviour.Initialize(shape,blockColors,blockPrefab);
+        shapeBehaviour.FitColliderToShape();
+        col.enabled = true;
+        return shapeGO;
+    }
+    
+    public void SpawnShapes()
+    {
+        currentShapes.Clear();
+        for (var i = 0; i < spawnPoints.Length; i++)
+        {
+            Shape shape = GetWeightedRandomShape();
+            currentShapes.Add(shape);
+            CreateShapeVisuals(shape, spawnPoints[i]);
+        }
+    }
+
+    /*public void SpawnShapes()
     {
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -112,6 +160,19 @@ public class BlockSpawner : MonoBehaviour
             SH.FitColliderToShape();
             col.enabled = true;
         }
+    }*/
+
+    public void RestoreShapes(string[] shapeNames)
+    {
+        currentShapes.Clear();
+        var count = MathF.Min(shapeNames.Length, spawnPoints.Length);
+        for (int i = 0; i < count; i++)
+        {
+            Shape shape = ShapeLibrary.GetByName(shapeNames[i]);
+            if (shape == null) continue;
+            currentShapes.Add(shape);
+            CreateShapeVisuals(shape, spawnPoints[i]);
+        }
     }
     
     public void BlockPlaced()
@@ -141,38 +202,9 @@ public class BlockSpawner : MonoBehaviour
         
         GridManager.Instance.CheckIfPlayable();
     }
-}
 
-/*public void SpawnNewBlock() GAMLA SPAWNSYSTEMET
-{
-    GridTimerScript.Instance.resetValue();
-    foreach (var spawnpoint in spawnPoints)
+    public void ClearCurrentShapes()
     {
-        int randomIndex = Random.Range(0, blockPrefabs.Length);
-        int attempts = 0;
-        while (GridManager.Instance.CanBlockFit(blockPrefabs[randomIndex]) == false)
-        {
-            randomIndex = Random.Range(0, blockPrefabs.Length);
-            attempts++;
-            if (attempts > 50)
-            {
-                Debug.Log("Inget block får plats! Här ska vi trigga Game Over senare.");
-                break;
-            }
-        }
-        GameObject spawnedBlock = Instantiate(blockPrefabs[randomIndex], spawnpoint.position, Quaternion.identity);
-        float minX = float.MaxValue, maxX = float.MinValue;
-        float minY = float.MaxValue, maxY = float.MinValue;
-        foreach (Transform child in spawnedBlock.transform)
-        {
-            if (child.localPosition.x < minX) minX = child.localPosition.x;
-            if (child.localPosition.x > maxX) maxX = child.localPosition.x;
-            if (child.localPosition.y < minY) minY = child.localPosition.y;
-            if (child.localPosition.y > maxY) maxY = child.localPosition.y;
-        }
-        float centerX = (minX + maxX) / 2f;
-        float centerY = (minY + maxY) / 2f;
-        Vector3 offset = new Vector3(centerX * 0.6f, centerY * 0.6f, 0f);
-        spawnedBlock.transform.position -= offset;
+        currentShapes.Clear();
     }
-}*/
+}

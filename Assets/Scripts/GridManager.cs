@@ -7,21 +7,27 @@ using UnityEngine.SceneManagement;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
-    [Header("Settings")]
-    public int[,] gridLogic;
+    [Header("Settings")] public int[,] gridLogic;
     public Transform[,] visualGrid;
     [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
-    private int width = 8, height = 8;
-    private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
+    public int width { get; private set; } = 8;
+    public int height { get; private set; } = 8;
+    public int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
+    public static Transform PlacedBlockParent;
 
     void Awake()
     {
         Instance = this;
         gridLogic = new int[width, height];
         visualGrid = new Transform[width, height];
+        if (PlacedBlockParent == null)
+        {
+            var go = new GameObject("PlacedBlocks");
+            PlacedBlockParent = go.transform;
+        }
     }
 
     void Start()
@@ -60,6 +66,24 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void ClearExistingBoardVisuals()
+    {
+        if (PlacedBlockParent == null)
+        {
+            return;
+        }
+
+        foreach (Transform child in PlacedBlockParent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    public void ResetGridLogic()
+    {
+        gridLogic = new int[width, height];
+    }
+
     public float GetBoardFillPercentage()
     {
         int occupied = 0;
@@ -86,7 +110,7 @@ public class GridManager : MonoBehaviour
 
         return new Vector2(
             x - xOffset,
-            y - yOffset + 2f
+            y - yOffset
         );
     }
 
@@ -96,7 +120,7 @@ public class GridManager : MonoBehaviour
         float yOffset = (height - 0) / 2f;
 
         int x = Mathf.RoundToInt(worldPos.x + xOffset);
-        int y = Mathf.RoundToInt(worldPos.y + yOffset - 2f);
+        int y = Mathf.RoundToInt(worldPos.y + yOffset);
 
         return new Vector2Int(x, y);
     }
@@ -111,6 +135,7 @@ public class GridManager : MonoBehaviour
         {
             time.time = 100f;
         }
+        GameManager.Instance.DeleteSave();
         MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -489,6 +514,8 @@ public class GridManager : MonoBehaviour
             visualGrid[x, y] = block;
             i++;
         }
+
+        BlockSpawner.Instance.currentShapes.Remove(shape);
         Destroy(shapeBehaviour.gameObject);
     }
 
@@ -496,6 +523,11 @@ public class GridManager : MonoBehaviour
     {
         StartCoroutine(ClearColCoroutine(x));
         return true;
+    }
+    public void SpawnPlacedBlock(int x, int y)
+    {
+        Vector3 worldPos = GetWorldPosition(x, y);
+        Instantiate(blockPrefab, worldPos, Quaternion.identity);
     }
     public bool IsInsideGrid(int x, int y)
     {

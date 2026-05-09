@@ -14,6 +14,7 @@ public class Shape
         this.cells = cells;
     }
     
+    
     public Vector2 GetCenter()
     {
         Vector2 min = Vector2.positiveInfinity;

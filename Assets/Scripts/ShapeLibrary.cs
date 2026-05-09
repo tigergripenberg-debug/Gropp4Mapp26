@@ -1,8 +1,14 @@
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 public class ShapeLibrary
 {
+    public static Shape GetByName(string name)
+    {
+        return allShapes.FirstOrDefault(s => s.Name == name);
+    }
+    
     private static readonly Shape Square = new Shape("Square",new Vector2Int[]
     {
         new(1,0), new(1,1),
