@@ -509,7 +509,7 @@ public class GridManager : MonoBehaviour
                 continue;
             gridLogic[x, y] = 1;
             Transform block = shapeBehaviour.transform.GetChild(i);
-            block.SetParent(transform);
+            block.SetParent(PlacedBlockParent);
             block.position = GetWorldPosition(x, y);
             visualGrid[x, y] = block;
             i++;
@@ -527,7 +527,9 @@ public class GridManager : MonoBehaviour
     public void SpawnPlacedBlock(int x, int y)
     {
         Vector3 worldPos = GetWorldPosition(x, y);
-        Instantiate(blockPrefab, worldPos, Quaternion.identity);
+        var block = Instantiate(blockPrefab, worldPos, Quaternion.identity, PlacedBlockParent);
+        block.GetComponent<SpriteRenderer>().sortingLayerName = "PlacedBlocks";
+        visualGrid[x,y] = block.transform;
     }
     public bool IsInsideGrid(int x, int y)
     {
