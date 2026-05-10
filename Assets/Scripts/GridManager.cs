@@ -16,6 +16,7 @@ public class GridManager : MonoBehaviour
     public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
+    [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
     public static Transform PlacedBlockParent;
 
     void Awake()
@@ -111,16 +112,16 @@ public class GridManager : MonoBehaviour
         return new Vector2(
             x - xOffset,
             y - yOffset
-        );
+        ) + originOffset;
     }
 
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
         float xOffset = (width - 1) / 2f;
         float yOffset = (height - 0) / 2f;
-
-        int x = Mathf.RoundToInt(worldPos.x + xOffset);
-        int y = Mathf.RoundToInt(worldPos.y + yOffset);
+        Vector2 adjusted = (Vector2)worldPos - originOffset;
+        int x = Mathf.RoundToInt(adjusted.x + xOffset);
+        int y = Mathf.RoundToInt(adjusted.y + yOffset);
 
         return new Vector2Int(x, y);
     }

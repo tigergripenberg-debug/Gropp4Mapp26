@@ -31,6 +31,13 @@ public class Score : MonoBehaviour
         highscoreText.text = "Best: " + highscore;
     }
 
+    public void RestoreScoreData(int savedScore, int savedCombo, int savedBlocksSinceLastClear)
+    {
+        score = savedScore;
+        currentCombo = savedCombo;
+        blocksSinceLastClear = savedBlocksSinceLastClear;
+    }
+
     public void RegisterBlockPlaced()
     {
         // 1. Varje gång ett block läggs ökar vi räknaren.

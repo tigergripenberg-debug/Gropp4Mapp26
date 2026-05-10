@@ -45,8 +45,10 @@ public class GameManager : MonoBehaviour
         data.width = width;
         data.height = height;
         data.grid = FlattenGrid();
-        data.score = Score.Instance.score;
         data.currentShapes = BlockSpawner.Instance.currentShapes.Select(s => s.Name).ToArray();
+        data.score = Score.Instance.score;
+        data.currentCombo = Score.Instance.currentCombo;
+        data.blocksSinceLastClear = Score.Instance.blocksSinceLastClear;
         string json = JsonUtility.ToJson(data);
         PlayerPrefs.SetString("save", json);
         PlayerPrefs.Save();
@@ -67,7 +69,7 @@ public class GameManager : MonoBehaviour
         GridManager.Instance.ClearExistingBoardVisuals();
         GridManager.Instance.gridLogic = new int[width, height];
         RestoreGrid(data);
-        var score = data.score;
+        Score.Instance.RestoreScoreData(data.score,data.currentCombo,data.blocksSinceLastClear);
         BlockSpawner.Instance.RestoreShapes(data.currentShapes);
         Debug.Log("Game Loaded");
         Debug.Log(json);
