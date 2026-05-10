@@ -10,6 +10,7 @@ public class ShapeBehaviour : MonoBehaviour
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private SpriteRenderer[] childSR;
     private Color shapeColor;
+    public int colorIndex;
     public Color[] possibleColors; // colors are set inside of blockspawner
     public Shape ShapeData { get; private set;  }
     private GameObject ghost;
@@ -61,10 +62,17 @@ public class ShapeBehaviour : MonoBehaviour
     }
     private void SetRandomColor()
     {
-        shapeColor = possibleColors[Random.Range(0, possibleColors.Length)];
+        colorIndex = Random.Range(0, possibleColors.Length);
+        shapeColor = possibleColors[colorIndex];
         foreach (SpriteRenderer sr in childSR)
         {
             sr.color = shapeColor;
+            NewBlock nv = sr.GetComponent<NewBlock>();
+            if (nv != null)
+            {
+                nv.colorIndex = colorIndex;
+            }
+            
         }
     }
 

@@ -12,7 +12,7 @@ public class BlockSpawner : MonoBehaviour
     public GameObject[] blockPrefabs;
     public Transform[] spawnPoints;
     public GameObject blockPrefab;
-    [SerializeField] Color[] blockColors;
+    [SerializeField] public Color[] blockColors;
     private Shape[] shapes = ShapeLibrary.allShapes;
     public List<Shape> currentShapes = new();
 

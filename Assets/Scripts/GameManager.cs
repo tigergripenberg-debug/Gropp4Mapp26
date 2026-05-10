@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
         data.score = Score.Instance.score;
         data.currentCombo = Score.Instance.currentCombo;
         data.blocksSinceLastClear = Score.Instance.blocksSinceLastClear;
+        data.colors = FlattenColors();
         string json = JsonUtility.ToJson(data);
         PlayerPrefs.SetString("save", json);
         PlayerPrefs.Save();
@@ -83,12 +85,15 @@ public class GameManager : MonoBehaviour
         {
             for (int x = 0; x < data.width;x++)
             {
-                int value = data.grid[index++];
+                int value = data.grid[index];
                 GridManager.Instance.gridLogic[x, y] = value;
                 if (value == 1)
                 {
-                    GridManager.Instance.SpawnPlacedBlock(x, y);
+                    int colorIndex = data.colors[index];
+                    GridManager.Instance.SpawnPlacedBlock(x, y, colorIndex);
+                    
                 }
+                index++;
             }
         }
     }
@@ -120,5 +125,26 @@ public class GameManager : MonoBehaviour
         GridManager.Instance.ResetGridLogic();
         Score.Instance.score = 0;
         BlockSpawner.Instance.SpawnShapes();
+    }
+
+    private int[] FlattenColors()
+    {
+        int[] flat = new int[width * height];
+        int index = 0;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                Transform block = GridManager.Instance.visualGrid[x, y];
+                if (block == null)
+                {
+                    flat[index++] = -1;
+                    continue;
+                }
+                NewBlock nb = block.GetComponent<NewBlock>();
+                flat[index++] = nb.colorIndex;
+            }
+        }
+        return flat;
     }
 }

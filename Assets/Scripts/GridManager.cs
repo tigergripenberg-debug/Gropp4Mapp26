@@ -525,11 +525,14 @@ public class GridManager : MonoBehaviour
         StartCoroutine(ClearColCoroutine(x));
         return true;
     }
-    public void SpawnPlacedBlock(int x, int y)
+    public void SpawnPlacedBlock(int x, int y, int colorIndex)
     {
         Vector3 worldPos = GetWorldPosition(x, y);
         var block = Instantiate(blockPrefab, worldPos, Quaternion.identity, PlacedBlockParent);
-        block.GetComponent<SpriteRenderer>().sortingLayerName = "PlacedBlocks";
+        var sr = block.GetComponent<SpriteRenderer>();
+        sr.sortingLayerName = "PlacedBlocks";
+        sr.color = BlockSpawner.Instance.blockColors[colorIndex];
+        block.GetComponent<NewBlock>().colorIndex = colorIndex;
         visualGrid[x,y] = block.transform;
     }
     public bool IsInsideGrid(int x, int y)
