@@ -96,7 +96,7 @@ public class GridManager : MonoBehaviour
                 if (gridLogic[x, y] == 1)
                 {
                     occupied++;
-                    Debug.Log($"{occupied}");
+                    Debug.Log($"{occupied / (width*height) * 100} %");
                 }
             }
         }
