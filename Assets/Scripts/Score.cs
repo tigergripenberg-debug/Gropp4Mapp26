@@ -36,6 +36,7 @@ public class Score : MonoBehaviour
         score = savedScore;
         currentCombo = savedCombo;
         blocksSinceLastClear = savedBlocksSinceLastClear;
+        scoreText.text = score.ToString();
     }
 
     public void RegisterBlockPlaced()
