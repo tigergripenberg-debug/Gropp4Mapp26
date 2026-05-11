@@ -7,13 +7,18 @@ using UnityEngine.SceneManagement;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
+    
     [Header("Settings")]
     public int[,] gridLogic;
     public Transform[,] visualGrid;
+    
     [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
+    [SerializeField] private GameObject explosionParticlePrefab; // <--- NY VARIABEL FÖR PARTIKLAR
+    
     private int width = 8, height = 8;
     private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     public bool hasImmunity = false, linesClearedThisRound = false;
+    
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
 
@@ -31,7 +36,7 @@ public class GridManager : MonoBehaviour
         AdjustCameraToScreen();
     }
 
-    void OnDrawGizmos() //används för att rita upp grid i debugmode
+    void OnDrawGizmos()
     {
         if (visualGrid == null) return;
         Gizmos.color = Color.green;
@@ -82,7 +87,7 @@ public class GridManager : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public void RestartGame() //använder onclick event i unity
+    public void RestartGame()
     {
         if (Score.Instance != null)
         {
@@ -102,7 +107,6 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-
                 GameObject newTile = Instantiate(tilePrefab);
                 newTile.transform.position = GetWorldPosition(x, y);
                 newTile.name = $"Tile X:{x} Y:{y}";
@@ -149,7 +153,6 @@ public class GridManager : MonoBehaviour
         List<int> rowsToClear = new List<int>();
         List<int> columnsToClear = new List<int>();
 
-        // Check rows
         for (int y = 0; y < height; y++)
         {
             bool full = true;
@@ -161,11 +164,9 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
-
             if (full) rowsToClear.Add(y);
         }
 
-        // Check columns
         for (int x = 0; x < width; x++)
         {
             bool full = true;
@@ -177,7 +178,6 @@ public class GridManager : MonoBehaviour
                     break;
                 }
             }
-
             if (full) columnsToClear.Add(x);
         }
 
@@ -213,10 +213,7 @@ public class GridManager : MonoBehaviour
             }
 
             if (Timer.Instance != null) Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
-
             if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
-
-
         }
 
         return didClear;
@@ -255,6 +252,7 @@ public class GridManager : MonoBehaviour
         MenuController.gameIsPaused = true;
         StartCoroutine(ShowGameOverRoutine());
     }
+    
     private IEnumerator ShowGameOverRoutine()
     {
         FillBoardAtGameOver();
@@ -294,7 +292,6 @@ public class GridManager : MonoBehaviour
 
     public static event System.Action<SFXSounds> OnGridMovedPlayPop;
 
-
     public void MoveGrid()
     {
         if (IsGameOver())
@@ -322,7 +319,6 @@ public class GridManager : MonoBehaviour
                 {
                     visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 1f).SetEase(Ease.InOutElastic);
                     OnGridMovedPlayPop?.Invoke(SFXSounds.pop_sound);
-
                 }
             }
         }
@@ -338,11 +334,11 @@ public class GridManager : MonoBehaviour
     {
         for (int x = 0; x < width; x++)
         {
-            Debug.Log("Generating new row");
             visualGrid[x, height - 1] = null;
             gridLogic[x, height - 1] = 0;
         }
     }
+    
     bool IsGameOver()
     {
         for (int x = 0; x < width; x++)
@@ -404,8 +400,9 @@ public class GridManager : MonoBehaviour
         foreach (Transform block in blocksToDestroy)
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
+            SpawnParticles(block);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f); 
         }
     }
 
@@ -425,25 +422,11 @@ public class GridManager : MonoBehaviour
         foreach (Transform block in blocksToDestroy)
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
+            SpawnParticles(block);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f); 
         }
     }
-
-    /*public bool CanPlaceShapeAtPosition(Shape shape, int gridX, int gridY)
-    {
-        foreach (Vector2Int cell in shape.cells)
-        {
-            int x = gridX + cell.x;
-            int y = gridY + cell.y;
-            if (!IsInsideGrid(x, y))
-                return false;
-            if (gridLogic[x, y] == 1)
-                return false;
-        }
-        return true;
-    }
-    */
 
     public bool CanPlaceShapeAtPosition(Shape shape, Vector2Int gridPos)
     {
@@ -498,24 +481,38 @@ public class GridManager : MonoBehaviour
         StartCoroutine(ClearColCoroutine(x));
         return true;
     }
+    
     public bool IsInsideGrid(int x, int y)
     {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
+    
     public void AdjustCameraToScreen()
     {
-        //Lägger till 2 rutor i marginal på varje sida av griden.
         float targetWidth = width + 2f;
-
-        //Räknar ut mobilens aspect ratio (bredd/höjd).
         float aspectRatio = Screen.width / (float)Screen.height;
-
-        //Räknar ut vilken ortografisk storlek kameran behöver ha för att visa hela griden i bredd.
         float requiredCameraSize = targetWidth / 2f / aspectRatio;
-
         Camera.main.orthographicSize = requiredCameraSize;
-
-        // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
+    }
+
+    private void SpawnParticles(Transform block)
+    {
+        if (explosionParticlePrefab == null) return;
+
+        // Skapa partikeln på blockets position
+        GameObject particles = Instantiate(explosionParticlePrefab, block.position, Quaternion.identity);
+        
+        // Hämta färgen från blocket och ge den till partikeln
+        SpriteRenderer sr = block.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var main = ps.main;
+                main.startColor = sr.color;
+            }
+        }
     }
 }
