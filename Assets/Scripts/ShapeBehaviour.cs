@@ -141,6 +141,22 @@ public class ShapeBehaviour : MonoBehaviour
             currentGridPosition);
         SetGhostColor(valid);
         UpdateGhostVisibility();
+        if (valid)
+        {
+            var clears = GridManager.Instance.GetPreviewClears(ShapeData, currentGridPosition);
+            if (clears.Count > 0)
+            {
+                GridManager.Instance.ShowClearPreview(clears);
+            }
+            else
+            {
+                GridManager.Instance.ClearPreviewEffects();
+            }
+        }
+        else
+        {
+            GridManager.Instance.ClearPreviewEffects();
+        }
     }
     
     private void SetGhostColor(bool valid)
@@ -155,6 +171,7 @@ public class ShapeBehaviour : MonoBehaviour
     }
     void OnMouseUp()
     {
+        GridManager.Instance.ClearPreviewEffects();
         if (ghost != null)
         {
             Destroy(ghost);
