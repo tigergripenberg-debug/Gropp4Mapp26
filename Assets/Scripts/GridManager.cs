@@ -10,6 +10,7 @@ public class GridManager : MonoBehaviour
     [Header("Settings")] public int[,] gridLogic;
     public Transform[,] visualGrid;
     [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
+    [SerializeField] private GameObject explosionParticlePrefab;
     public int width { get; private set; } = 8;
     public int height { get; private set; } = 8;
     public int maxTurnsSinceClear = 0, turnsSinceClear = 0;
@@ -449,7 +450,8 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            SpawnParticles(block);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
@@ -470,7 +472,7 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
@@ -554,5 +556,24 @@ public class GridManager : MonoBehaviour
 
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
+    }
+    private void SpawnParticles(Transform block)
+    {
+        if (explosionParticlePrefab == null) return;
+
+        // Skapa partikeln på blockets position
+        GameObject particles = Instantiate(explosionParticlePrefab, block.position, Quaternion.identity);
+        
+        // Hämta färgen från blocket och ge den till partikeln
+        SpriteRenderer sr = block.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var main = ps.main;
+                main.startColor = sr.color;
+            }
+        }
     }
 }
