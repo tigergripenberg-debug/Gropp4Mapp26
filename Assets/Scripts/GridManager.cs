@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,6 +10,7 @@ public class GridManager : MonoBehaviour
     [Header("Settings")] public int[,] gridLogic;
     public Transform[,] visualGrid;
     [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
+    [SerializeField] private GameObject explosionParticlePrefab;
     public int width { get; private set; } = 8;
     public int height { get; private set; } = 8;
     public int maxTurnsSinceClear = 0, turnsSinceClear = 0;
@@ -20,8 +19,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
     public static Transform PlacedBlockParent;
-    private HashSet<Transform> previewTiles = new();
-    private List<Vector2Int> previousPreviewCells = new();
 
     void Awake()
     {
@@ -453,7 +450,8 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            SpawnParticles(block);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
@@ -474,7 +472,7 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
@@ -559,8 +557,6 @@ public class GridManager : MonoBehaviour
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
     }
-<<<<<<< Updated upstream
-=======
     private void SpawnParticles(Transform block)
     {
         if (explosionParticlePrefab == null) return;
@@ -580,96 +576,4 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-
-    public List<Vector2Int> GetPreviewClears(Shape shape, Vector2Int gridPos)
-    {
-        List<Vector2Int> cellsToClear = new();
-        int[,] tempGrid = (int[,])gridLogic.Clone();
-        Vector2Int origin = shape.GetOriginCell();
-        foreach (var cell in shape.cells)
-        {
-            int x = gridPos.x + (cell.x - origin.x);
-            int y = gridPos.y +(cell.y - origin.y);
-
-            if (IsInsideGrid(x, y))
-            {
-                tempGrid[x, y] = 1;
-            }
-        }
-        for (var y = 0; y < height; y++)
-        {
-            bool full = true;
-            for (var x = 0; x < width; x++)
-            {
-                if (tempGrid[x, y] == 0)
-                {
-                    full = false;
-                    break;
-                }
-            }
-            if (full)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    cellsToClear.Add(new Vector2Int(x, y));
-                }
-            }
-        }
-        for (int x = 0; x < width; x++)
-        {
-            bool full = true;
-            for (var y = 0; y < height; y++)
-            {
-                if (tempGrid[x, y] == 0)
-                {
-                    full = false;
-                    break;
-                }
-            }
-            if (full)
-            {
-                for (var y = 0; y < height; y++)
-                {
-                    cellsToClear.Add(new Vector2Int(x, y));
-                }
-            }
-        }
-        return cellsToClear;
-    }
-
-    public void ShowClearPreview(List<Vector2Int> cells)
-    {
-        HashSet<Transform> newPreview = new();
-        foreach (var cell in cells)
-        {
-            Transform block = visualGrid[cell.x, cell.y];
-            if (block == null) continue;
-            newPreview.Add(block);
-            if (previewTiles.Contains(block)) continue;
-            block.DOKill();
-            block.DOScale(1.2f, 0.35f).SetLoops(-1, LoopType.Yoyo);
-            previewTiles.Add(block);
-        }
-        var toRemove = previewTiles.Except(newPreview).ToList();
-        foreach (Transform block in toRemove)
-        {
-            if (block == null) continue;
-            block.DOKill();
-            block.localScale = Vector3.one;
-            previewTiles.Remove(block);
-        }
-        
-    }
-
-    public void ClearPreviewEffects()
-    {
-        foreach (Transform block in previewTiles)
-        {
-            if (block == null) continue;
-                block.DOKill();
-                block.localScale = Vector3.one;
-        }
-        previewTiles.Clear();
-    }
->>>>>>> Stashed changes
 }
