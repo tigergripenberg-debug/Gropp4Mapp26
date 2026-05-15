@@ -724,6 +724,10 @@ PrefabInstance:
       propertyPath: gridtimerscript
       value: 
       objectReference: {fileID: 2170316417285935242}
+    - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
+      propertyPath: explosionParticlePrefab
+      value: 
+      objectReference: {fileID: 9144086865607056377, guid: 46f358a87be666641a929397f1003e68, type: 3}
     - target: {fileID: 6312326340226181562, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
       propertyPath: m_Name
       value: GridManager
