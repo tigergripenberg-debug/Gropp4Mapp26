@@ -9,7 +9,7 @@ public class Timer : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private TMP_Text hightimeText;
     private SoundManager soundManager;
-    
+
     [Header("Time Stats")]
     public float time;
     private int hightime;
@@ -38,8 +38,8 @@ public class Timer : MonoBehaviour
         {
             time -= Time.deltaTime;
             timeText.text = Mathf.RoundToInt(time).ToString();
-            
-            CheckHightime(); 
+
+            CheckHightime();
         }
         else
         {
@@ -55,7 +55,7 @@ public class Timer : MonoBehaviour
         {
             if (currentCombo > 0)
             {
-                Debug.Log("Time Combo bruten!");
+                // Debug.Log("Time Combo bruten!");
             }
             currentCombo = 0;
         }
@@ -63,19 +63,19 @@ public class Timer : MonoBehaviour
 
     public void CalculateAndAddTime(int linesCleared, bool isBoardEmpty)
     {
-        Debug.Log("Timer: Jag tog emot signalen! Lägger till tid nu...");
+        // Debug.Log("Timer: Jag tog emot signalen! Lägger till tid nu...");
         currentCombo++;
         blocksSinceLastClear = 0;
 
-        int timeToAdd = (linesCleared * linesCleared) * 10; 
+        int timeToAdd = (linesCleared * linesCleared) * 10;
 
         timeToAdd = timeToAdd * currentCombo;
-        Debug.Log($"Tid tillagd! Sprängde {linesCleared} rader. Combo x{currentCombo} -> +{timeToAdd} sekunder");
+        // Debug.Log($"Tid tillagd! Sprängde {linesCleared} rader. Combo x{currentCombo} -> +{timeToAdd} sekunder");
 
         if (isBoardEmpty)
         {
             timeToAdd += 50;
-            Debug.Log("PERFECT CLEAR! +50 sekunder!");
+            // Debug.Log("PERFECT CLEAR! +50 sekunder!");
         }
 
         time += timeToAdd;
