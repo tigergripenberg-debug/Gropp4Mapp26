@@ -8,7 +8,22 @@ public class Block : MonoBehaviour
     private Vector3 touchOffset;
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
     private Vector3 normalSize = new Vector3(1f, 1f, 1f);
+    private string[,] blockNameCache;
 
+    void Awake()
+    {
+        int y = 0, x = 0;
+        blockNameCache = new string[x, y];
+        for (x = 0; x < 8; x++)
+        {
+            for (y = 0; y < 8; y++)
+            {
+                blockNameCache[x, y] = $"Block X:{x} Y:{y}";
+            }
+        }
+    }
+
+    public string GetBlockName(int x, int y) => blockNameCache[x, y];
     void Start()
     {
         startPosition = transform.position;
@@ -71,7 +86,8 @@ public class Block : MonoBehaviour
                 int childY = childPos.y;
                 GridManager.Instance.gridLogic[childX, childY] = 1;
                 GridManager.Instance.visualGrid[childX, childY] = child;
-                child.name = $"Block X:{childX} Y:{childY}";
+                child.name = GetBlockName(childX, childY);
+                // child.name = $"Block X:{childX} Y:{childY}";
                 //OnBlockPlacement?.Invoke(SFXSounds.placement_sound);
             }
             IsPlaced = true;
