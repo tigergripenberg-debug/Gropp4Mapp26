@@ -54,15 +54,15 @@ public class GameManager : MonoBehaviour
         string json = JsonUtility.ToJson(data);
         PlayerPrefs.SetString("save", json);
         PlayerPrefs.Save();
-        Debug.Log("Game Saved");
-        Debug.Log(json);
+        // Debug.Log("Game Saved");
+        // Debug.Log(json);
     }
 
     private void LoadGame()
     {
         if (!PlayerPrefs.HasKey("save"))
         {
-            Debug.Log("No Game found");
+            // Debug.Log("No Game found");
             StartNewGame();
             return;
         }
@@ -73,8 +73,8 @@ public class GameManager : MonoBehaviour
         RestoreGrid(data);
         Score.Instance.RestoreScoreData(data.score,data.currentCombo,data.blocksSinceLastClear);
         BlockSpawner.Instance.RestoreShapes(data.currentShapes);
-        Debug.Log("Game Loaded");
-        Debug.Log(json);
+        // Debug.Log("Game Loaded");
+        // Debug.Log(json);
     }
 
     private void RestoreGrid(SaveData data)
@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.DeleteKey("save");
         PlayerPrefs.Save();
-        Debug.Log("Game Deleted");
+        // Debug.Log("Game Deleted");
     }
 
     public void StartNewGame()
