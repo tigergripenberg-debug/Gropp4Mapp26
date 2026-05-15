@@ -20,14 +20,14 @@ public class BlockSpawner : MonoBehaviour
     {
         Instance = this;
     }
-    
+
     private Shape GetWeightedRandomShape()
     {
         float fill = GridManager.Instance.GetBoardFillPercentage();
         Shape[] validShapes = shapes.Where(s => GridManager.Instance.CanBlockFit(s)).ToArray();
         if (validShapes.Length == 0) return null;
         int maxCells = validShapes.Max(s => s.CellCount);
-        
+
         List<float> weights = new();
         float totalWeight = 0f;
         foreach (Shape shape in validShapes)
@@ -39,10 +39,10 @@ public class BlockSpawner : MonoBehaviour
         for (int i = 0; i < validShapes.Length; i++) // this forloop is strictly for debuglog to see block % spawnrate, not necessary at release
         {
             float chance = (weights[i] / totalWeight) * 100;
-            Debug.Log(
-                $"{validShapes[i].Name} " +
-                $"Weight: {weights[i]:F2} " +
-                $"Chance: {chance:F1}");
+            // Debug.Log(
+            // $"{validShapes[i].Name} " +
+            // $"Weight: {weights[i]:F2} " +
+            // $"Chance: {chance:F1}");
         }
         float random = Random.value * totalWeight;
         for (int i = 0; i < validShapes.Length; i++)
@@ -50,10 +50,10 @@ public class BlockSpawner : MonoBehaviour
             random -= weights[i];
             if (random <= 0f)
             {
-                Debug.Log("Shapes list length" + currentShapes.Count);
+                // Debug.Log("Shapes list length" + currentShapes.Count);
                 return validShapes[i];
             }
-        } 
+        }
         return validShapes[0];
     }
 
@@ -93,12 +93,12 @@ public class BlockSpawner : MonoBehaviour
             Vector3 offset = new Vector3(centerX * 0.6f, centerY * 0.6f, 0f);
             shapeGO.transform.position -= offset;
         }
-        shapeBehaviour.Initialize(shape,blockColors,blockPrefab);
+        shapeBehaviour.Initialize(shape, blockColors, blockPrefab);
         shapeBehaviour.FitColliderToShape();
         col.enabled = true;
         return shapeGO;
     }
-    
+
     public void SpawnShapes()
     {
         currentShapes.Clear();
@@ -109,7 +109,7 @@ public class BlockSpawner : MonoBehaviour
             CreateShapeVisuals(shape, spawnPoints[i]);
         }
     }
-    
+
     public void RestoreShapes(string[] shapeNames)
     {
         currentShapes.Clear();
@@ -122,11 +122,11 @@ public class BlockSpawner : MonoBehaviour
             CreateShapeVisuals(shape, spawnPoints[i]);
         }
     }
-    
+
     public void BlockPlaced()
     {
         //BlocksUsed++;
-        Debug.Log(currentShapes.Count);
+        // Debug.Log(currentShapes.Count);
         if (Score.Instance != null)
         {
             Score.Instance.RegisterBlockPlaced();
@@ -140,19 +140,24 @@ public class BlockSpawner : MonoBehaviour
         {
             GridTimerScript.Instance.decreaseValue();
         }
-        
+
         if (currentShapes.Count <= 0)
         {
             //BlocksUsed = 0;
             GridManager.Instance.OnTurnFinished();
             SpawnShapes();
         }
-        
+
         GridManager.Instance.CheckIfPlayable();
     }
 
     public void ClearCurrentShapes()
     {
         currentShapes.Clear();
+        ShapeBehaviour[] sb = gameObject.GetComponentsInChildren<ShapeBehaviour>();
+        foreach (ShapeBehaviour shapes in sb)
+        {
+            DestroyImmediate(shapes.gameObject);
+        }
     }
 }
