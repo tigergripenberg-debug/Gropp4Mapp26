@@ -93,6 +93,7 @@ public class SoundManager : MonoBehaviour
     {
         sfxSoundManager.volume = sfxVolumeSlider.value;
         PlayerPrefs.SetFloat("volume", volume);
+        PlayerPrefs.Save();
     }
     public void SetSFXMute(bool mute)
     {
@@ -202,7 +203,7 @@ public class SoundManager : MonoBehaviour
                 return clip;
             }
         }
-        Debug.LogWarning("Sound " + clipName + " not found");
+        // Debug.LogWarning("Sound " + clipName + " not found");
         return null;
     }
 }
