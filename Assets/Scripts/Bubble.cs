@@ -7,7 +7,7 @@ public class Bubble : MonoBehaviour
     public float floatSpeed = 2f;
     public float driftStrength = 2f;
     private float randomOffset;
-    
+
     private void Start()
     {
         randomOffset = UnityEngine.Random.Range(0f, 100f);
@@ -28,10 +28,10 @@ public class Bubble : MonoBehaviour
         float time = 0;
         float shrinkDuration = 0.8f;
         Vector2 startScale = Vector2.zero;
-        Vector2 endScale = new Vector2(2f,2f);
-        Vector2 endPosition = new Vector2(1f,1f);
+        Vector2 endScale = new Vector2(2f, 2f);
+        Vector2 endPosition = new Vector2(1f, 1f);
 
-        while (time > duration)
+        while (time < duration)
         {
             transform.localScale = Vector3.Lerp(startScale, endScale, time / duration);
             time += Time.deltaTime;
@@ -47,6 +47,5 @@ public class Bubble : MonoBehaviour
 
         transform.localScale = endScale;
         Destroy(gameObject);
-        yield return new WaitForSeconds(0.1f);
     }
 }
