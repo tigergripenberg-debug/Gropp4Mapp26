@@ -17,7 +17,7 @@ public class GridManager : MonoBehaviour
     public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
-    [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
+    [SerializeField] private Vector2 originOffset = new Vector2(0, 2f);
     public static Transform PlacedBlockParent;
 
     void Awake()
@@ -84,6 +84,7 @@ public class GridManager : MonoBehaviour
     public void ResetGridLogic()
     {
         gridLogic = new int[width, height];
+        visualGrid = new Transform[width, height];
     }
 
     public float GetBoardFillPercentage()
@@ -98,7 +99,7 @@ public class GridManager : MonoBehaviour
                 if (gridLogic[x, y] == 1)
                 {
                     occupied++;
-                    Debug.Log($"{occupied / (width*height) * 100} %");
+                    // Debug.Log($"{(float) occupied / (width * height) * 100} %");
                 }
             }
         }
@@ -137,6 +138,8 @@ public class GridManager : MonoBehaviour
         {
             time.time = 100f;
         }
+        DestroyImmediate(PlacedBlockParent.gameObject);
+        PlacedBlockParent = null;
         GameManager.Instance.DeleteSave();
         MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -174,7 +177,7 @@ public class GridManager : MonoBehaviour
 
             GridTimerScript.Instance.resetValue();
             GridTimerScript.Instance.freeze(false);
-            Debug.Log("Runda klar: Immuniteten har löpt ut.");
+            // Debug.Log("Runda klar: Immuniteten har löpt ut.");
         }
         else
         {
@@ -297,7 +300,7 @@ public class GridManager : MonoBehaviour
 
     public void TriggerGameOver()
     {
-        Debug.Log("Game Over");
+        // Debug.Log("Game Over");
         MenuController.gameIsPaused = true;
         StartCoroutine(ShowGameOverRoutine());
     }
@@ -366,7 +369,9 @@ public class GridManager : MonoBehaviour
 
                 if (visualGrid[x, y] != null)
                 {
-                    visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 1f).SetEase(Ease.InOutElastic);
+                    visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 1f)
+                    .SetLink(visualGrid[x, y].gameObject)
+                    .SetEase(Ease.InOutElastic);
                     OnGridMovedPlayPop?.Invoke(SFXSounds.pop_sound);
 
                 }
@@ -384,7 +389,7 @@ public class GridManager : MonoBehaviour
     {
         for (int x = 0; x < width; x++)
         {
-            Debug.Log("Generating new row");
+            // Debug.Log("Generating new row");
             visualGrid[x, height - 1] = null;
             gridLogic[x, height - 1] = 0;
         }
@@ -495,7 +500,7 @@ public class GridManager : MonoBehaviour
     {
         if (shapeBehaviour.transform.childCount == 0)
         {
-            Debug.LogError("Shape has no children! Not built yet.");
+            // Debug.LogError("Shape has no children! Not built yet.");
             return;
         }
         Shape shape = shapeBehaviour.ShapeData;
@@ -535,7 +540,7 @@ public class GridManager : MonoBehaviour
         sr.sortingLayerName = "PlacedBlocks";
         sr.color = BlockSpawner.Instance.blockColors[colorIndex];
         block.GetComponent<NewBlock>().colorIndex = colorIndex;
-        visualGrid[x,y] = block.transform;
+        visualGrid[x, y] = block.transform;
     }
     public bool IsInsideGrid(int x, int y)
     {
@@ -563,7 +568,8 @@ public class GridManager : MonoBehaviour
 
         // Skapa partikeln på blockets position
         GameObject particles = Instantiate(explosionParticlePrefab, block.position, Quaternion.identity);
-        
+
+        Destroy(particles, 2f);
         // Hämta färgen från blocket och ge den till partikeln
         SpriteRenderer sr = block.GetComponent<SpriteRenderer>();
         if (sr != null)
@@ -574,6 +580,8 @@ public class GridManager : MonoBehaviour
                 var main = ps.main;
                 main.startColor = sr.color;
             }
+
+
         }
     }
 }
