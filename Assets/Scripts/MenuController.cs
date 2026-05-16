@@ -3,10 +3,13 @@ using UnityEngine.SceneManagement;
 using DG.Tweening;
 using System.Collections;
 using UnityEngine.UI;
-
+ 
 public class MenuController : MonoBehaviour
 {
     public static bool gameIsPaused = false;
+
+    public static event System.Action<SFXSounds> OnPause;
+    public static event System.Action<SFXSounds> OnUnpause;
 
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject menuPanel;
@@ -16,6 +19,7 @@ public class MenuController : MonoBehaviour
 
     private Image backgroundImg;
     private Color backgorundColor;
+
 
     private void Awake()
     {
@@ -78,12 +82,13 @@ public class MenuController : MonoBehaviour
         OpenSettingsPanel();
         gameIsPaused = true;
         PausePanelEnterAnim();
+        OnPause?.Invoke(SFXSounds.placement_sound);
     }
 
     private void PausePanelEnterAnim()
     {
-        var sequenceX = DOTween.Sequence();
-        var sequenceY = DOTween.Sequence();
+        Sequence sequenceX = DOTween.Sequence();
+        Sequence sequenceY = DOTween.Sequence();
 
         menuPanel.transform.DOMove(menuPanel.transform.parent.position, mpEntryLength).SetEase(Ease.OutBack);
         backgroundImg.DOFade(0.6f, mpEntryLength);
@@ -99,6 +104,7 @@ public class MenuController : MonoBehaviour
 
     public void ClosePausePanel()
     {
+        OnUnpause?.Invoke(SFXSounds.placement_sound);
         StartCoroutine(PausePanelExitAnim());
     }
 

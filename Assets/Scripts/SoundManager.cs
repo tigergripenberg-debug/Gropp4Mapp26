@@ -15,8 +15,8 @@ public enum SFXSounds
 {
     pop_sound,
     placement_sound
-}
 
+}
 
 public class SoundManager : MonoBehaviour
 {
@@ -76,7 +76,6 @@ public class SoundManager : MonoBehaviour
         from.Stop();
     }
 
-
     public void SetMusicVolume(float volume)
     {
         currentVolume = volume;
@@ -111,6 +110,20 @@ public class SoundManager : MonoBehaviour
         Play("death_sound");
     }
 
+    public void PlayMenuOpen(SFXSounds soundType)
+    {
+        PlayDelayed("menuOpen_sound", 0.04f);
+    }
+    public void PlayMenuClose(SFXSounds soundType)
+    {
+        Play("menuClose_sound");
+    }
+
+    public void PlayPauseButtonClick(SFXSounds soundType)
+    {
+        Play("pauseButton_sound");
+    }
+
     private void OnEnable()
     {
         Score.OnScoreChange += PlayScoreSound;
@@ -119,6 +132,10 @@ public class SoundManager : MonoBehaviour
         GridManager.OnGridMovedPlayPop += PlayMoved;
         GridManager.OnGameOverPlayPop += PlayDeath;
         Score.OnComboChanged += HandleCombo;
+
+        MenuController.OnPause += PlayMenuOpen;
+        MenuController.OnPause += PlayPauseButtonClick;
+        MenuController.OnUnpause += PlayMenuClose;
     }
 
     private void OnDisable()
@@ -129,6 +146,10 @@ public class SoundManager : MonoBehaviour
         GridManager.OnGridMovedPlayPop -= PlayMoved;
         GridManager.OnGameOverPlayPop -= PlayDeath;
         Score.OnComboChanged -= HandleCombo;
+
+        MenuController.OnPause -= PlayMenuOpen;
+        MenuController.OnPause -= PlayPauseButtonClick;
+        MenuController.OnUnpause -= PlayMenuClose;
     }
     private void HandleCombo(int combo)
     {
@@ -168,7 +189,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-
     void Play(string clipName)
     {
         AudioClip clip = GetClipByName(clipName);
@@ -185,7 +205,6 @@ public class SoundManager : MonoBehaviour
             StartCoroutine(ExecuteDelayedSfx(clip, delay));
         }
     }
-
     IEnumerator ExecuteDelayedSfx(AudioClip clip, float delay)
     {
         yield return new WaitForSeconds(delay);

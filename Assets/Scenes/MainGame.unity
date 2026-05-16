@@ -1332,12 +1332,24 @@ PrefabInstance:
       objectReference: {fileID: 758621304}
     - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: wowSounds.Array.size
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: 'wowSounds.Array.data[6]'
       value: 
       objectReference: {fileID: 8300000, guid: 754b923e278c06c4ababab60135ce6cc, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[7]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 69ca94eea39deef4c97cc43776b9500a, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[8]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 6460b294cc17854438f9a72385cd98b6, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[9]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 6996f77f835bf3341b0bdb89a58b5ccc, type: 3}
     - target: {fileID: 5248637459201962429, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: m_Resource
       value: 
@@ -1385,6 +1397,10 @@ PrefabInstance:
     - target: {fileID: 7630470034198704394, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: m_Name
       value: SoundManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630470034198704394, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1659,6 +1675,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f58e627bd820ec14d8829fbc22eba3e2, type: 3}
+    - target: {fileID: 3790856870760404808, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: soundManager
+      value: 
+      objectReference: {fileID: 1765800403}
     - target: {fileID: 4191613535036478051, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
