@@ -4,12 +4,16 @@ using Random = UnityEngine.Random;
 
 public class Shape
 {
+    public string Name;
     public Vector2Int[] cells;
+    public int CellCount => cells.Length;
     
-    public Shape(Vector2Int[] cells)
+    public Shape(string name, Vector2Int[] cells)
     {
+        Name = name;
         this.cells = cells;
     }
+    
     
     public Vector2 GetCenter()
     {

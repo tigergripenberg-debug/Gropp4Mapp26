@@ -7,21 +7,29 @@ using UnityEngine.SceneManagement;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
-    [Header("Settings")]
-    public int[,] gridLogic;
+    [Header("Settings")] public int[,] gridLogic;
     public Transform[,] visualGrid;
     [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
-    private int width = 8, height = 8;
-    private int maxTurnsSinceClear = 0, turnsSinceClear = 0;
+    [SerializeField] private GameObject explosionParticlePrefab;
+    public int width { get; private set; } = 8;
+    public int height { get; private set; } = 8;
+    public int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
+    [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
+    public static Transform PlacedBlockParent;
 
     void Awake()
     {
         Instance = this;
         gridLogic = new int[width, height];
         visualGrid = new Transform[width, height];
+        if (PlacedBlockParent == null)
+        {
+            var go = new GameObject("PlacedBlocks");
+            PlacedBlockParent = go.transform;
+        }
     }
 
     void Start()
@@ -60,6 +68,43 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void ClearExistingBoardVisuals()
+    {
+        if (PlacedBlockParent == null)
+        {
+            return;
+        }
+
+        foreach (Transform child in PlacedBlockParent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    public void ResetGridLogic()
+    {
+        gridLogic = new int[width, height];
+    }
+
+    public float GetBoardFillPercentage()
+    {
+        int occupied = 0;
+        int total = width * height;
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (gridLogic[x, y] == 1)
+                {
+                    occupied++;
+                    Debug.Log($"{occupied / (width*height) * 100} %");
+                }
+            }
+        }
+        return (float)occupied / total;
+    }
+
     public Vector2 GetWorldPosition(int x, int y)
     {
         float xOffset = (width - 1) / 2f;
@@ -67,17 +112,17 @@ public class GridManager : MonoBehaviour
 
         return new Vector2(
             x - xOffset,
-            y - yOffset + 2f
-        );
+            y - yOffset
+        ) + originOffset;
     }
 
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
         float xOffset = (width - 1) / 2f;
         float yOffset = (height - 0) / 2f;
-
-        int x = Mathf.RoundToInt(worldPos.x + xOffset);
-        int y = Mathf.RoundToInt(worldPos.y + yOffset - 2f);
+        Vector2 adjusted = (Vector2)worldPos - originOffset;
+        int x = Mathf.RoundToInt(adjusted.x + xOffset);
+        int y = Mathf.RoundToInt(adjusted.y + yOffset);
 
         return new Vector2Int(x, y);
     }
@@ -92,6 +137,7 @@ public class GridManager : MonoBehaviour
         {
             time.time = 100f;
         }
+        GameManager.Instance.DeleteSave();
         MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -355,7 +401,6 @@ public class GridManager : MonoBehaviour
 
     public bool CanBlockFit(Shape shape)
     {
-        Vector2Int origin = shape.GetOriginCell();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -363,8 +408,8 @@ public class GridManager : MonoBehaviour
                 bool fitsHere = true;
                 foreach (Vector2Int cell in shape.cells)
                 {
-                    int testX = x + (origin.x);
-                    int testY = y + (origin.y);
+                    int testX = x + cell.x;
+                    int testY = y + cell.y;
                     if (testX < 0 || testX >= width || testY < 0 || testY >= height || gridLogic[testX, testY] == 1)
                     {
                         fitsHere = false;
@@ -405,7 +450,8 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            SpawnParticles(block);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
@@ -426,41 +472,22 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
-
-    /*public bool CanPlaceShapeAtPosition(Shape shape, int gridX, int gridY)
-    {
-        foreach (Vector2Int cell in shape.cells)
-        {
-            int x = gridX + cell.x;
-            int y = gridY + cell.y;
-            if (!IsInsideGrid(x, y))
-                return false;
-            if (gridLogic[x, y] == 1)
-                return false;
-        }
-        return true;
-    }
-    */
 
     public bool CanPlaceShapeAtPosition(Shape shape, Vector2Int gridPos)
     {
         Vector2Int origin = shape.GetOriginCell();
-
         foreach (Vector2Int cell in shape.cells)
         {
             int x = gridPos.x + (cell.x - origin.x);
             int y = gridPos.y + (cell.y - origin.y);
-
             if (!IsInsideGrid(x, y))
                 return false;
-
             if (gridLogic[x, y] == 1)
                 return false;
         }
-
         return true;
     }
 
@@ -485,11 +512,13 @@ public class GridManager : MonoBehaviour
                 continue;
             gridLogic[x, y] = 1;
             Transform block = shapeBehaviour.transform.GetChild(i);
-            block.SetParent(transform);
+            block.SetParent(PlacedBlockParent);
             block.position = GetWorldPosition(x, y);
             visualGrid[x, y] = block;
             i++;
         }
+
+        BlockSpawner.Instance.currentShapes.Remove(shape);
         Destroy(shapeBehaviour.gameObject);
     }
 
@@ -497,6 +526,16 @@ public class GridManager : MonoBehaviour
     {
         StartCoroutine(ClearColCoroutine(x));
         return true;
+    }
+    public void SpawnPlacedBlock(int x, int y, int colorIndex)
+    {
+        Vector3 worldPos = GetWorldPosition(x, y);
+        var block = Instantiate(blockPrefab, worldPos, Quaternion.identity, PlacedBlockParent);
+        var sr = block.GetComponent<SpriteRenderer>();
+        sr.sortingLayerName = "PlacedBlocks";
+        sr.color = BlockSpawner.Instance.blockColors[colorIndex];
+        block.GetComponent<NewBlock>().colorIndex = colorIndex;
+        visualGrid[x,y] = block.transform;
     }
     public bool IsInsideGrid(int x, int y)
     {
@@ -517,5 +556,24 @@ public class GridManager : MonoBehaviour
 
         // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
+    }
+    private void SpawnParticles(Transform block)
+    {
+        if (explosionParticlePrefab == null) return;
+
+        // Skapa partikeln på blockets position
+        GameObject particles = Instantiate(explosionParticlePrefab, block.position, Quaternion.identity);
+        
+        // Hämta färgen från blocket och ge den till partikeln
+        SpriteRenderer sr = block.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var main = ps.main;
+                main.startColor = sr.color;
+            }
+        }
     }
 }
