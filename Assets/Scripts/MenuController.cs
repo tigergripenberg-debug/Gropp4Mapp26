@@ -11,23 +11,29 @@ public class MenuController : MonoBehaviour
     public static event System.Action<SFXSounds> OnPause;
     public static event System.Action<SFXSounds> OnUnpause;
 
-    [SerializeField] private GameObject settingsPanel;
-    [SerializeField] private GameObject menuPanel;
-    [SerializeField] private GameObject leaderBoardPanel;
+    [SerializeField] private GameObject settingsPanel, menuPanel, leaderBoardPanel, gameOverPanel;
 
     [SerializeField] private float mpEntryLength = 0.4f;
 
     private Image backgroundImg;
-    private Color backgorundColor;
+
+
+    private Image gameOverImg;
+
 
 
     private void Awake()
     {
         menuPanel.transform.position = menuPanel.transform.parent.position + new Vector3(0, -1500, 0);
         backgroundImg = settingsPanel.GetComponent<Image>();
+        backgroundImg.DOFade(0f, 0f);
+        settingsPanel.SetActive(false);
+        
+        
+        gameOverImg = gameOverPanel.GetComponent<Image>();
+        gameOverImg.DOFade(0f, 0f);
+        gameOverPanel.SetActive(false);
 
-        backgorundColor = backgroundImg.color;
-        backgorundColor.a = 0f;
     }
 
     public void StartGame()
@@ -91,6 +97,7 @@ public class MenuController : MonoBehaviour
         Sequence sequenceY = DOTween.Sequence();
 
         menuPanel.transform.DOMove(menuPanel.transform.parent.position, mpEntryLength).SetEase(Ease.OutBack);
+
         backgroundImg.DOFade(0.6f, mpEntryLength);
 
         sequenceX.Append(menuPanel.transform.DOScaleX(0.8f, 0.22f));
@@ -117,6 +124,22 @@ public class MenuController : MonoBehaviour
         menuPanel.transform.position = menuPanel.transform.parent.position + new Vector3(0, -1500, 0);
         menuPanel.transform.localScale = new Vector3(1f, 1f, 1f);
     }
+
+    public void ShowGameOverPanel()
+    {
+        gameOverPanel.SetActive(true);
+        gameIsPaused = true;
+        GameOverPanelEnterAnim();
+    }
+
+    private void GameOverPanelEnterAnim()
+    {
+        gameOverPanel.GetComponent<Image>().DOFade(0.5f, 0.3f);
+
+
+    }
+
+
 
     public void GoToStartMenu()
     {

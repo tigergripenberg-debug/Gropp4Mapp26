@@ -308,6 +308,8 @@ public class GridManager : MonoBehaviour
         if (gameOverCanvas != null)
         {
             OnGameOverPlayPop?.Invoke(SFXSounds.pop_sound);
+
+            //Add Method from MenuController to set active and animate GameOver
             gameOverCanvas.SetActive(true);
         }
     }
