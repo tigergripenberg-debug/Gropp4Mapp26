@@ -9,7 +9,7 @@ public class GridManager : MonoBehaviour
     public static GridManager Instance;
     [Header("Settings")] public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
+    [SerializeField] private GameObject tilePrefab, blockPrefab;
     [SerializeField] private GameObject explosionParticlePrefab;
     public int width { get; private set; } = 8;
     public int height { get; private set; } = 8;
@@ -17,6 +17,7 @@ public class GridManager : MonoBehaviour
     public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
+    [SerializeField] private MenuController menuController;
     [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
     public static Transform PlacedBlockParent;
 
@@ -305,12 +306,12 @@ public class GridManager : MonoBehaviour
     {
         FillBoardAtGameOver();
         yield return new WaitForSeconds(0.5f);
-        if (gameOverCanvas != null)
+        if (menuController != null)
         {
             OnGameOverPlayPop?.Invoke(SFXSounds.pop_sound);
 
             //Add Method from MenuController to set active and animate GameOver
-            gameOverCanvas.SetActive(true);
+            menuController.ShowGameOverPanel();
         }
     }
 
