@@ -20,6 +20,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private MenuController menuController;
     [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
     public static Transform PlacedBlockParent;
+    public int clearingRoutines = 0;
+    public bool isClearing => clearingRoutines > 0;
 
     void Awake()
     {
@@ -443,6 +445,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator ClearRowCoroutine(int y)
     {
+        clearingRoutines++;
         List<Transform> blocksToDestroy = new List<Transform>();
 
         for (int x = 0; x < width; x++)
@@ -461,10 +464,12 @@ public class GridManager : MonoBehaviour
             SpawnParticles(block);
             yield return new WaitForSeconds(0.05f);
         }
+        clearingRoutines--;
     }
 
     private IEnumerator ClearColCoroutine(int x)
     {
+        clearingRoutines++;
         List<Transform> blocksToDestroy = new List<Transform>();
 
         for (int y = 0; y < height; y++)
@@ -482,6 +487,7 @@ public class GridManager : MonoBehaviour
             Destroy(block.gameObject);
             yield return new WaitForSeconds(0.05f);
         }
+        clearingRoutines--;
     }
 
     public bool CanPlaceShapeAtPosition(Shape shape, Vector2Int gridPos)
