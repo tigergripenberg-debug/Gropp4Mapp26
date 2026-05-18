@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f7b03d9c75fe5de40a5c42e8b6eed663
+guid: 5876cb93ee7de12428873dac412d4361
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1364864582579679579
-    second: Counter_WIP_3_Blue_0
+      213: 6312351332253330742
+    second: PauseButton_Upp_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Counter_WIP_3_Blue_0
+      name: PauseButton_Upp_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 528
-        height: 529
+        width: 248
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5ae83dcb4e60f0de0800000000000000
-      internalID: -1364864582579679579
+      spriteID: 63d6c68a71af99750800000000000000
+      internalID: 6312351332253330742
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Counter_WIP_3_Blue_0: -1364864582579679579
+      PauseButton_Upp_0: 6312351332253330742
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
