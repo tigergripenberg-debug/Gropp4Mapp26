@@ -55,3 +55,4 @@ MonoBehaviour:
   soundManager: {fileID: 0}
   menuController: {fileID: 0}
   originOffset: {x: 0, y: 2}
+  clearingRoutines: 0
