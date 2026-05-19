@@ -9,7 +9,7 @@ public class GridManager : MonoBehaviour
     public static GridManager Instance;
     [Header("Settings")] public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, gameOverCanvas, blockPrefab;
+    [SerializeField] private GameObject tilePrefab, blockPrefab;
     [SerializeField] private GameObject explosionParticlePrefab;
     public int width { get; private set; } = 8;
     public int height { get; private set; } = 8;
@@ -17,6 +17,8 @@ public class GridManager : MonoBehaviour
     public bool hasImmunity = false, linesClearedThisRound = false;
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
+    [SerializeField] private Vector2 originOffset = new Vector2(0, 2f);
+    [SerializeField] private MenuController menuController;
     [SerializeField] private Vector2 originOffset = new Vector2(0, 2f);
     public static Transform PlacedBlockParent;
     public int clearingRoutines = 0;
@@ -153,11 +155,16 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-
                 GameObject newTile = Instantiate(tilePrefab);
                 newTile.transform.position = GetWorldPosition(x, y);
                 newTile.name = $"Tile X:{x} Y:{y}";
                 newTile.transform.SetParent(transform);
+
+                //Ändrar sprite av alla tiles på raden längst ned
+                if (y != 0) continue;
+                //newTile.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(0.88f, 0.12f, 0.12f, 1f);
+                newTile.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/BottomTile");
+
             }
         }
     }
@@ -310,10 +317,12 @@ public class GridManager : MonoBehaviour
     {
         FillBoardAtGameOver();
         yield return new WaitForSeconds(0.5f);
-        if (gameOverCanvas != null)
+        if (menuController != null)
         {
             OnGameOverPlayPop?.Invoke(SFXSounds.pop_sound);
-            gameOverCanvas.SetActive(true);
+
+            //Add Method from MenuController to set active and animate GameOver
+            menuController.ShowGameOverPanel();
         }
     }
 

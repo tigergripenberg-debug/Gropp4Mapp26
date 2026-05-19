@@ -214,6 +214,8 @@ public class ShapeBehaviour : MonoBehaviour
     }
     private void OnMouseDown()
     {
+        if (MenuController.gameIsPaused) return;
+
         transform.localScale = normalScale;
 
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -250,6 +252,8 @@ public class ShapeBehaviour : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        if (MenuController.gameIsPaused) return;
+
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
         
@@ -265,6 +269,8 @@ public class ShapeBehaviour : MonoBehaviour
 
     void OnMouseUp()
     {
+        if (MenuController.gameIsPaused) return;
+
         if (ghost != null)
         {
             Destroy(ghost);
