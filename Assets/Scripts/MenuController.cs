@@ -15,11 +15,13 @@ public class MenuController : MonoBehaviour
     [SerializeField] private float mpEntryLength = 0.4f;
 
     private Image backgroundImg, gameOverImg;
-    private Vector3 panelEntryStartPos;
+    private Vector3 menuPanelOriginPos, panelEntryStartPos;
+    [SerializeField] private Vector3 entryPosOffset = new Vector3(0, -1500, 0);
 
     private void Awake()
     {
-        panelEntryStartPos = menuPanel.transform.parent.position + new Vector3(0, -1500, 0);
+        menuPanelOriginPos = menuPanel.transform.position;
+        panelEntryStartPos = menuPanelOriginPos + entryPosOffset;
         menuPanel.transform.position = panelEntryStartPos;
         backgroundImg = settingsPanel.GetComponent<Image>();
         backgroundImg.DOFade(0f, 0f);
@@ -87,7 +89,7 @@ public class MenuController : MonoBehaviour
 
     private void PausePanelEnterAnim()
     {
-        menuPanel.transform.DOMove(menuPanel.transform.parent.position, mpEntryLength).SetEase(Ease.OutBack);
+        menuPanel.transform.DOMove(menuPanelOriginPos, mpEntryLength).SetEase(Ease.OutBack);
 
         backgroundImg.DOFade(0.6f, mpEntryLength);
 
