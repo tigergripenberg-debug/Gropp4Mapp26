@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c7316f3f890a6e84cb1f7918098ba85e
+guid: 84d9c477896e301439aed52635ed7cd8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2984397643982430341
-    second: PlayArea_itr3_0
+      213: 7509858745344530984
+    second: SettingsButton_Upp_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -100,12 +100,12 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 47
+    textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 1
+    overridden: 0
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayArea_itr3_0
+      name: SettingsButton_Upp_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2160
-        height: 3258
+        width: 248
+        height: 248
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 580e51e58d5ba6920800000000000000
-      internalID: 2984397643982430341
+      spriteID: 82a1f9d6db0683860800000000000000
+      internalID: 7509858745344530984
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PlayArea_itr3_0: 2984397643982430341
+      SettingsButton_Upp_0: 7509858745344530984
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
