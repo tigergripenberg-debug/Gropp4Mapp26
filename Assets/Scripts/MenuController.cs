@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
-using System.Collections;
 using UnityEngine.UI;
  
+using TMPro;
 public class MenuController : MonoBehaviour
 {
     public static bool gameIsPaused = false;
@@ -13,6 +13,7 @@ public class MenuController : MonoBehaviour
 
     [SerializeField] private GameObject settingsPanel, menuPanel, leaderBoardPanel, gameOverPanel;
     [SerializeField] private float mpEntryLength = 0.4f;
+    [SerializeField] private TMP_Text gameOverText;
 
     private Image backgroundImg, gameOverImg;
     private Vector3 menuPanelOriginPos, panelEntryStartPos;
@@ -126,6 +127,10 @@ public class MenuController : MonoBehaviour
     {
         gameOverPanel.SetActive(true);
         gameIsPaused = true;
+        if(string.IsNullOrEmpty(GridManager.Instance.Whydied))
+            Debug.LogError("Reason to death not given by Whydied, instead was: " + GridManager.Instance.Whydied);
+
+        gameOverText.text = GridManager.Instance.Whydied;
         GameOverPanelEnterAnim();
     }
 

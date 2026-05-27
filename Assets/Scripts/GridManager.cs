@@ -22,6 +22,7 @@ public class GridManager : MonoBehaviour
     public static Transform PlacedBlockParent;
     public int clearingRoutines = 0;
     public bool isClearing => clearingRoutines > 0;
+    public string Whydied {private set; get;}
 
     void Awake()
     {
@@ -333,6 +334,7 @@ public class GridManager : MonoBehaviour
             if (CanFitAnywhere(b.ShapeData))
                 return;
         }
+        Whydied = "No more space to place blocks";
         TriggerGameOver();
     }
 
@@ -356,6 +358,7 @@ public class GridManager : MonoBehaviour
     {
         if (IsGameOver())
         {
+            Whydied = "Blocks moved beyond the bottom";
             TriggerGameOver();
             return;
         }
