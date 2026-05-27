@@ -592,6 +592,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 642888739545730190, guid: bf7170e17f90359418646bca34a94b06, type: 3}
+      propertyPath: blockColors.Array.size
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3998972783956017299, guid: bf7170e17f90359418646bca34a94b06, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
