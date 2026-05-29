@@ -1,5 +1,3 @@
-using DG.Tweening;
-using DG.Tweening.Core;
 using TMPro;
 using UnityEngine;
 
@@ -10,9 +8,8 @@ public class Score : MonoBehaviour
     [Header("UI & References")]
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highscoreText;
-
+    
     [Header("Score Stats")]
-    [SerializeField] private Color scoreColor = Color.white;
     public int score;
     private int highscore;
     public int currentCombo = 0;
@@ -21,7 +18,7 @@ public class Score : MonoBehaviour
     public static event System.Action<ScoreEventType> OnScoreChange;
     public static event System.Action<string> OnScoreMessage;
     public static event System.Action<int> OnComboChanged;
-    private new Sequence animation;
+
     void Awake()
     {
         Instance = this;
@@ -29,49 +26,9 @@ public class Score : MonoBehaviour
 
     void Start()
     {
-        animation = DOTween.Sequence();
         highscore = PlayerPrefs.GetInt("Highscore", 0);
         scoreText.text = score.ToString();
         highscoreText.text = "Best: " + highscore;
-    }
-    private void Scorer(int number, ScoreEventType type)
-    {
-        Color tmpclr = scoreColor;
-        DOTween.SetTweensCapacity(500, 50);
-        float shakeStrength = 0.2f;
-        switch (type)
-        {
-            case ScoreEventType.Small:
-                shakeStrength = 0.2f;
-                scoreColor = Color.yellow;
-                break;
-            case ScoreEventType.Medium:
-                shakeStrength = 0.4f;
-                scoreColor = Color.orange;
-                break;
-            case ScoreEventType.Big:
-                shakeStrength = 0.8f;
-                scoreColor = Color.red;
-                break;
-            case ScoreEventType.Jackpot:
-                scoreColor = Color.purple;
-                shakeStrength = 1.6f;
-                break;
-        }
-        Camera.main.transform.DOShakePosition(1f, shakeStrength, 5, 20);
-        int currentScore = int.Parse(scoreText.text);
-        for (int i = currentScore; i <= number; i++)
-        {
-            scoreText.transform.DOScale(2f, 1f);
-            scoreText.color = scoreColor;
-            scoreText.text = (currentScore + 1).ToString();
-            scoreText.transform.DOScale(1f, 1f);
-            scoreText.color = tmpclr;
-            scoreColor = tmpclr;
-
-        }
-
-
     }
 
     public void RestoreScoreData(int savedScore, int savedCombo, int savedBlocksSinceLastClear)
@@ -94,7 +51,7 @@ public class Score : MonoBehaviour
             currentCombo = 0;
             OnComboChanged?.Invoke(currentCombo);
 
-            if (SoundManager.Instance != null)
+            if(SoundManager.Instance != null)
             {
                 SoundManager.Instance.ExitComboMusic();
             }
@@ -113,37 +70,38 @@ public class Score : MonoBehaviour
     public void CalculateAndAddScore(int linesCleared, bool isBoardEmpty)
     {
         currentCombo++;
-
+        
         // --- MAGIN HÄNDER HÄR ---
-        // Vi sätter den till -1! Eftersom RegisterBlockPlaced körs millisekunden
+        // Vi sätter den till -1! Eftersom RegisterBlockPlaced körs millisekunden 
         // efter detta, kommer räknaren nollställas till exakt 0.
-        blocksSinceLastClear = -1;
-
+        blocksSinceLastClear = -1; 
+        
         OnComboChanged?.Invoke(currentCombo);
 
         int pointsForLines = 0;
         switch (linesCleared)
         {
             case 1: pointsForLines = 100; break;
-            case 2: pointsForLines = 300; break;
-            case 3: pointsForLines = 600; break;
-            default: pointsForLines = 1000; break;
+            case 2: pointsForLines = 300; break; 
+            case 3: pointsForLines = 600; break; 
+            default: pointsForLines = 1000; break; 
         }
-
+        
         float comboMultiplier = 1.0f + (currentCombo * currentCombo * 0.1f);
         int pointsToGive = Mathf.RoundToInt(pointsForLines * comboMultiplier);
-
+        
         if (isBoardEmpty)
         {
             pointsToGive += 1000;
             Debug.Log("PERFECT CLEAR! +1000 bonuspoäng!");
         }
-
+        
         score += pointsToGive;
+        scoreText.text = score.ToString();
+        
         ScoreEventType type = GetScoreEventType(currentCombo);
-        Scorer(score, type);
         CheckHighscore();
-
+        
         string message = $"Multiplier: x{comboMultiplier:F1}\n Total {pointsToGive} points!";
         OnScoreChange?.Invoke(type);
         OnScoreMessage?.Invoke(message);

@@ -56,13 +56,11 @@ Assets/Scripts/
  Block.cs
  BlockSpawner.cs
  Bubble.cs
- GameManager.cs
  GridManager.cs
  gridtimerscript.cs
  leaderboardpanel.cs
  MenuController.cs
  NewBlock.cs
- SaveData.cs
  Score.cs
  Shape.cs
  ShapeBehaviour.cs

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,134 +13,48 @@ public class BlockSpawner : MonoBehaviour
     public Transform[] spawnPoints;
     public GameObject blockPrefab;
     [SerializeField] public Color[] blockColors;
-    
     private Shape[] shapes = ShapeLibrary.allShapes;
     public List<Shape> currentShapes = new();
-
-    private Shape[] smallShapes;
-    private Shape[] mediumShapes;
-    private Shape[] largeShapes;
 
     void Awake()
     {
         Instance = this;
-        smallShapes = shapes.Where(s => s.CellCount <= 3).ToArray();
-        mediumShapes = shapes.Where(s => s.CellCount == 4).ToArray();
-        largeShapes = shapes.Where(s => s.CellCount >= 5).ToArray();
     }
     
-    private List<Shape> GenerateSkillBasedDraft()
+    private Shape GetWeightedRandomShape()
     {
-        List<Shape> draft = new List<Shape>();
-
-        draft.Add(GetPerfectSolutionShape());
-
-        float fill = GridManager.Instance != null ? GridManager.Instance.GetBoardFillPercentage() : 0f;
-        int chanceSmall = fill < 0.3f ? 15 : (fill < 0.6f ? 30 : 50);
-        int chanceMedium = fill < 0.3f ? 45 : (fill < 0.6f ? 55 : 45);
-
-        for (int i = 0; i < 2; i++)
-        {
-            int roll = Random.Range(0, 100);
-            if (roll < chanceSmall) draft.Add(smallShapes[Random.Range(0, smallShapes.Length)]);
-            else if (roll < chanceSmall + chanceMedium) draft.Add(mediumShapes[Random.Range(0, mediumShapes.Length)]);
-            else draft.Add(largeShapes[Random.Range(0, largeShapes.Length)]);
-        }
-
-        int safetyNet = 0;
-        while (!IsDraftPlayable(draft) && safetyNet < 5)
-        {
-            draft[1] = smallShapes[Random.Range(0, smallShapes.Length)];
-            draft[2] = smallShapes[Random.Range(0, smallShapes.Length)];
-            safetyNet++;
-        }
-        return draft.OrderBy(x => Random.value).ToList();
-    }
-
-    private Shape GetPerfectSolutionShape()
-    {
-        if (GridManager.Instance == null || GridManager.Instance.gridLogic == null) return shapes[Random.Range(0, shapes.Length)];
-
-        int[,] logic = GridManager.Instance.gridLogic;
-        int w = GridManager.Instance.width;
-        int h = GridManager.Instance.height;
-    
-        int bestRow = -1, bestCol = -1;
-        int maxFilled = -1;
+        float fill = GridManager.Instance.GetBoardFillPercentage();
+        Shape[] validShapes = shapes.Where(s => GridManager.Instance.CanBlockFit(s)).ToArray();
+        if (validShapes.Length == 0) return null;
+        int maxCells = validShapes.Max(s => s.CellCount);
         
-        for(int y=0; y<h; y++) {
-            int f = 0; for(int x=0; x<w; x++) if(logic[x,y]==1) f++;
-            if(f > maxFilled && f < w) { maxFilled = f; bestRow = y; bestCol = -1; }
-        }
-        for(int x=0; x<w; x++) {
-            int f = 0; for(int y=0; y<h; y++) if(logic[x,y]==1) f++;
-            if(f > maxFilled && f < h) { maxFilled = f; bestRow = -1; bestCol = x; }
-        }
-
-        if (maxFilled == -1) return shapes[Random.Range(0, shapes.Length)];
-
-        Shape bestShape = null;
-        int bestScore = -1;
-
-        var shuffledShapes = shapes.OrderBy(s => Random.value).ToList();
-
-        foreach (Shape s in shuffledShapes)
+        List<float> weights = new();
+        float totalWeight = 0f;
+        foreach (Shape shape in validShapes)
         {
-            for (int cx = 0; cx < w; cx++)
+            float weight = Mathf.Lerp(shape.CellCount, (maxCells + 1) - shape.CellCount, fill);
+            weights.Add(weight);
+            totalWeight += weight;
+        }
+        for (int i = 0; i < validShapes.Length; i++) // this forloop is strictly for debuglog to see block % spawnrate, not necessary at release
+        {
+            float chance = (weights[i] / totalWeight) * 100;
+            Debug.Log(
+                $"{validShapes[i].Name} " +
+                $"Weight: {weights[i]:F2} " +
+                $"Chance: {chance:F1}");
+        }
+        float random = Random.value * totalWeight;
+        for (int i = 0; i < validShapes.Length; i++)
+        {
+            random -= weights[i];
+            if (random <= 0f)
             {
-                for (int cy = 0; cy < h; cy++)
-                {
-                    Vector2Int testPos = new Vector2Int(cx, cy);
-                    if (GridManager.Instance.CanPlaceShapeAtPosition(s, testPos))
-                    {
-                        int cellsInTargetLine = 0;
-                        Vector2Int origin = s.GetOriginCell();
-                        
-                        foreach (var cell in s.cells)
-                        {
-                            int px = cx + (cell.x - origin.x);
-                            int py = cy + (cell.y - origin.y);
-                            
-                            if (bestRow != -1 && py == bestRow) cellsInTargetLine++;
-                            if (bestCol != -1 && px == bestCol) cellsInTargetLine++;
-                        }
-
-                        if (cellsInTargetLine > 0)
-                        {
-                            int score = (cellsInTargetLine * 10) + s.CellCount;
-                            
-                            if (score > bestScore)
-                            {
-                                bestScore = score;
-                                bestShape = s;
-                            }
-                        }
-                    }
-                }
+                Debug.Log("Shapes list length" + currentShapes.Count);
+                return validShapes[i];
             }
-        }
-
-        return bestShape != null ? bestShape : shapes[Random.Range(0, shapes.Length)];
-    }
-
-    private bool IsDraftPlayable(List<Shape> draft)
-    {
-        if (GridManager.Instance == null) return true;
-        foreach (Shape s in draft) if (GridManager.Instance.CanBlockFit(s)) return true;
-        return false;
-    }
-
-    public void SpawnShapes()
-    {
-        currentShapes.Clear();
-        List<Shape> draft = GenerateSkillBasedDraft();
-
-        for (var i = 0; i < spawnPoints.Length; i++)
-        {
-            Shape shape = draft[i];
-            currentShapes.Add(shape);
-            CreateShapeVisuals(shape, spawnPoints[i]);
-        }
+        } 
+        return validShapes[0];
     }
 
     private GameObject CreateShapeVisuals(Shape shape, Transform spawnpoint)
@@ -153,7 +66,6 @@ public class BlockSpawner : MonoBehaviour
         col.enabled = false;
         shapeGO.transform.position = spawnpoint.position;
         Vector2Int origin = shape.GetOriginCell();
-        
         foreach (var cell in shape.cells)
         {
             GameObject block = Instantiate(blockPrefab, shapeGO.transform);
@@ -181,13 +93,23 @@ public class BlockSpawner : MonoBehaviour
             Vector3 offset = new Vector3(centerX * 0.6f, centerY * 0.6f, 0f);
             shapeGO.transform.position -= offset;
         }
-        
-        shapeBehaviour.Initialize(shape, blockColors, blockPrefab);
+        shapeBehaviour.Initialize(shape,blockColors,blockPrefab);
         shapeBehaviour.FitColliderToShape();
         col.enabled = true;
         return shapeGO;
     }
-
+    
+    public void SpawnShapes()
+    {
+        currentShapes.Clear();
+        for (var i = 0; i < spawnPoints.Length; i++)
+        {
+            Shape shape = GetWeightedRandomShape();
+            currentShapes.Add(shape);
+            CreateShapeVisuals(shape, spawnPoints[i]);
+        }
+    }
+    
     public void RestoreShapes(string[] shapeNames)
     {
         currentShapes.Clear();
@@ -200,35 +122,32 @@ public class BlockSpawner : MonoBehaviour
             CreateShapeVisuals(shape, spawnPoints[i]);
         }
     }
-
+    
     public void BlockPlaced()
     {
-        StartCoroutine(BlockPlacedRoutine());
-    }
-
-    private IEnumerator BlockPlacedRoutine()
-    {
-        if (Score.Instance != null) Score.Instance.RegisterBlockPlaced();
-        if (Timer.Instance != null) Timer.Instance.RegisterBlockPlaced();
+        //BlocksUsed++;
+        Debug.Log(currentShapes.Count);
+        if (Score.Instance != null)
+        {
+            Score.Instance.RegisterBlockPlaced();
+        }
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.RegisterBlockPlaced();
+        }
 
         if (!GridManager.Instance.linesClearedThisRound && !GridManager.Instance.hasImmunity)
         {
             GridTimerScript.Instance.decreaseValue();
         }
-
-        while (GridManager.Instance.isClearing)
-        {
-            yield return null; 
-        }
-
+        
         if (currentShapes.Count <= 0)
         {
+            //BlocksUsed = 0;
             GridManager.Instance.OnTurnFinished();
             SpawnShapes();
         }
-
-        yield return null;
-
+        
         GridManager.Instance.CheckIfPlayable();
     }
 

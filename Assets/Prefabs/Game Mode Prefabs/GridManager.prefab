@@ -45,14 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   tilePrefab: {fileID: 3709587514387350726, guid: ed334b22f1e0b4b4085c3ae5c4fc09f3, type: 3}
-  blockPrefab: {fileID: 3007790078228690655, guid: c938d0af5e804b648bc7bea92c58f630, type: 3}
-  explosionParticlePrefab: {fileID: 9144086865607056377, guid: 46f358a87be666641a929397f1003e68, type: 3}
-  maxTurnsSinceClear: 0
-  turnsSinceClear: 0
-  hasImmunity: 0
-  linesClearedThisRound: 0
+  gameOverCanvas: {fileID: 0}
+  bubble: {fileID: 2140327967988264035, guid: fe48cbb6a8fdc3944a5fb0c310c5d50c, type: 3}
   time: {fileID: 0}
   soundManager: {fileID: 0}
-  menuController: {fileID: 0}
-  originOffset: {x: 0, y: 2}
-  clearingRoutines: 0
+  gridtimerscript: {fileID: 0}
