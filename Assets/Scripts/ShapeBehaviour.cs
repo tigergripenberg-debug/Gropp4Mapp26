@@ -13,18 +13,19 @@ public class ShapeBehaviour : MonoBehaviour
     private SpriteRenderer[] childSR;
     private Color shapeColor;
     public int colorIndex;
-    public Color[] possibleColors; 
+    //private static readonly Color[] possibleColors = BlockColors.Colors;
+    [SerializeField] private BlockColorPalette normalPalette;
     public Shape ShapeData { get; private set; }
     private GameObject ghost;
     [SerializeField] GameObject blockPrefab;
     private List<Vector2Int> lastPreviewClears = new();
     public static event System.Action<SFXSounds> OnBlockPlacement;
 
-    public void Initialize(Shape shape, Color[] colors, GameObject prefab)
+    public void Initialize(Shape shape, GameObject prefab, BlockColorPalette palette)
     {
         blockPrefab = prefab;
         ShapeData = shape;
-        possibleColors = colors;
+        normalPalette = palette;
         BuildShape();
         childSR = GetComponentsInChildren<SpriteRenderer>();
         SetRandomColor();
@@ -32,7 +33,7 @@ public class ShapeBehaviour : MonoBehaviour
         startPosition = transform.position;
         transform.localScale = previewScale;
     }
-
+    
     private void BuildShape()
     {
         Vector2Int origin = ShapeData.GetOriginCell();
@@ -44,6 +45,23 @@ public class ShapeBehaviour : MonoBehaviour
                 cell.y - origin.y,
                 0f
             );
+        }
+    }
+    
+    public void SetPalette(BlockColorPalette newPalette)
+    {
+        normalPalette = newPalette;
+        GridManager.Instance.SetPalette(newPalette);
+        GridManager.Instance.RefreshBlockColors();
+    }
+    
+    public void RefreshColors(BlockColorPalette palette)
+    {
+        shapeColor = palette.colors[colorIndex];
+
+        foreach (SpriteRenderer sr in childSR)
+        {
+            sr.color = shapeColor;
         }
     }
 
@@ -69,8 +87,8 @@ public class ShapeBehaviour : MonoBehaviour
 
     private void SetRandomColor()
     {
-        colorIndex = Random.Range(0, possibleColors.Length);
-        shapeColor = possibleColors[colorIndex];
+        colorIndex = Random.Range(0, normalPalette.colors.Length);
+        shapeColor = normalPalette.colors[colorIndex];
         foreach (SpriteRenderer sr in childSR)
         {
             sr.color = shapeColor;
@@ -164,19 +182,7 @@ public class ShapeBehaviour : MonoBehaviour
             lastPreviewClears.Clear();
         }
     }
-
-    // private void UpdateGhost()
-    // {
-    //     Vector2 world = GridManager.Instance.GetWorldPosition(
-    //         currentGridPosition.x,
-    //         currentGridPosition.y
-    //     );
-    //     ghost.transform.position = new Vector3(world.x, world.y, 0f);
-    //     bool valid = GridManager.Instance.CanPlaceShapeAtPosition(ShapeData, currentGridPosition);
-    //     SetGhostColor(valid);
-    //     UpdateGhostVisibility();
-    // }
-
+    
     private void SetGhostColor(bool valid)
     {
         foreach (Transform child in ghost.transform)

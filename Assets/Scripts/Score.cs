@@ -10,6 +10,9 @@ public class Score : MonoBehaviour
     [Header("UI & References")]
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highscoreText;
+    [SerializeField] private TMP_Text multiplierText;
+    [SerializeField] private GameObject scorePopupPrefab;
+    [SerializeField] private Transform popupSpawnPoint;
 
     [Header("Score Stats")]
     [SerializeField] private Color scoreColor = Color.white;
@@ -33,6 +36,7 @@ public class Score : MonoBehaviour
         highscore = PlayerPrefs.GetInt("Highscore", 0);
         scoreText.text = score.ToString();
         highscoreText.text = "Best: " + highscore;
+        UpdateMultiplierText();
     }
     private void Scorer(int number, ScoreEventType type)
     {
@@ -68,10 +72,21 @@ public class Score : MonoBehaviour
             scoreText.transform.DOScale(1f, 1f);
             scoreText.color = tmpclr;
             scoreColor = tmpclr;
-
         }
+    }
+    
+    private void SpawnScorePopup(string message, Color color)
+    {
+        GameObject popup = Instantiate(
+            scorePopupPrefab,
+            popupSpawnPoint.position,
+            Quaternion.identity,
+            popupSpawnPoint);
 
+        ScorePopup popupScript =
+            popup.GetComponent<ScorePopup>();
 
+        popupScript.Setup(message, scoreColor);
     }
 
     public void RestoreScoreData(int savedScore, int savedCombo, int savedBlocksSinceLastClear)
@@ -80,6 +95,7 @@ public class Score : MonoBehaviour
         currentCombo = savedCombo;
         blocksSinceLastClear = savedBlocksSinceLastClear;
         scoreText.text = score.ToString();
+        UpdateMultiplierText();
     }
 
     public void RegisterBlockPlaced()
@@ -93,6 +109,7 @@ public class Score : MonoBehaviour
         {
             currentCombo = 0;
             OnComboChanged?.Invoke(currentCombo);
+            UpdateMultiplierText();
 
             if (SoundManager.Instance != null)
             {
@@ -120,6 +137,8 @@ public class Score : MonoBehaviour
         blocksSinceLastClear = -1;
 
         OnComboChanged?.Invoke(currentCombo);
+        UpdateMultiplierText();
+        
 
         int pointsForLines = 0;
         switch (linesCleared)
@@ -140,13 +159,15 @@ public class Score : MonoBehaviour
         }
 
         score += pointsToGive;
+        ThemeManager.Instance.UpdatePaletteFromScore(score);
         ScoreEventType type = GetScoreEventType(currentCombo);
         Scorer(score, type);
         CheckHighscore();
 
-        string message = $"Multiplier: x{comboMultiplier:F1}\n Total {pointsToGive} points!";
+        string message = $"+ {pointsToGive}";
         OnScoreChange?.Invoke(type);
         OnScoreMessage?.Invoke(message);
+        SpawnScorePopup(message, scoreColor);
     }
 
     private void CheckHighscore()
@@ -158,6 +179,14 @@ public class Score : MonoBehaviour
             PlayerPrefs.SetInt("Highscore", highscore);
             PlayerPrefs.Save();
         }
+    }
+    private void UpdateMultiplierText()
+    {
+        multiplierText.text = "x" + currentCombo;
+
+        float targetAlpha = currentCombo > 1 ? 1f : 0f;
+
+        multiplierText.DOFade(targetAlpha, 0.25f);
     }
 
     private ScoreEventType GetScoreEventType(int value)
