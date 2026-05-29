@@ -124,11 +124,20 @@ MonoBehaviour:
   - {fileID: 1750946060526884066, guid: e0e3e666e799c1c448a1da99d16bd77e, type: 3}
   - {fileID: 7200550138501144648, guid: 815ee10738e258c4aa5711aa63c5b9dc, type: 3}
   - {fileID: 343364855792667137, guid: 92d339141be75bd4a92bae118546dd1c, type: 3}
-  gridtimerscript: {fileID: 0}
   spawnPoints:
   - {fileID: 2002258457231949886}
   - {fileID: 3484016573306274904}
   - {fileID: 5284917662403321258}
+  blockPrefab: {fileID: 3007790078228690655, guid: c938d0af5e804b648bc7bea92c58f630, type: 3}
+  blockColors:
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0.259, g: 0.259, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0.6086957, b: 0.052173913, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8720923077449036584
 GameObject:
   m_ObjectHideFlags: 0
