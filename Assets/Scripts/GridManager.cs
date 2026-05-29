@@ -19,6 +19,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
     public static Transform PlacedBlockParent;
+    private List<SpriteRenderer> previewRenderers = new List<SpriteRenderer>();
+    private Dictionary<SpriteRenderer, Color> previewOriginalColors
+        = new Dictionary<SpriteRenderer, Color>();
+    [SerializeField] private Color previewColor = Color.white;
+    [SerializeField] private float previewAlpha = 0.5f;
+    private List<Transform> previewBlocks = new List<Transform>();
+    [SerializeField] private float previewPulseScale = 1.2f;
+    [SerializeField] private float previewPulseDuration = 0.35f;
 
     void Awake()
     {
@@ -37,6 +45,118 @@ public class GridManager : MonoBehaviour
         Application.targetFrameRate = 60;
         GenerateGrid();
         AdjustCameraToScreen();
+    }
+    
+    public List<Vector2Int> GetPreviewClears(Shape shape, Vector2Int gridPos)
+    {
+        List<Vector2Int> cellsToClear = new List<Vector2Int>();
+        bool[,] simulated = new bool[width, height];
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                simulated[x, y] = gridLogic[x, y] == 1;
+            }
+        }
+        Vector2Int origin = shape.GetOriginCell();
+
+        foreach (Vector2Int cell in shape.cells)
+        {
+            int x = gridPos.x + (cell.x - origin.x);
+            int y = gridPos.y + (cell.y - origin.y);
+
+            if (!IsInsideGrid(x, y))
+                return cellsToClear;
+
+            simulated[x, y] = true;
+        }
+        for (int y = 0; y < height; y++)
+        {
+            bool full = true;
+
+            for (int x = 0; x < width; x++)
+            {
+                if (!simulated[x, y])
+                {
+                    full = false;
+                    break;
+                }
+            }
+            if (full)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+
+                    if (!cellsToClear.Contains(pos))
+                        cellsToClear.Add(pos);
+                }
+            }
+        }
+        for (int x = 0; x < width; x++)
+        {
+            bool full = true;
+
+            for (int y = 0; y < height; y++)
+            {
+                if (!simulated[x, y])
+                {
+                    full = false;
+                    break;
+                }
+            }
+            if (full)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+
+                    if (!cellsToClear.Contains(pos))
+                        cellsToClear.Add(pos);
+                }
+            }
+        }
+        return cellsToClear;
+    }
+    
+    public void ClearPreviewEffects()
+    {
+        foreach (Transform block in previewBlocks)
+        {
+            if (block == null)
+                continue;
+
+            block.DOKill();
+
+            block.DOScale(1f, 0.1f);
+        }
+
+        previewBlocks.Clear();
+    }
+    
+    public void ShowClearPreview(List<Vector2Int> clears)
+    {
+        ClearPreviewEffects();
+
+        foreach (Vector2Int pos in clears)
+        {
+            Transform block = visualGrid[pos.x, pos.y];
+
+            if (block == null)
+                continue;
+
+            // Prevent duplicate tweening
+            if (previewBlocks.Contains(block))
+                continue;
+
+            previewBlocks.Add(block);
+
+            block.DOKill();
+
+            block.DOScale(previewPulseScale, previewPulseDuration)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo);
+        }
     }
 
     void OnDrawGizmos() //används för att rita upp grid i debugmode

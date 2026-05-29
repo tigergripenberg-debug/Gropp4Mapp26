@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,6 +17,7 @@ public class ShapeBehaviour : MonoBehaviour
     private GameObject ghost;
     [SerializeField] GameObject blockPrefab;
     public static event System.Action<SFXSounds> OnBlockPlacement;
+    private List<Vector2Int> lastPreviewClears = new();
     public void Initialize(Shape shape, Color[] colors, GameObject prefab)
     {
         blockPrefab = prefab;
@@ -128,7 +130,22 @@ public class ShapeBehaviour : MonoBehaviour
         currentGridPosition = GridManager.Instance.WorldToGrid(pieceWorld);
         UpdateGhost();
     }
+    
+    private bool AreSameClears(
+        List<Vector2Int> a,
+        List<Vector2Int> b)
+    {
+        if (a.Count != b.Count)
+            return false;
 
+        foreach (var pos in a)
+        {
+            if (!b.Contains(pos))
+                return false;
+        }
+        return true;
+    }
+    
     private void UpdateGhost()
     {
         Vector2 world = GridManager.Instance.GetWorldPosition(
@@ -143,19 +160,28 @@ public class ShapeBehaviour : MonoBehaviour
         UpdateGhostVisibility();
         if (valid)
         {
-            var clears = GridManager.Instance.GetPreviewClears(ShapeData, currentGridPosition);
-            if (clears.Count > 0)
-            {
-                GridManager.Instance.ShowClearPreview(clears);
-            }
-            else
+            var clears = GridManager.Instance.GetPreviewClears(
+                ShapeData,
+                currentGridPosition);
+
+            bool changed = !AreSameClears(clears, lastPreviewClears);
+
+            if (changed)
             {
                 GridManager.Instance.ClearPreviewEffects();
+
+                if (clears.Count > 0)
+                {
+                    GridManager.Instance.ShowClearPreview(clears);
+                }
+
+                lastPreviewClears = new List<Vector2Int>(clears);
             }
         }
         else
         {
             GridManager.Instance.ClearPreviewEffects();
+            lastPreviewClears.Clear();
         }
     }
     
