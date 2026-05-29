@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,6 +17,7 @@ public class ShapeBehaviour : MonoBehaviour
     public Shape ShapeData { get; private set; }
     private GameObject ghost;
     [SerializeField] GameObject blockPrefab;
+    private List<Vector2Int> lastPreviewClears = new();
     public static event System.Action<SFXSounds> OnBlockPlacement;
 
     public void Initialize(Shape shape, Color[] colors, GameObject prefab)
@@ -108,7 +110,22 @@ public class ShapeBehaviour : MonoBehaviour
             i++;
         }
     }
+    
+    private bool AreSameClears(
+        List<Vector2Int> a,
+        List<Vector2Int> b)
+    {
+        if (a.Count != b.Count)
+            return false;
 
+        foreach (var pos in a)
+        {
+            if (!b.Contains(pos))
+                return false;
+        }
+        return true;
+    }
+    
     private void UpdateGhost()
     {
         Vector2 world = GridManager.Instance.GetWorldPosition(
@@ -116,10 +133,49 @@ public class ShapeBehaviour : MonoBehaviour
             currentGridPosition.y
         );
         ghost.transform.position = new Vector3(world.x, world.y, 0f);
-        bool valid = GridManager.Instance.CanPlaceShapeAtPosition(ShapeData, currentGridPosition);
+        bool valid = GridManager.Instance.CanPlaceShapeAtPosition(
+            ShapeData,
+            currentGridPosition);
         SetGhostColor(valid);
         UpdateGhostVisibility();
+        if (valid)
+        {
+            var clears = GridManager.Instance.GetPreviewClears(
+                ShapeData,
+                currentGridPosition);
+
+            bool changed = !AreSameClears(clears, lastPreviewClears);
+
+            if (changed)
+            {
+                GridManager.Instance.ClearPreviewEffects();
+
+                if (clears.Count > 0)
+                {
+                    GridManager.Instance.ShowClearPreview(clears);
+                }
+
+                lastPreviewClears = new List<Vector2Int>(clears);
+            }
+        }
+        else
+        {
+            GridManager.Instance.ClearPreviewEffects();
+            lastPreviewClears.Clear();
+        }
     }
+
+    // private void UpdateGhost()
+    // {
+    //     Vector2 world = GridManager.Instance.GetWorldPosition(
+    //         currentGridPosition.x,
+    //         currentGridPosition.y
+    //     );
+    //     ghost.transform.position = new Vector3(world.x, world.y, 0f);
+    //     bool valid = GridManager.Instance.CanPlaceShapeAtPosition(ShapeData, currentGridPosition);
+    //     SetGhostColor(valid);
+    //     UpdateGhostVisibility();
+    // }
 
     private void SetGhostColor(bool valid)
     {
