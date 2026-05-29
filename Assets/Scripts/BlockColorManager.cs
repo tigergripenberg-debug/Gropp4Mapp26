@@ -4,6 +4,7 @@ public class ThemeManager : MonoBehaviour
 {
     public static ThemeManager Instance;
     [SerializeField] private BlockColorPalette[] blockPalettes;
+    [SerializeField] private int howOftenToSwapPalette;
     BlockColorPalette currentPalette;
     private int currentMilestone = 0;
     private readonly int defaultPalette = 0;
@@ -24,7 +25,7 @@ public class ThemeManager : MonoBehaviour
     }
     public void UpdatePaletteFromScore(int score)
     {
-        int milestone = score / 1000;
+        int milestone = score / howOftenToSwapPalette;
         if (milestone == currentMilestone)
             return;
         currentMilestone = milestone;
