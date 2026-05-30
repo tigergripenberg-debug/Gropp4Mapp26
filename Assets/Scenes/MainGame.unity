@@ -603,10 +603,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3790856870760404808, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
-      propertyPath: fadeTime
-      value: 0.34
-      objectReference: {fileID: 0}
-    - target: {fileID: 3790856870760404808, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: CrossFade
       value: 
       objectReference: {fileID: 897600636}

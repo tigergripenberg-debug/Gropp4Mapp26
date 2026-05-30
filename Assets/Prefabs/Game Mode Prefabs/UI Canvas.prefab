@@ -2153,13 +2153,13 @@ PrefabInstance:
     m_TransformParent: {fileID: 4191613535036478051}
     m_Modifications:
     - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
-      propertyPath: fadeTime
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
       propertyPath: menuPanel
       value: 
       objectReference: {fileID: 271441386619054856}
+    - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
+      propertyPath: Transition
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
       propertyPath: gameOverText
       value: 

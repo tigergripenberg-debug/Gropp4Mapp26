@@ -47,4 +47,9 @@ MonoBehaviour:
   settingsPanel: {fileID: 0}
   menuPanel: {fileID: 0}
   leaderBoardPanel: {fileID: 0}
+  gameOverPanel: {fileID: 0}
   mpEntryLength: 0.28
+  gameOverText: {fileID: 0}
+  entryPosOffset: {x: 0, y: -1500, z: 0}
+  Transition: {fileID: 0}
+  fadeTime: 0.16
