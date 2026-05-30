@@ -6762,18 +6762,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
-      propertyPath: fadeTime
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
-      propertyPath: CrossFade
-      value: 
-      objectReference: {fileID: 237578339}
-    - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
-      propertyPath: fadeImage
-      value: 
-      objectReference: {fileID: 1632452198}
-    - target: {fileID: 2474720413410317103, guid: f93cc5b8818ce2048ad4720576858b66, type: 3}
       propertyPath: menuPanel
       value: 
       objectReference: {fileID: 477490688}
@@ -8168,11 +8156,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631589985}
   m_CullTransparentMesh: 1
---- !u!1 &1632452198 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5677825850271418768, guid: ccf5fe9200178e44ab238d3ac073081f, type: 3}
-  m_PrefabInstance: {fileID: 4938996883962538652}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1642636180
 PrefabInstance:
   m_ObjectHideFlags: 0

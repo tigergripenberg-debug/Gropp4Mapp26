@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8080174310247698105}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -52,4 +52,4 @@ MonoBehaviour:
   gameOverText: {fileID: 0}
   entryPosOffset: {x: 0, y: -1500, z: 0}
   Transition: {fileID: 0}
-  fadeTime: 0.16
+  fadeTime: 0.2
