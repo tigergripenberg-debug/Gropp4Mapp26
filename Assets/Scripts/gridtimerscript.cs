@@ -58,27 +58,6 @@ public class GridTimerScript : MonoBehaviour
         Refresh();
     }
 
-    public int getRingValue()
-    {
-        return (int)ring.value;
-    }
-
-    public void setRingValue(int value)
-    {
-        if (frozen)
-        {
-            return;
-        }
-        ring.value = value;
-        Refresh();
-    }
-    
-
-    public bool getFrozenStatus()
-    {
-        return frozen;
-    }
-
     private void Refresh()
     {
         bool isAcuallyImmune = frozen || (GridManager.Instance != null && (GridManager.Instance.hasImmunity || GridManager.Instance.linesClearedThisRound));

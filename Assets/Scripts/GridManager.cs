@@ -18,16 +18,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private MenuController menuController;
-    [SerializeField] private Vector2 originOffset = new Vector2(0, 2f);
+    [SerializeField] private Vector2 originOffset =  new Vector2(0, 2f); 
     public static Transform PlacedBlockParent;
-    [SerializeField] private BlockColorPalette currentPalette;
     public int clearingRoutines = 0;
     public bool isClearing => clearingRoutines > 0;
-    public string Whydied { private set; get; }
+    public string Whydied {private set; get;}
     private List<Transform> previewBlocks = new List<Transform>();
     [SerializeField] private float previewPulseScale = 1.2f;
     [SerializeField] private float previewPulseDuration = 0.35f;
-    public bool GameOver { get; private set; }
 
     void Awake()
     {
@@ -77,8 +75,8 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-
-    public List<Vector2Int> GetPreviewClears(Shape shape, Vector2Int gridPos)
+    
+        public List<Vector2Int> GetPreviewClears(Shape shape, Vector2Int gridPos)
     {
         List<Vector2Int> cellsToClear = new List<Vector2Int>();
         bool[,] simulated = new bool[width, height];
@@ -149,7 +147,7 @@ public class GridManager : MonoBehaviour
         }
         return cellsToClear;
     }
-
+    
     public void ClearPreviewEffects()
     {
         foreach (Transform block in previewBlocks)
@@ -164,7 +162,7 @@ public class GridManager : MonoBehaviour
 
         previewBlocks.Clear();
     }
-
+    
     public void ShowClearPreview(List<Vector2Int> clears)
     {
         ClearPreviewEffects();
@@ -219,7 +217,7 @@ public class GridManager : MonoBehaviour
                 if (gridLogic[x, y] == 1)
                 {
                     occupied++;
-                    Debug.Log($"{occupied / (width * height) * 100} %");
+                    Debug.Log($"{occupied / (width*height) * 100} %");
                 }
             }
         }
@@ -262,11 +260,6 @@ public class GridManager : MonoBehaviour
         MenuController.gameIsPaused = false;
         menuController.ReloadActiveScene();
     }
-    
-    public void ResetGameOver()
-    {
-        GameOver = false;
-    }
 
     void GenerateGrid()
     {
@@ -278,19 +271,18 @@ public class GridManager : MonoBehaviour
                 newTile.transform.position = GetWorldPosition(x, y);
                 newTile.name = $"Tile X:{x} Y:{y}";
                 newTile.transform.SetParent(transform);
-
+                
                 //Ändrar sprite av alla tiles på raden längst ned
                 if (y != 0) continue;
                 //newTile.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(0.88f, 0.12f, 0.12f, 1f);
                 newTile.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/BottomTile");
-
+                
             }
         }
     }
 
     public void OnTurnFinished()
     {
-        if (GridTimerScript.Instance.getFrozenStatus()) return;
         if (linesClearedThisRound)
         {
             hasImmunity = true;
@@ -429,7 +421,6 @@ public class GridManager : MonoBehaviour
 
     public void TriggerGameOver()
     {
-        GameOver = true;
         Debug.Log("Game Over");
         MenuController.gameIsPaused = true;
         StartCoroutine(ShowGameOverRoutine());
@@ -674,50 +665,28 @@ public class GridManager : MonoBehaviour
         var block = Instantiate(blockPrefab, worldPos, Quaternion.identity, PlacedBlockParent);
         var sr = block.GetComponent<SpriteRenderer>();
         sr.sortingLayerName = "PlacedBlocks";
-        sr.color = currentPalette.colors[colorIndex];
+        sr.color = BlockSpawner.Instance.blockColors[colorIndex];
         block.GetComponent<NewBlock>().colorIndex = colorIndex;
-        visualGrid[x, y] = block.transform;
+        visualGrid[x,y] = block.transform;
     }
     public bool IsInsideGrid(int x, int y)
     {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
-    
-    public void RefreshBlockColors()
-    {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                Transform block = visualGrid[x, y];
-                if (block == null)
-                    continue;
-                NewBlock nb = block.GetComponent<NewBlock>();
-                if (nb == null)
-                    continue;
-                SpriteRenderer sr =
-                    block.GetComponent<SpriteRenderer>();
-                sr.color =
-                    currentPalette.colors[nb.colorIndex];
-            }
-        }
-    }
-    
-    public void SetPalette(BlockColorPalette newPalette)
-    {
-        currentPalette = newPalette;
-    }
-    
     public void AdjustCameraToScreen()
     {
+        //Lägger till 2 rutor i marginal på varje sida av griden.
         float targetWidth = width + 2f;
 
+        //Räknar ut mobilens aspect ratio (bredd/höjd).
         float aspectRatio = Screen.width / (float)Screen.height;
 
+        //Räknar ut vilken ortografisk storlek kameran behöver ha för att visa hela griden i bredd.
         float requiredCameraSize = targetWidth / 2f / aspectRatio;
 
-        Camera.main.orthographicSize = Screen.width > Screen.height ? requiredCameraSize * 2 : requiredCameraSize;
+        Camera.main.orthographicSize = requiredCameraSize;
 
+        // Sätter kamerans position så att den är centrerad på griden.
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
     }
     private void SpawnParticles(Transform block)
@@ -726,7 +695,7 @@ public class GridManager : MonoBehaviour
 
         // Skapa partikeln på blockets position
         GameObject particles = Instantiate(explosionParticlePrefab, block.position, Quaternion.identity);
-
+        
         // Hämta färgen från blocket och ge den till partikeln
         SpriteRenderer sr = block.GetComponent<SpriteRenderer>();
         if (sr != null)
