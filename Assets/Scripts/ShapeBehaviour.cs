@@ -376,4 +376,37 @@ public class ShapeBehaviour : MonoBehaviour
         foreach (var sr in childSR) sr.sortingLayerName = "PlacedBlocks";
         transform.SetParent(GridManager.PlacedBlockParent, true);
     }
+
+    private void OnEnable()
+    {
+        MenuController.OnPause += HandlePause;
+    }
+
+    private void OnDisable()
+    {
+        MenuController.OnPause -= HandlePause;
+    }
+
+    private void HandlePause(SFXSounds sound)
+    {
+        if (ghost != null)
+        {
+            CancelDrag();
+        }
+    }
+
+    private void CancelDrag()
+    {
+        if (ghost != null)
+        {
+            Destroy(ghost);
+        }
+        
+        GridManager.Instance.ClearPreviewEffects();
+        lastPreviewClears.Clear();
+        
+        transform.position = startPosition;
+        transform.localScale = previewScale;
+        SetAsActive();
+    }
 }
