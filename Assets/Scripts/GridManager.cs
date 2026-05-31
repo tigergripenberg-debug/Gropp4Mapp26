@@ -27,6 +27,7 @@ public class GridManager : MonoBehaviour
     private List<Transform> previewBlocks = new List<Transform>();
     [SerializeField] private float previewPulseScale = 1.2f;
     [SerializeField] private float previewPulseDuration = 0.35f;
+    public bool GameOver { get; private set; }
 
     void Awake()
     {
@@ -261,6 +262,11 @@ public class GridManager : MonoBehaviour
         MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+    
+    public void ResetGameOver()
+    {
+        GameOver = false;
+    }
 
     void GenerateGrid()
     {
@@ -422,6 +428,7 @@ public class GridManager : MonoBehaviour
 
     public void TriggerGameOver()
     {
+        GameOver = true;
         Debug.Log("Game Over");
         MenuController.gameIsPaused = true;
         StartCoroutine(ShowGameOverRoutine());

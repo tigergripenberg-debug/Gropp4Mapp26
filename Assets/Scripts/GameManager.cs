@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
 
     private void SaveGame()
     {
+        if (GridManager.Instance.GameOver) return;
         SaveData data = new SaveData();
         data.width = width;
         data.height = height;
@@ -62,6 +63,7 @@ public class GameManager : MonoBehaviour
 
     private void LoadGame()
     {
+        GridManager.Instance.ResetGameOver();
         if (!PlayerPrefs.HasKey("save"))
         {
             Debug.Log("No Game found");
@@ -104,7 +106,7 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationPause(bool pause)
     {
-        if (pause)
+        if (pause && !GridManager.Instance.GameOver)
         {
             SaveGame();
         }
@@ -112,6 +114,14 @@ public class GameManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveGame();
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus && GridManager.Instance.GameOver)
+        {
+            StartNewGame();
+        }
     }
 
     public void DeleteSave()
@@ -124,6 +134,7 @@ public class GameManager : MonoBehaviour
     public void StartNewGame()
     {
         DeleteSave();
+        GridManager.Instance.ResetGameOver();
         GridManager.Instance.ClearExistingBoardVisuals();
         BlockSpawner.Instance.ClearCurrentShapes();
         GridManager.Instance.ResetGridLogic();
