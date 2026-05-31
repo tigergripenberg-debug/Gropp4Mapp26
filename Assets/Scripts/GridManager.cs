@@ -278,12 +278,6 @@ public class GridManager : MonoBehaviour
                 newTile.transform.position = GetWorldPosition(x, y);
                 newTile.name = $"Tile X:{x} Y:{y}";
                 newTile.transform.SetParent(transform);
-
-                //Ändrar sprite av alla tiles på raden längst ned
-                if (y != 0) continue;
-                //newTile.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(0.88f, 0.12f, 0.12f, 1f);
-                newTile.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/BottomTile");
-
             }
         }
     }

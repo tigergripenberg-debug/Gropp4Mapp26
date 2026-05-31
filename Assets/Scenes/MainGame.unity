@@ -201,25 +201,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 516282606933458580, guid: f922ce64eddbf1b49b3db85c9ebd278d, type: 3}
-      propertyPath: m_TagString
-      value: Untagged
-      objectReference: {fileID: 0}
-    - target: {fileID: 5147845515160078434, guid: f922ce64eddbf1b49b3db85c9ebd278d, type: 3}
-      propertyPath: m_TagString
-      value: Untagged
-      objectReference: {fileID: 0}
     - target: {fileID: 6851880539011492171, guid: f922ce64eddbf1b49b3db85c9ebd278d, type: 3}
       propertyPath: m_Name
       value: PlayAreaDecore
-      objectReference: {fileID: 0}
-    - target: {fileID: 6851880539011492171, guid: f922ce64eddbf1b49b3db85c9ebd278d, type: 3}
-      propertyPath: m_TagString
-      value: Untagged
-      objectReference: {fileID: 0}
-    - target: {fileID: 6990986070270661934, guid: f922ce64eddbf1b49b3db85c9ebd278d, type: 3}
-      propertyPath: m_TagString
-      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8624451150067638829, guid: f922ce64eddbf1b49b3db85c9ebd278d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -344,17 +328,6 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 7703249250585174299, guid: ccf5fe9200178e44ab238d3ac073081f, type: 3}
   m_PrefabInstance: {fileID: 897600634}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1625318995 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1993842595414257706, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
-  m_PrefabInstance: {fileID: 4383733186862942267}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1689600731 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6119554470326460557, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
@@ -629,6 +602,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -370
       objectReference: {fileID: 0}
+    - target: {fileID: 1028857674640056752, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: m_SortingOrder
+      value: -10
+      objectReference: {fileID: 0}
     - target: {fileID: 1671463790416126889, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -785,6 +762,10 @@ PrefabInstance:
       propertyPath: scorePopupPrefab
       value: 
       objectReference: {fileID: 1689600731}
+    - target: {fileID: 6986817199848877564, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: m_SortingOrder
+      value: -10
+      objectReference: {fileID: 0}
     - target: {fileID: 7080725026307761876, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
