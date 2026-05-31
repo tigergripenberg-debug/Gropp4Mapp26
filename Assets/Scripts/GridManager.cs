@@ -290,6 +290,7 @@ public class GridManager : MonoBehaviour
 
     public void OnTurnFinished()
     {
+        if (GridTimerScript.Instance.getFrozenStatus()) return;
         if (linesClearedThisRound)
         {
             hasImmunity = true;
