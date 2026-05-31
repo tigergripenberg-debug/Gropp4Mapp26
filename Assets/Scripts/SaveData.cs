@@ -9,5 +9,7 @@ public class SaveData
     public int score;
     public int currentCombo;
     public int blocksSinceLastClear;
+    public int gridTimerStatus;
+    public bool frozenStatus;
 
 }

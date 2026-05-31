@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour
         data.score = Score.Instance.score;
         data.currentCombo = Score.Instance.currentCombo;
         data.blocksSinceLastClear = Score.Instance.blocksSinceLastClear;
+        data.gridTimerStatus = GridTimerScript.Instance.getRingValue();
+        data.frozenStatus = GridTimerScript.Instance.getFrozenStatus();
         data.colors = FlattenColors();
         string json = JsonUtility.ToJson(data);
         PlayerPrefs.SetString("save", json);
@@ -70,6 +72,8 @@ public class GameManager : MonoBehaviour
         SaveData data = JsonUtility.FromJson<SaveData>(json);
         GridManager.Instance.ClearExistingBoardVisuals();
         GridManager.Instance.gridLogic = new int[width, height];
+        GridTimerScript.Instance.setRingValue(data.gridTimerStatus);
+        GridTimerScript.Instance.freeze(data.frozenStatus);
         RestoreGrid(data);
         Score.Instance.RestoreScoreData(data.score,data.currentCombo,data.blocksSinceLastClear);
         BlockSpawner.Instance.RestoreShapes(data.currentShapes);
