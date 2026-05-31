@@ -20,12 +20,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private MenuController menuController;
     [SerializeField] private Vector2 originOffset = new Vector2(0, 2f);
     public static Transform PlacedBlockParent;
+    [SerializeField] private BlockColorPalette currentPalette;
     public int clearingRoutines = 0;
     public bool isClearing => clearingRoutines > 0;
     public string Whydied { private set; get; }
     private List<Transform> previewBlocks = new List<Transform>();
     [SerializeField] private float previewPulseScale = 1.2f;
     [SerializeField] private float previewPulseDuration = 0.35f;
+    public bool GameOver { get; private set; }
 
     void Awake()
     {
@@ -260,6 +262,11 @@ public class GridManager : MonoBehaviour
         MenuController.gameIsPaused = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+    
+    public void ResetGameOver()
+    {
+        GameOver = false;
+    }
 
     void GenerateGrid()
     {
@@ -421,6 +428,7 @@ public class GridManager : MonoBehaviour
 
     public void TriggerGameOver()
     {
+        GameOver = true;
         Debug.Log("Game Over");
         MenuController.gameIsPaused = true;
         StartCoroutine(ShowGameOverRoutine());
@@ -665,7 +673,7 @@ public class GridManager : MonoBehaviour
         var block = Instantiate(blockPrefab, worldPos, Quaternion.identity, PlacedBlockParent);
         var sr = block.GetComponent<SpriteRenderer>();
         sr.sortingLayerName = "PlacedBlocks";
-        sr.color = BlockSpawner.Instance.blockColors[colorIndex];
+        sr.color = currentPalette.colors[colorIndex];
         block.GetComponent<NewBlock>().colorIndex = colorIndex;
         visualGrid[x, y] = block.transform;
     }
@@ -673,6 +681,32 @@ public class GridManager : MonoBehaviour
     {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
+    
+    public void RefreshBlockColors()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Transform block = visualGrid[x, y];
+                if (block == null)
+                    continue;
+                NewBlock nb = block.GetComponent<NewBlock>();
+                if (nb == null)
+                    continue;
+                SpriteRenderer sr =
+                    block.GetComponent<SpriteRenderer>();
+                sr.color =
+                    currentPalette.colors[nb.colorIndex];
+            }
+        }
+    }
+    
+    public void SetPalette(BlockColorPalette newPalette)
+    {
+        currentPalette = newPalette;
+    }
+    
     public void AdjustCameraToScreen()
     {
         float targetWidth = width + 2f;

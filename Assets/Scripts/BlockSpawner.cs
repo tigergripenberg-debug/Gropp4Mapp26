@@ -13,7 +13,7 @@ public class BlockSpawner : MonoBehaviour
     public GameObject[] blockPrefabs;
     public Transform[] spawnPoints;
     public GameObject blockPrefab;
-    [SerializeField] public Color[] blockColors;
+    [SerializeField] private BlockColorPalette currentPalette;
     
     private Shape[] shapes = ShapeLibrary.allShapes;
     public List<Shape> currentShapes = new();
@@ -123,6 +123,18 @@ public class BlockSpawner : MonoBehaviour
 
         return bestShape != null ? bestShape : shapes[Random.Range(0, shapes.Length)];
     }
+    
+    public void RefreshActiveShapeColors()
+    {
+        ShapeBehaviour[] shapes =
+            FindObjectsByType<ShapeBehaviour>(
+                FindObjectsSortMode.None);
+
+        foreach (var shape in shapes)
+        {
+            shape.RefreshColors(currentPalette);
+        }
+    }
 
     private bool IsDraftPlayable(List<Shape> draft)
     {
@@ -133,12 +145,14 @@ public class BlockSpawner : MonoBehaviour
 
     public void SpawnShapes()
     {
+        
         currentShapes.Clear();
         List<Shape> draft = GenerateSkillBasedDraft();
 
         for (var i = 0; i < spawnPoints.Length; i++)
         {
             Shape shape = draft[i];
+            Debug.Log(draft.Count);
             currentShapes.Add(shape);
             CreateShapeVisuals(shape, spawnPoints[i]);
         }
@@ -182,7 +196,7 @@ public class BlockSpawner : MonoBehaviour
             shapeGO.transform.position -= offset;
         }
         
-        shapeBehaviour.Initialize(shape, blockColors, blockPrefab);
+        shapeBehaviour.Initialize(shape, blockPrefab, currentPalette);
         shapeBehaviour.FitColliderToShape();
         col.enabled = true;
         return shapeGO;
@@ -204,6 +218,11 @@ public class BlockSpawner : MonoBehaviour
     public void BlockPlaced()
     {
         StartCoroutine(BlockPlacedRoutine());
+    }
+    
+    public void SetPalette(BlockColorPalette palette)
+    {
+        currentPalette = palette;
     }
 
     private IEnumerator BlockPlacedRoutine()
