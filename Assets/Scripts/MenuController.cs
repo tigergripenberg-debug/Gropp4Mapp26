@@ -4,6 +4,7 @@ using DG.Tweening;
 using UnityEngine.UI;
  
 using TMPro;
+using System.Collections;
 public class MenuController : MonoBehaviour
 {
     public static bool gameIsPaused = false;
@@ -19,6 +20,9 @@ public class MenuController : MonoBehaviour
     private Vector3 menuPanelOriginPos, panelEntryStartPos;
     [SerializeField] private Vector3 entryPosOffset = new Vector3(0, -1500, 0);
 
+    [SerializeField] private Animator Transition;
+    [SerializeField] private float fadeTime;
+
     private void Awake()
     {
         menuPanelOriginPos = menuPanel.transform.position;
@@ -27,27 +31,50 @@ public class MenuController : MonoBehaviour
         backgroundImg = settingsPanel.GetComponent<Image>();
         backgroundImg.DOFade(0f, 0f);
         settingsPanel.SetActive(false);
-        
-        gameOverImg = gameOverPanel.GetComponent<Image>();
-        gameOverImg.DOFade(0f, 0f);
-        gameOverPanel.SetActive(false);
+        if (gameOverPanel != null)
+        {
+            gameOverImg = gameOverPanel.GetComponent<Image>();
+            gameOverImg.DOFade(0f, 0f);
+            gameOverPanel.SetActive(false);
+        }
+
+
+    }
+ 
+    public void GoToStartMenu()
+    {
+        StartCoroutine(LoadSceneIndex(0));
     }
 
     public void StartGame()
     {
         Debug.Log("changing to scene 1");
-        SceneManager.LoadScene(1);
+        StartCoroutine(LoadSceneIndex(1));
         gameIsPaused = false;
     }
     public void TimeGame()
     {
-        SceneManager.LoadScene(2);
+        StartCoroutine(LoadSceneIndex(2));
         gameIsPaused = false;
     }
 
     public void StartTutorial()
     {
         SceneManager.LoadScene("Tutorial");
+    }
+
+    public void ReloadActiveScene()
+    {
+        StartCoroutine(LoadSceneIndex(SceneManager.GetActiveScene().buildIndex));
+    }
+
+    private IEnumerator LoadSceneIndex(int levelIndex)
+    {
+        Transition.SetTrigger("Start");
+
+        yield return new WaitForSeconds(fadeTime);
+
+        SceneManager.LoadScene(levelIndex);
     }
 
     public void OpenSettingsPanel()
@@ -59,6 +86,7 @@ public class MenuController : MonoBehaviour
         }
         settingsPanel.SetActive(true);
     }
+
 
     public void CloseSettingsPanel()
     {
@@ -158,9 +186,6 @@ public class MenuController : MonoBehaviour
         moveButtonSeq.Append(restartButton.DOLocalMove(Vector3.down * 450f, 0.75f)).SetEase(Ease.InOutBack).SetDelay(0.1f);
     }
 
-    public void GoToStartMenu()
-    {
-        SceneManager.LoadScene(0);
-    }
+
 
 }

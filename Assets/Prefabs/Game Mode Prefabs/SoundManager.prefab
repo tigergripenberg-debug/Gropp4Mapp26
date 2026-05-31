@@ -442,6 +442,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4e6cbc3a1ecfb8b4281e15f0b08227a6, type: 3}
   - {fileID: 8300000, guid: c75cbd721ff4a454bb1349ec13b333f4, type: 3}
   - {fileID: 8300000, guid: 754b923e278c06c4ababab60135ce6cc, type: 3}
+  - {fileID: 8300000, guid: 69ca94eea39deef4c97cc43776b9500a, type: 3}
+  - {fileID: 8300000, guid: 6460b294cc17854438f9a72385cd98b6, type: 3}
+  - {fileID: 8300000, guid: 6996f77f835bf3341b0bdb89a58b5ccc, type: 3}
   music: {fileID: 8300000, guid: 62e3f9224038e144bb1c4ac2f7328397, type: 3}
   comboMusic: {fileID: 8300000, guid: 59f24fdca3341e04ca70b1af6b721f40, type: 3}
   sfxSoundManager: {fileID: 5248637459201962429}

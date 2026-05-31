@@ -260,7 +260,7 @@ public class GridManager : MonoBehaviour
         }
         GameManager.Instance.DeleteSave();
         MenuController.gameIsPaused = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        menuController.ReloadActiveScene();
     }
     
     public void ResetGameOver()
