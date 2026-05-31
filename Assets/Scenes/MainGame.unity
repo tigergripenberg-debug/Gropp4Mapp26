@@ -449,6 +449,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: music
+      value: 
+      objectReference: {fileID: 8300000, guid: acb81581d92ed744aab1843089f095a9, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: comboMusic
+      value: 
+      objectReference: {fileID: 8300000, guid: 8aaf8d84d58a344448c2f71643cb996a, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: sfxVolumeSlider
       value: 
       objectReference: {fileID: 2041661501}
@@ -456,6 +464,30 @@ PrefabInstance:
       propertyPath: musicVolumeSlider
       value: 
       objectReference: {fileID: 758621304}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 949418f06c9aab641af0bf094430f2cf, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 1ea4581e04f2b144c87e993b523162af, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 4bd44731ed35cba4fb566ea612e72dcd, type: 3}
+    - target: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: 'wowSounds.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: c5624be42956ae841917726471dc04bc, type: 3}
+    - target: {fileID: 1022348105151305645, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: acb81581d92ed744aab1843089f095a9, type: 3}
+    - target: {fileID: 1402573306453341437, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 8aaf8d84d58a344448c2f71643cb996a, type: 3}
     - target: {fileID: 6167997956629970020, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -689,6 +721,10 @@ PrefabInstance:
     - target: {fileID: 4191613535036478051, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4787960101122979248, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: m_fontSize
+      value: 259.8
       objectReference: {fileID: 0}
     - target: {fileID: 4986209160668854770, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_AnchorMax.y
