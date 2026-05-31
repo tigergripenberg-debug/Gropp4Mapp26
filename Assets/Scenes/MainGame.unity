@@ -140,6 +140,7 @@ GameObject:
   m_Component:
   - component: {fileID: 404260876}
   - component: {fileID: 404260875}
+  - component: {fileID: 404260877}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -174,6 +175,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &404260877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404260874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13536d2e9c9d48fea525a0f025ca12d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemeManager
+  blockPalettes:
+  - {fileID: 11400000, guid: 2d4d060989b5dde409e0c49485cbf72a, type: 2}
+  - {fileID: 11400000, guid: 6441d32f847b97646bfc3ad3b10935e6, type: 2}
+  - {fileID: 11400000, guid: 640e2cbb1652dc34286337bf98afc54b, type: 2}
+  - {fileID: 11400000, guid: 4c5d261710a45c64480152c9881592af, type: 2}
+  howOftenToSwapPalette: 10000
 --- !u!1001 &636962647
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -325,6 +344,27 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 7703249250585174299, guid: ccf5fe9200178e44ab238d3ac073081f, type: 3}
   m_PrefabInstance: {fileID: 897600634}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1625318995 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1993842595414257706, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+  m_PrefabInstance: {fileID: 4383733186862942267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &1689600731 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6119554470326460557, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+  m_PrefabInstance: {fileID: 4383733186862942267}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1689600734 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6467782740664751323, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+  m_PrefabInstance: {fileID: 4383733186862942267}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1765800403 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 209762170212482467, guid: 83a20d06e9b9b874e9a802a9a4666b76, type: 3}
@@ -336,6 +376,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60b3a8f03086c7c4f82b01630a9644d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!114 &1920986263 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6143363688971636761, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+  m_PrefabInstance: {fileID: 4383733186862942267}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &2041661501 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6081782100785944429, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
@@ -489,6 +540,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 642888739545730190, guid: bf7170e17f90359418646bca34a94b06, type: 3}
+      propertyPath: colorPalette
+      value: 
+      objectReference: {fileID: 11400000, guid: 2d4d060989b5dde409e0c49485cbf72a, type: 2}
+    - target: {fileID: 642888739545730190, guid: bf7170e17f90359418646bca34a94b06, type: 3}
+      propertyPath: currentPalette
+      value: 
+      objectReference: {fileID: 11400000, guid: 2d4d060989b5dde409e0c49485cbf72a, type: 2}
     - target: {fileID: 642888739545730190, guid: bf7170e17f90359418646bca34a94b06, type: 3}
       propertyPath: blockColors.Array.size
       value: 7
@@ -654,10 +713,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4787960101122979248, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
-      propertyPath: m_fontSize
-      value: 218.25
-      objectReference: {fileID: 0}
     - target: {fileID: 4986209160668854770, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -694,18 +749,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -185
       objectReference: {fileID: 0}
-    - target: {fileID: 5460570232672495420, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6081782100785944429, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1765800403}
-    - target: {fileID: 6097739560459307367, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
-      propertyPath: m_fontSize
-      value: 150
-      objectReference: {fileID: 0}
     - target: {fileID: 6282096082891241802, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 6
@@ -726,6 +773,18 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1765800403}
+    - target: {fileID: 6858677927282673181, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: multiplierText
+      value: 
+      objectReference: {fileID: 1920986263}
+    - target: {fileID: 6858677927282673181, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: popupSpawnPoint
+      value: 
+      objectReference: {fileID: 1689600734}
+    - target: {fileID: 6858677927282673181, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
+      propertyPath: scorePopupPrefab
+      value: 
+      objectReference: {fileID: 1689600731}
     - target: {fileID: 7080725026307761876, guid: 822b695c4a351d5459c19c64e5575639, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -861,9 +920,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
+      propertyPath: colorPalette
+      value: 
+      objectReference: {fileID: 11400000, guid: 2d4d060989b5dde409e0c49485cbf72a, type: 2}
+    - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
       propertyPath: soundManager
       value: 
       objectReference: {fileID: 1765800403}
+    - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
+      propertyPath: currentPalette
+      value: 
+      objectReference: {fileID: 11400000, guid: 2d4d060989b5dde409e0c49485cbf72a, type: 2}
     - target: {fileID: 2954539316339561849, guid: eb2bd907b0706f446843f974eff8fc22, type: 3}
       propertyPath: menuController
       value: 
