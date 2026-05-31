@@ -43,7 +43,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 59f24fdca3341e04ca70b1af6b721f40, type: 3}
+  m_Resource: {fileID: 8300000, guid: 8aaf8d84d58a344448c2f71643cb996a, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -172,7 +172,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 62e3f9224038e144bb1c4ac2f7328397, type: 3}
+  m_Resource: {fileID: 8300000, guid: acb81581d92ed744aab1843089f095a9, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -435,18 +435,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   wowSounds:
-  - {fileID: 8300000, guid: e35ba5f7ca521ed4e97de8fb59c62680, type: 3}
-  - {fileID: 8300000, guid: 8e9d23772f1f2374f89217ce658a25b9, type: 3}
-  - {fileID: 8300000, guid: 9ea640feff7b27249a5d24df967001b5, type: 3}
-  - {fileID: 8300000, guid: 6b27d800bb6903747a3890275fc4800b, type: 3}
+  - {fileID: 8300000, guid: 949418f06c9aab641af0bf094430f2cf, type: 3}
+  - {fileID: 8300000, guid: 1ea4581e04f2b144c87e993b523162af, type: 3}
+  - {fileID: 8300000, guid: 4bd44731ed35cba4fb566ea612e72dcd, type: 3}
+  - {fileID: 8300000, guid: c5624be42956ae841917726471dc04bc, type: 3}
   - {fileID: 8300000, guid: 4e6cbc3a1ecfb8b4281e15f0b08227a6, type: 3}
   - {fileID: 8300000, guid: c75cbd721ff4a454bb1349ec13b333f4, type: 3}
   - {fileID: 8300000, guid: 754b923e278c06c4ababab60135ce6cc, type: 3}
   - {fileID: 8300000, guid: 69ca94eea39deef4c97cc43776b9500a, type: 3}
   - {fileID: 8300000, guid: 6460b294cc17854438f9a72385cd98b6, type: 3}
   - {fileID: 8300000, guid: 6996f77f835bf3341b0bdb89a58b5ccc, type: 3}
-  music: {fileID: 8300000, guid: 62e3f9224038e144bb1c4ac2f7328397, type: 3}
-  comboMusic: {fileID: 8300000, guid: 59f24fdca3341e04ca70b1af6b721f40, type: 3}
+  music: {fileID: 8300000, guid: acb81581d92ed744aab1843089f095a9, type: 3}
+  comboMusic: {fileID: 8300000, guid: 8aaf8d84d58a344448c2f71643cb996a, type: 3}
   sfxSoundManager: {fileID: 5248637459201962429}
   musicManager: {fileID: 1022348105151305645}
   comboMusicManager: {fileID: 1402573306453341437}
