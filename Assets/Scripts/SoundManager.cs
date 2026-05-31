@@ -28,6 +28,8 @@ public class SoundManager : MonoBehaviour
     private float currentVolume;
     private float fadeDuration = 1f;
     private bool isInComboState = false;
+    private const float MAX_MUSIC_VOLUME = 0.35f;
+    private float ActualVolume => currentVolume * MAX_MUSIC_VOLUME;
 
     private void Awake()
     {
@@ -37,8 +39,8 @@ public class SoundManager : MonoBehaviour
     private void Start()
     {
         currentVolume = musicVolumeSlider.value;
-        musicManager.volume = currentVolume;
-        comboMusicManager.volume = currentVolume;
+        musicManager.volume = ActualVolume;
+        comboMusicManager.volume = ActualVolume;
         musicManager.Play();
     }
 
@@ -62,13 +64,13 @@ public class SoundManager : MonoBehaviour
             to.Play();
         }
         float fromStart = from.volume;
-        float toTarget = currentVolume;
+        float toTarget = ActualVolume;
         while (time < fadeDuration)
         {
             time += Time.deltaTime;
             float t = time / fadeDuration;
             from.volume = Mathf.Lerp(fromStart, 0f, t);
-            to.volume = Mathf.Lerp(0f, toTarget, t);
+            to.volume = Mathf.Lerp(0f, ActualVolume, t);
             yield return null;
         }
         from.volume = 0f;
@@ -79,8 +81,8 @@ public class SoundManager : MonoBehaviour
     public void SetMusicVolume(float volume)
     {
         currentVolume = volume;
-        musicManager.volume = volume;
-        comboMusicManager.volume = volume;
+        musicManager.volume = ActualVolume;
+        comboMusicManager.volume = ActualVolume;
     }
 
     public void SetMusicMute(bool mute)
