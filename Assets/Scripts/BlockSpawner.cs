@@ -30,16 +30,25 @@ public class BlockSpawner : MonoBehaviour
         largeShapes = shapes.Where(s => s.CellCount >= 5).ToArray();
     }
     
+    // ==========================================
+    // Tiger: SMART SPAWN-ALGORITM START
+    // Det här är logiken som ser till att spelet är rättvist.
+    // Den läser av hur fullt brädet är och justerar chansen för
+    // små/stora block. Den garanterar också att det alltid finns 
+    // minst ett block som går att placera.
     private List<Shape> GenerateSkillBasedDraft()
     {
         List<Shape> draft = new List<Shape>();
 
+        // Tvingar in ett block som garanterat hjälper spelaren
         draft.Add(GetPerfectSolutionShape());
 
+        // Räknar ut hur fullt brädet är för att anpassa svårighetsgraden
         float fill = GridManager.Instance != null ? GridManager.Instance.GetBoardFillPercentage() : 0f;
-        int chanceSmall = fill < 0.3f ? 15 : (fill < 0.6f ? 30 : 50);
+        int chanceSmall = fill < 0.3f ? 15 : (fill < 0.6f ? 30 : 50); // Mer fullt = högre chans för små block
         int chanceMedium = fill < 0.3f ? 45 : (fill < 0.6f ? 55 : 45);
 
+        // Slumpar fram de resterande två blocken utifrån procenten vi nyss räknade ut
         for (int i = 0; i < 2; i++)
         {
             int roll = Random.Range(0, 100);
@@ -48,6 +57,7 @@ public class BlockSpawner : MonoBehaviour
             else draft.Add(largeShapes[Random.Range(0, largeShapes.Length)]);
         }
 
+        // Om de framlottade blocken direkt leder till Game Over, byt ut dem mot små block
         int safetyNet = 0;
         while (!IsDraftPlayable(draft) && safetyNet < 5)
         {
@@ -55,6 +65,8 @@ public class BlockSpawner : MonoBehaviour
             draft[2] = smallShapes[Random.Range(0, smallShapes.Length)];
             safetyNet++;
         }
+        
+        // Kastar om ordningen så det perfekta blocket inte alltid är på samma plats
         return draft.OrderBy(x => Random.value).ToList();
     }
 
@@ -69,6 +81,7 @@ public class BlockSpawner : MonoBehaviour
         int bestRow = -1, bestCol = -1;
         int maxFilled = -1;
         
+        // Letar upp den rad eller kolumn som har flest utplacerade block just nu
         for(int y=0; y<h; y++) {
             int f = 0; for(int x=0; x<w; x++) if(logic[x,y]==1) f++;
             if(f > maxFilled && f < w) { maxFilled = f; bestRow = y; bestCol = -1; }
@@ -85,6 +98,7 @@ public class BlockSpawner : MonoBehaviour
 
         var shuffledShapes = shapes.OrderBy(s => Random.value).ToList();
 
+        // Loopar igenom alla spelets former och testar dem på alla lediga rutor
         foreach (Shape s in shuffledShapes)
         {
             for (int cx = 0; cx < w; cx++)
@@ -102,12 +116,15 @@ public class BlockSpawner : MonoBehaviour
                             int px = cx + (cell.x - origin.x);
                             int py = cy + (cell.y - origin.y);
                             
+                            // Kollar om just det här blocket fyller i hål i vår farligaste rad.
+                            // Om blocket fyller hålet i den raden, ökar vår score för det blocket.
                             if (bestRow != -1 && py == bestRow) cellsInTargetLine++;
                             if (bestCol != -1 && px == bestCol) cellsInTargetLine++;
                         }
 
                         if (cellsInTargetLine > 0)
                         {
+                            // Ger massor av poäng om blocket spränger den mest fyllda raden
                             int score = (cellsInTargetLine * 10) + s.CellCount;
                             
                             if (score > bestScore)
@@ -121,8 +138,23 @@ public class BlockSpawner : MonoBehaviour
             }
         }
 
+        // Skickar tillbaka det block som fick allra bäst poäng.
+        // Spelaren får alltså extra poäng av att spränga den mest fyllda raden på spelplanen.
         return bestShape != null ? bestShape : shapes[Random.Range(0, shapes.Length)];
     }
+    
+    private bool IsDraftPlayable(List<Shape> draft)
+    {
+        if (GridManager.Instance == null) return true;
+        
+        // Om minst ett av blocken i listan går att placera, godkänn listan skickar true
+        foreach (Shape s in draft) if (GridManager.Instance.CanBlockFit(s)) return true;
+        
+        return false; // Om inget går att placera, skicka false
+    }
+    // ==========================================
+    // Tiger: SMART SPAWN-ALGORITM SLUT
+    // ==========================================
     
     public void RefreshActiveShapeColors()
     {
@@ -134,13 +166,6 @@ public class BlockSpawner : MonoBehaviour
         {
             shape.RefreshColors(currentPalette);
         }
-    }
-
-    private bool IsDraftPlayable(List<Shape> draft)
-    {
-        if (GridManager.Instance == null) return true;
-        foreach (Shape s in draft) if (GridManager.Instance.CanBlockFit(s)) return true;
-        return false;
     }
 
     public void SpawnShapes()
@@ -158,6 +183,13 @@ public class BlockSpawner : MonoBehaviour
         }
     }
 
+    // ==========================================
+    // Tiger: SKAPA FORMER (VISUELLT) START
+    // Tar den logiska Shape datan och bygger det faktiska spelets GameObject.
+    // Fäster ditt ShapeBehaviour script, 
+    // räknar ut rätt center-offset och sätter colliders.
+    // Är inte helt säker på om jag skrivit allt detta men har iaf jobbat med denna mycket.
+    // Är rätt säker på att kalle ändrat i denna från hur den va från grunden när det mesta skapas av kod.
     private GameObject CreateShapeVisuals(Shape shape, Transform spawnpoint)
     {
         GameObject shapeGO = new GameObject("Shape");
@@ -201,6 +233,9 @@ public class BlockSpawner : MonoBehaviour
         col.enabled = true;
         return shapeGO;
     }
+    // ==========================================
+    // Tiger: SKAPA FORMER (VISUELLT) SLUT
+    // ==========================================
 
     public void RestoreShapes(string[] shapeNames)
     {
@@ -225,6 +260,11 @@ public class BlockSpawner : MonoBehaviour
         currentPalette = palette;
     }
 
+    // ==========================================
+    // Tiger: SPEL-LOOP OCH TURER START
+    // Coroutine som väntar tills blocket är placerat och
+    // sprängningar är klara. Här pratar GridTimern och GridManagern
+    // med varandra. Avslutar turen och spawnar nya block om det behövs.
     private IEnumerator BlockPlacedRoutine()
     {
         if (Score.Instance != null) Score.Instance.RegisterBlockPlaced();
@@ -250,6 +290,9 @@ public class BlockSpawner : MonoBehaviour
 
         GridManager.Instance.CheckIfPlayable();
     }
+    // ==========================================
+    // Tiger: SPEL-LOOP OCH TURER SLUT
+    // ==========================================
 
     public void ClearCurrentShapes()
     {

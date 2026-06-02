@@ -7,14 +7,28 @@ using UnityEngine.SceneManagement;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
-    [Header("Settings")] public int[,] gridLogic;
+    [Header("Settings")] 
+    
+    // ==========================================
+    // Tiger: SPELPLANEN (2D-ARRAY) START
+    // Variablerna som håller koll på det logiska och visuella 8x8-brädet.
+    public int[,] gridLogic;
     public Transform[,] visualGrid;
-    [SerializeField] private GameObject tilePrefab, blockPrefab;
-    [SerializeField] private GameObject explosionParticlePrefab;
     public int width { get; private set; } = 8;
     public int height { get; private set; } = 8;
+    // ==========================================
+    // Tiger: SPELPLANEN SLUT
+    // ==========================================
+
+    [SerializeField] private GameObject tilePrefab, blockPrefab;
+    
+    // ==== Tiger: PARTIKLAR (Referens) ====
+    [SerializeField] private GameObject explosionParticlePrefab;
+    
+    // ==== Tiger: GRIDPUSH (Referenser) ====
     public int maxTurnsSinceClear = 0, turnsSinceClear = 0;
     public bool hasImmunity = false, linesClearedThisRound = false;
+    
     [SerializeField] private Timer time;
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private MenuController menuController;
@@ -32,8 +46,17 @@ public class GridManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        
+        // ==========================================
+        // Tiger: SPELPLANEN (SKAPA ARRAYER) START
+        // Här initierar vi arrayerna baserat på width och height (8x8) 
+        // när spelet startar.
         gridLogic = new int[width, height];
         visualGrid = new Transform[width, height];
+        // ==========================================
+        // Tiger: SPELPLANEN SLUT
+        // ==========================================
+        
         if (PlacedBlockParent == null)
         {
             var go = new GameObject("PlacedBlocks");
@@ -45,11 +68,11 @@ public class GridManager : MonoBehaviour
     {
         Application.targetFrameRate = 120;
         QualitySettings.vSyncCount = 0;
-        GenerateGrid();
+        GenerateGrid(); // Tiger: Genererar det visuella brädet
         AdjustCameraToScreen();
     }
 
-    void OnDrawGizmos() //används för att rita upp grid i debugmode
+    void OnDrawGizmos() 
     {
         if (visualGrid == null) return;
         Gizmos.color = Color.green;
@@ -226,6 +249,10 @@ public class GridManager : MonoBehaviour
         return (float)occupied / total;
     }
 
+    // ==========================================
+    // Tiger: SPELPLANEN (POSITIONERING) START
+    // Dessa två funktioner konverterar mellan grid-koordinater (x,y) och världens koordinater (Vector2).
+    // Samt justerar offset så att det ska vara skön position av spelplanen för spelaren.
     public Vector2 GetWorldPosition(int x, int y)
     {
         float xOffset = (width - 1) / 2f;
@@ -247,8 +274,11 @@ public class GridManager : MonoBehaviour
 
         return new Vector2Int(x, y);
     }
+    // ==========================================
+    // Tiger: SPELPLANEN (POSITIONERING) SLUT
+    // ==========================================
 
-    public void RestartGame() //använder onclick event i unity
+    public void RestartGame() 
     {
         if (Score.Instance != null)
         {
@@ -268,6 +298,10 @@ public class GridManager : MonoBehaviour
         GameOver = false;
     }
 
+    // ==========================================
+    // Tiger: SPELPLANEN (GENERERING) START
+    // Skapar alla visuella rutor när spelet startar.
+    // Inkluderar även koden för Varningszonen som jag inte har gjort.
     void GenerateGrid()
     {
         for (int x = 0; x < width; x++)
@@ -278,10 +312,52 @@ public class GridManager : MonoBehaviour
                 newTile.transform.position = GetWorldPosition(x, y);
                 newTile.name = $"Tile X:{x} Y:{y}";
                 newTile.transform.SetParent(transform);
+
+                // Skapar den vita faden och klipper den via SpriteMask
+                if (y == 0)
+                {
+                    SpriteRenderer baseTileSR = newTile.transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+                    Texture2D fadeTex = new Texture2D(1, 2);
+                    fadeTex.wrapMode = TextureWrapMode.Clamp;
+                    fadeTex.filterMode = FilterMode.Bilinear;
+                    fadeTex.SetPixel(0, 0, new Color(1f, 1f, 1f, 1f));
+                    fadeTex.SetPixel(0, 1, new Color(1f, 1f, 1f, 0f));
+                    fadeTex.Apply();
+                    Sprite fadeSprite = Sprite.Create(fadeTex, new Rect(0, 0, 1, 2), new Vector2(0.5f, 0.5f), 1f);
+
+                    GameObject fadeOverlay = new GameObject("FadeOverlay");
+                    fadeOverlay.transform.SetParent(baseTileSR.transform);
+                    fadeOverlay.transform.localPosition = new Vector3(0, 0, -0.01f);
+                    
+                    float scaleX = baseTileSR.sprite.bounds.size.x / fadeSprite.bounds.size.x;
+                    float scaleY = baseTileSR.sprite.bounds.size.y / fadeSprite.bounds.size.y;
+                    fadeOverlay.transform.localScale = new Vector3(scaleX, scaleY, 1f);
+
+                    SpriteRenderer sr = fadeOverlay.AddComponent<SpriteRenderer>();
+                    sr.sprite = fadeSprite;
+                    sr.color = Color.red; 
+                    sr.sortingLayerName = baseTileSR.sortingLayerName;
+                    sr.sortingOrder = baseTileSR.sortingOrder + 1;
+
+                    SpriteMask mask = baseTileSR.gameObject.AddComponent<SpriteMask>();
+                    mask.sprite = baseTileSR.sprite;
+                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+
+                    UnityEngine.Rendering.SortingGroup sg = newTile.AddComponent<UnityEngine.Rendering.SortingGroup>();
+                    sg.sortingLayerName = baseTileSR.sortingLayerName;
+                }
             }
         }
     }
+    // ==========================================
+    // Tiger: SPELPLANEN (GENERERING) SLUT
+    // ==========================================
 
+    // ==========================================
+    // Tiger: GRIDPUSH LOGIK START
+    // Håller koll på hur många turer spelaren gjort utan att
+    // spränga linjer, och flyttar ner brädet om det gått för lång tid.
     public void OnTurnFinished()
     {
         if (GridTimerScript.Instance.getFrozenStatus()) return;
@@ -307,6 +383,7 @@ public class GridManager : MonoBehaviour
             turnsSinceClear++;
         }
 
+        // Om gränsen nås, aktivera MoveGrid (GridPush)
         if (turnsSinceClear > maxTurnsSinceClear)
         {
             MoveGrid();
@@ -314,6 +391,9 @@ public class GridManager : MonoBehaviour
             GridTimerScript.Instance.resetValue();
         }
     }
+    // ==========================================
+    // Tiger: GRIDPUSH LOGIK SLUT
+    // ==========================================
 
     public bool CheckForMatches()
     {
@@ -354,7 +434,7 @@ public class GridManager : MonoBehaviour
         }
 
         int totalLines = rowsToClear.Count + columnsToClear.Count;
-
+        // Handlar om GridPush-logiken: Om vi spränger linjer, nollställ timer och ge immunitet.
         if (totalLines > 0)
         {
             linesClearedThisRound = true;
@@ -387,8 +467,6 @@ public class GridManager : MonoBehaviour
             if (Timer.Instance != null) Timer.Instance.CalculateAndAddTime(totalLines, isBoardEmpty);
 
             if (Score.Instance != null) Score.Instance.CalculateAndAddScore(totalLines, isBoardEmpty);
-
-
         }
 
         return didClear;
@@ -428,6 +506,7 @@ public class GridManager : MonoBehaviour
         MenuController.gameIsPaused = true;
         StartCoroutine(ShowGameOverRoutine());
     }
+    
     private IEnumerator ShowGameOverRoutine()
     {
         FillBoardAtGameOver();
@@ -436,7 +515,6 @@ public class GridManager : MonoBehaviour
         {
             OnGameOverPlayPop?.Invoke(SFXSounds.pop_sound);
 
-            //Add Method from MenuController to set active and animate GameOver
             menuController.ShowGameOverPanel();
         }
     }
@@ -470,15 +548,21 @@ public class GridManager : MonoBehaviour
 
     public static event System.Action<SFXSounds> OnGridMovedPlayPop;
 
-
+    // ==========================================
+    // Tiger: GRIDPUSH RÖRELSE START
+    // MoveGrid tar bort bottenraden och flyttar ner 
+    // alla befintliga block ett steg i arrayen och i världen.
     public void MoveGrid()
     {
+        //Inte jag
         if (IsGameOver())
         {
             Whydied = "Blocks moved beyond the bottom";
             TriggerGameOver();
             return;
         }
+
+        // Förstör rad y=0 (längst ner)
         for (int x = 0; x < width; x++)
         {
             if (visualGrid[x, 0] != null)
@@ -488,6 +572,8 @@ public class GridManager : MonoBehaviour
             visualGrid[x, 0] = null;
             gridLogic[x, 0] = 0;
         }
+        
+        // Flytta ner allt annat
         for (int y = 0; y < height - 1; y++)
         {
             for (int x = 0; x < width; x++)
@@ -499,10 +585,11 @@ public class GridManager : MonoBehaviour
                 {
                     visualGrid[x, y].transform.DOMove(GetWorldPosition(x, y), 1.5f).SetEase(Ease.InOutElastic);
                     OnGridMovedPlayPop?.Invoke(SFXSounds.pop_sound);
-
                 }
             }
         }
+        
+        // Rensa gamla topp-raden
         for (int x = 0; x < width; x++)
         {
             visualGrid[x, height - 1] = null;
@@ -520,6 +607,10 @@ public class GridManager : MonoBehaviour
             gridLogic[x, height - 1] = 0;
         }
     }
+    // ==========================================
+    // Tiger: GRIDPUSH RÖRELSE SLUT
+    // ==========================================
+
     bool IsGameOver()
     {
         for (int x = 0; x < width; x++)
@@ -582,7 +673,10 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
-            SpawnParticles(block);
+            
+            // Tiger: Partiklar triggas här!
+            SpawnParticles(block); 
+            
             yield return new WaitForSeconds(0.05f);
         }
         clearingRoutines--;
@@ -606,6 +700,10 @@ public class GridManager : MonoBehaviour
         {
             OnBlockClearedPlayPop?.Invoke(SFXSounds.pop_sound);
             Destroy(block.gameObject);
+            
+            // Tiger: Partiklar triggas här!
+            SpawnParticles(block); 
+            
             yield return new WaitForSeconds(0.05f);
         }
         clearingRoutines--;
@@ -662,6 +760,7 @@ public class GridManager : MonoBehaviour
         StartCoroutine(ClearColCoroutine(x));
         return true;
     }
+    
     public void SpawnPlacedBlock(int x, int y, int colorIndex)
     {
         Vector3 worldPos = GetWorldPosition(x, y);
@@ -672,6 +771,7 @@ public class GridManager : MonoBehaviour
         block.GetComponent<NewBlock>().colorIndex = colorIndex;
         visualGrid[x, y] = block.transform;
     }
+    
     public bool IsInsideGrid(int x, int y)
     {
         return x >= 0 && x < width && y >= 0 && y < height;
@@ -714,6 +814,11 @@ public class GridManager : MonoBehaviour
 
         Camera.main.transform.position = new Vector3(0, 1f, -10f);
     }
+    
+    // ==========================================
+    // Tiger: PARTIKLAR (INSTANSIERING) START
+    // Läser av färgen på blocket som precis sprängdes och 
+    // skapar en explosion med exakt samma färg.
     private void SpawnParticles(Transform block)
     {
         if (explosionParticlePrefab == null) return;
@@ -733,4 +838,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+    // ==========================================
+    // Tiger: PARTIKLAR (INSTANSIERING) SLUT
+    // ==========================================
 }

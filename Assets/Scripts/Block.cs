@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+
+    
     public bool IsPickedUp { get; private set; } = false;
     public bool IsPlaced { get; private set; } = false;
     private Vector3 startPosition;
     private Vector3 touchOffset;
+    // Storlekar för att göra blocken mindre när de inte är i handen, och större när de är det.
     private Vector3 previewSize = new Vector3(0.6f, 0.6f, 1f);
     private Vector3 normalSize = new Vector3(1f, 1f, 1f);
 
@@ -15,6 +18,9 @@ public class Block : MonoBehaviour
         transform.localScale = previewSize;
     }
 
+    // När blocket klickas på, sätts IsPickedUp till true och blocket följer musen/fingret. 
+    // När det släpps, kontrolleras om det är i en giltig position. 
+    // Om det är det, placeras blocket i rutnätet och IsPlaced sätts till true. Om inte, återställs blockets position.
     void OnMouseDown()
     {
         IsPickedUp = true;
@@ -26,7 +32,7 @@ public class Block : MonoBehaviour
         mousePos.z = 0;
         touchOffset = transform.position - mousePos;
     }
-
+    // När blocket dras, uppdateras dess position baserat på musens/fingrets position och touchOffset.
     void OnMouseDrag()
     {
         if (MenuController.gameIsPaused) return;
@@ -36,8 +42,8 @@ public class Block : MonoBehaviour
         transform.position = new Vector3(mousePos.x + touchOffset.x, mousePos.y + touchOffset.y + 2f, -1f);
     }
 
-    //public static event System.Action<SFXSounds> OnBlockPlacement;
-
+    // När blocket släpps, kontrolleras om det är i en giltig position.
+    // Räknar ut om det är inom griden och inte överlappar med andra block.
     void OnMouseUp()
     {
         IsPickedUp = false;
@@ -61,7 +67,9 @@ public class Block : MonoBehaviour
                 break;
             }
         }
-
+        // Om positionen är giltig, uppdateras gridLogic och visualGrid i GridManager, 
+        // blocket placeras permanent och matchningar kontrolleras.
+        // Kollidern inaktiveras så att man inte kan dra det igen.
         if (isValid)
         {
             foreach (Transform child in transform)
